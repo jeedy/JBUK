@@ -34,3 +34,9 @@ Sysout.out.println(msg);
 
 ----
 
+## git clone
+```bash
+$ git clone https://github.com/jeedy/JBUK.git
+
+```
+
