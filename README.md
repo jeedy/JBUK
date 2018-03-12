@@ -34,9 +34,9 @@ Sysout.out.println(msg);
 
 ----
 
-## git clone
+## 설치(git clone)
 ```bash
 $ git clone https://github.com/jeedy/JBUK.git
-
+$ git remote set-url origin https://jeedy@github.com/jeedy/JBUK.git
 ```
 
