@@ -7,6 +7,8 @@
 
 ## Markdown 기본 문법
 
+[Github markdown document 참조](https://guides.github.com/features/mastering-markdown/)
+
 **굵은 글씨**
 
 *기울림*
