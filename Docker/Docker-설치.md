@@ -7,4 +7,7 @@ $ uname -r
 3.10.0-327.13.1.el7.x86_64
 ```
 
-맥에 도커 설치 방법 https://docs.docker.com/docker-for-mac/install/
+맥에 도커 설치       https://docs.docker.com/docker-for-mac/install/
+유분투에 도커 설치    https://docs.docker.com/install/linux/docker-ce/ubuntu/
+CentOS에 도커 설치  https://docs.docker.com/install/linux/docker-ce/centos/
+Windows에 도커 설치 https://docs.docker.com/docker-for-windows/install/
