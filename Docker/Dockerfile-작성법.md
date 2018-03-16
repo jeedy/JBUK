@@ -2,6 +2,8 @@
 
 ## 명령어
 
+### FROM
+
 ### ADD, COPY
 파일 복사
 ADD와 COPY 차이있음
@@ -11,4 +13,3 @@ ADD와 COPY 차이있음
 
 ### RUN
 bash 명령어 실행이 필요 할 경우
-
