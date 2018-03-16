@@ -1,4 +1,10 @@
 # Dockerfile 작성법
 
-## 파일 구조
+## 명령어
+
+### ADD, COPY
+
+### CMD
+
+### RUN
 
