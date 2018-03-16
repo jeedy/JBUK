@@ -7,7 +7,9 @@
 1. docker 데이터 삭제
     ```sh
     $ sudo rm -rf /var/run/docker
+    ... 삭제 작업 ...
     $ sudo rm /var/run/docker.*
+    ... 삭제 작업 ...
     ```
 1. 서비스 재시작
     ```sh
