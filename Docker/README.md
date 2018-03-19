@@ -11,6 +11,11 @@
 ## 기본 명령어
 
 ### $ docker images
+> 이미지 이름이 \<none> 인 댕글링(dangling) 이미지 리스트 확인방법
+> `$ docker images -f dangling=true`
+> 사용 중이지 않은 댕글링 이미지 삭제
+> `$ docker images prune`
+
 ```sh
 $ docker images
 REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
