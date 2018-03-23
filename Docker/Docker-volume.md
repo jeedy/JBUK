@@ -51,14 +51,11 @@ $ docker run -it \
 -v /home/wordpress_db:/home/testdir_2 \
 mysql:5.7
 
-# 2. 위 생성된 컨테이너(volume_dummy) 를 통해서 호스트와 디렉터리를 공유한다.
+# 2. 위 생성된 컨테이너(volume_dummy)를 통해서 호스트와 디렉터리를 공유한다.
 $ docker run -it \
 --name volumes_from_container \
 --volumes-from valume_dummy \ #중요
 ubuntu:14.04
-
-root@volumes_from_container$ ls /home/testdir_2/
-auto.cnf  ib_buffer_pool  ib_logfile0  ib_logfile1  ibdata1  mysql  performance_schema ....
 ```
 
 #### 접근방법
@@ -68,22 +65,73 @@ auto.cnf  ib_buffer_pool  ib_logfile0  ib_logfile1  ibdata1  mysql  performance_
 $ ls /home/wordpress_db
 auto.cnf  ib_buffer_pool  ib_logfile0  ib_logfile1  ibdata1  mysql  performance_schema ....
 
+# 1. 호스트 볼륨 공유 방식으로 호스트와 볼륨을 공유하는 컨테이너 생성
 $ docker run -it \
 --name volume_dummy \ # 중요
 -v /home/wordpress_db:/home/testdir_2 \
 mysql:5.7
 
+# 2. 위 생성된 컨테이너(volume_dummy)를 통해서 호스트와 디렉터리를 공유한다.
 $ docker run -it \
 --name volumes_from_container \
 --volumes-from valume_dummy \ #중요
 ubuntu:14.04
 
-root@volumes_from_container$ ls /home/testdir_2/
+root@volumes_from_container:~$ ls /home/testdir_2/
 auto.cnf  ib_buffer_pool  ib_logfile0  ib_logfile1  ibdata1  mysql  performance_schema ....
 ```
 
 ### 도커 볼륨
+docker volume 명령어를 사용하는 방식.
+도커 자체에서 제공하는 볼륨 기능을 활용해 데이터를 보존하는 방법.
 
 #### 설정
+볼륨을 생성할때 플러그인 드라이버를 설정해 여러 종류의 스토리지 백엔드를 쓸 수 있다. 기본적으로 제공되는 드라이버는 local(이 볼륨은 로컬 호스트에 저장되며 도커엔진에 의해 생성되고 삭제 된다.)
+```bash
+$ docker volume create --name myvolume
+myvolum
+
+$ docker volume ls
+DRIVER      VOLUME NAME
+local       myvolume
+
+$ docker run -it --name myvolume_1 \
+-v myvolume:/root/ \
+ubuntu:14.04
+
+root@myvolume_1:~$ echo hello, volume! >> /root/volume
+```
 
 #### 접근방법
+```bash
+#new session
+$ docker run -it --name myvolume_2 \
+-v myvolume:/root/ \
+ubuntu:14.04
+
+root@myvolume_2:~$ cat /root/volum
+hello, volume!
+```
+
+#### advanced
+호스트에서 볼륨 컨테이너의 위치
+```bash
+$ docker inspect --type volume myvolume
+# 또는 docker volume inspect myvolume
+[
+    {
+        "Driver":"local",
+        "Labels":{},
+        "Mountpoint":"/var/lib/docker/volumes/myvolume/_data",
+        "Name":"myvolume",
+        "Options":{},
+        "Scope":"local"
+    }
+]
+
+$ ls /var/lib/docker/volumes/myvolume/_data
+volume
+
+$ cat /var/lib/docker/volumes/myvolume/_data/volume
+hello, volume!
+```
