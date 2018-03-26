@@ -1,4 +1,5 @@
 # 도커 볼륨(Volume) 설정 관련내용
+
 > 참고 자료
     - 시작하세요! 도커(위키북스) 36page
 
@@ -8,12 +9,14 @@
 ## 볼륨 공유 방법
 
 ### 호스트 볼륨 공유 (호스트 디렉터리에 직접 파일을 올릴경우)
+
 - -v [호스트의 공유디렉토리]:[컨테이너의 공유 디렉터리]
 
 > 호스트에 이미 디렉터리와 파일이 존재하고 컨테이너에도 존재할 때 두 디렉터리를 공유하면?
     - 호스트의 디렉터리가 켄테이너 디렉터리에 마운트 된다.(호스트 디렉터리가 살아있고 컨테이너 디렉토리는 없어짐 / 실제로 삭제가 되는건 아니고 안 보일 뿐 다시 마운트 해제되면 보인다)
 
 #### 설정
+
 ```sh
 $ docker run -d \
 -name wordpressdb_hostvolume \
@@ -31,19 +34,23 @@ wordpress
 ```
 
 #### 접근방법
+
 호스트의 /home/wordpress_db 디렉토리를 확인해보면 디렉토리와 파일이 생성된 것을 확인가능하다.
+
 ```sh
 $ ls /home/wordpress_db
 auto.cnf  ib_buffer_pool  ib_logfile0  ib_logfile1  ibdata1  mysql  performance_schema ....
 ```
 
 ### 볼륨 컨테이너(다른 컨테이너와 공유)
+
 -v 옵션으로 볼륨을 사용하는 컨테이너(위 `호스트 볼륨 공유` 참조)를 다른 컨테이너에서 공유하는 것
 컨테이너를 생성할 때 --volumes-from 옵션을 설정하면 -v 또는 --volume 옵션을 적용한 컨테이너의 볼륨 디렉터리를 공유할 수 있다. 그러나 이는 직접 -v 옵션을 이용해 공유하것이 아닌 -v 옵션을 적용한 컨테이너를 통해 공유하는 것이다.
 
 - --volumes-from
 
 #### 설정
+
 ```bash
 # 1. 호스트 볼륨 공유 방식으로 호스트와 볼륨을 공유하는 컨테이너 생성
 $ docker run -it \
@@ -59,8 +66,10 @@ ubuntu:14.04
 ```
 
 #### 접근방법
+
 호스트의 /home/wordpress_db 디렉터리를 확인해보면 디렉토리와 파일이 생성된 것을 확인가능하다.
 컨테이너의 /home/testdir_2/ 디렉터리를 확인해보면 파일이 생성된 것을 확인할 수 있다.
+
 ```sh
 $ ls /home/wordpress_db
 auto.cnf  ib_buffer_pool  ib_logfile0  ib_logfile1  ibdata1  mysql  performance_schema ....
@@ -82,11 +91,14 @@ auto.cnf  ib_buffer_pool  ib_logfile0  ib_logfile1  ibdata1  mysql  performance_
 ```
 
 ### 도커 볼륨
+
 docker volume 명령어를 사용하는 방식.
 도커 자체에서 제공하는 볼륨 기능을 활용해 데이터를 보존하는 방법.
 
 #### 설정
+
 볼륨을 생성할때 플러그인 드라이버를 설정해 여러 종류의 스토리지 백엔드를 쓸 수 있다. 기본적으로 제공되는 드라이버는 local(이 볼륨은 로컬 호스트에 저장되며 도커엔진에 의해 생성되고 삭제 된다.)
+
 ```bash
 $ docker volume create --name myvolume
 myvolum
@@ -103,6 +115,7 @@ root@myvolume_1:~$ echo hello, volume! >> /root/volume
 ```
 
 #### 접근방법
+
 ```bash
 #new session
 $ docker run -it --name myvolume_2 \
@@ -114,7 +127,9 @@ hello, volume!
 ```
 
 #### advanced
+
 호스트에서 볼륨 컨테이너의 위치
+
 ```bash
 $ docker inspect --type volume myvolume
 # 또는 docker volume inspect myvolume
