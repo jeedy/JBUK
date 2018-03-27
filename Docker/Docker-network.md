@@ -47,6 +47,30 @@ $ docker network create --driver=bridge \
 my_custom_network
 ```
 
+## 브리지 네트워크와 --net-alias
+
+브리지 타입의 네트워크와 run 명령어의 --net-alias 옵션을 함께 쓰면 특정 호스트 이름으로 커넽이너 여러 개에 접근할 수 있습니다.
+위에서 생성한 mybridge 네트워크를 이용해 컨테이너 3개 생성해봅시다.
+```bash
+$ docker run -it -d -name network_alias_container1 \
+--net mybridge \
+--net-alias alicek106 ubuntu:14.04
+
+$ docker run -it -d -name network_alias_container2 \
+--net mybridge \
+--net-alias alicek106 ubuntu:14.04
+
+$ docker run -it -d -name network_alias_container3 \
+--net mybridge \
+--net-alias alicek106 ubuntu:14.04
+
+$ docker inspect network_alias_container1 | grep IPAddress 
+"SecondaryIPAddresses":null, "UPAddress":"", "IPAddress":"172.18.0.3"
+...
+```
+
+
+
 ## 호스트(host)
 
 네트워크를 호스트로 설정하면 호스트의 네트워크 환경을 그대로 쓸 수 있습니다.
@@ -102,7 +126,5 @@ HWaddr 02:42:ac:11:00:03
 ...
 ```
 
-두 컨테이너의 정보가 완전히 같다.
-~ 위 방법으로 다수의 컨테이너를 띄우면 외부에서 접근할때 어떻게 로드밸런싱이 되는가?
-
-## 오버레이(overlay)
+*두 컨테이너의 정보가 완전히 같다.*
+> 위 방법으로 다수의 컨테이너를 띄우면 외부에서 접근할때 어떻게 로드밸런싱이 되는가?

@@ -42,7 +42,9 @@ LABEL "purpose"="practice"
 이미지를 만들기 위해 컨테이너 내부에서 명령어를 실행. 단, Dockerfile을 이미지로 빌드하는 과정에서 별도의 입력이 불가능하기 때문에 apt-get install apache2 명령어에서 실치할 것일지를 선택하는 Y/N을 Yes로 설정해야함. 이미지를 빌드할 때 별도의 입력을 받아야 하는 RUN이 있다면 build 명령어는 이를 오류로 간주하고 빌드를 종료한다.
 > 일부 명령어는 배열 형태로 사용 가능
 > `RUN ["실행 가능한 파일", "명령줄 인자 1", "명령줄 인자 2", ... ]`
+
 ```dockerfile
+
 RUN ["echo", "$MY_ENV"] # (x)
 RUN ["sh", "-c", "echo $MY_ENV"] # (o)
 ```
@@ -53,16 +55,23 @@ RUN apt-get update
 RUN apt-get install apache2 -y
 ...
 ```
+
 ### WORKDIR
 
+컨테이너에서 작업 위치로 이동 cd 명령어와 비슷하다
+
+
 ### ENV
+
 Dockerfile 내부 그리고 Docker에서 사용할 환경변수를 선언
+
 ```dockerfile
 ...
 ENV test /home
 WORKDIR $test
 RUN touch $test/mytouchfile
 ```
+
 ```bash
 $ docker run -it --name env_test myenv:0.0 /bin/bash
 root@env_test:/home$ echo $test
@@ -70,10 +79,12 @@ root@env_test:/home$ echo $test
 ```
 
 ### ADD
+
 파일을 이미지에 추가. JSON 배열의 형태로 
 `["추가할 파일 이름", ... "컨테이너에 추가될 위치"]`
 와 같이 사용할 수 있습니다. 추가할 파일명은 여러 개를 지정할 수 있으며 배열의 마지막 원소가 컨테이너에 추가될 위치입니다.
-> ADD와 COPY 차이있음
+> ADD와 COPY 차이있음, ADD는 디렉토리가 없으면 자동으로 생성해서 복사하는 반면 COPY는 디렉토리가 없으면 오류가 난다.
+
 ```dockerfile
 ...
 ADD test.html /var/www/html
@@ -85,15 +96,20 @@ RUN ["/bin/bash", "-c", "echo hello >> test2.html"]
 ### COPY
 
 ### EXPOSE
+
 Dockerfile의 빌드로 생성된 이미지에서 노출할 포트를 설정합니다. 그러나 EXPOSE를 설정한 이미지로 컨테이너를 생성했다고 해서 반드시 이 포트가 호스트의 포트와 바인딩되는 것은 아니며, 단지 컨테이너의 80번 포트를 사용할 것임을 나타내는 것뿐입니다. EXPOSE는 컨테이너를 생성하는 run 명령어에서 모든 노출된 컨테이너의 포트를 호스트에 퍼블리시(Publish)하는 -P 플래그(flag)와 함께 사용됩니다.
+
 ```dockerfile
 ...
 EXPOSE 80
 CMD apachectl -DFOREGROUND
 ```
+
 ```bash
 $ docker run -d -P --name myserver mybuild:0.0
+...
 ```
+
 > -P 옵션은 EXPOSE로 노출된 포트를 호스트에서 사용 가능한 포트에 차례로 연결하므로 이 컨테이너가  호스트의 어떤 포트와 연결됐는지 확인할 필요가 있다.
 
 ```bash
@@ -102,7 +118,9 @@ $ docker port myserver
 ```
 
 ### ENTRYPOINT
+
 ENTRYPOINT 에 값이 있을 경우 명령어가 되어 CMD로 선언된 명령어는 인자로 들아가게 된다.
+
 ```dockerfile
 ENTRYPOINT ["echo"]
 CMD ["hello", "world"]
