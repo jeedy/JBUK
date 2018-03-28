@@ -155,9 +155,9 @@ $ docker rmi ${TENSORFLOW_IMAGE_ID}
 $ docker logs --tail 10 ${CONTAINER_ID}
 ```
 
-### docker [container ID, networdk, volume] inspect
+### $ docker [container ID, networdk, volume] inspect
 상세내용을 확인하는 명령어
 
-### docker network
+### $ docker network
 Container 의 네트워크 환경 구성관련
 [Dokcerfile-network 문서 참조](./Docker-network.md)
