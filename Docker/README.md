@@ -39,6 +39,8 @@ $ wget -qO- https://registry.hub.docker.com/v1/repositories/mysql/tags | jq '.[]
 ```
 
 ### $ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
+container를 pull 하고 create 하고 start 한다.
+> run flow : docker pull(이미지가 없다면) -> docker create -> docker start -> docker attack(-i-t 옵션을 사용했을 때)
 
 - --name : 이미지의 이름
 - -e, --env=[] : 설정값
@@ -66,6 +68,7 @@ $ docker \
 ```
 
 ### $ docker ps [OPTIONS]
+생성된 container를 볼수 있다.
 
 - -a, --all : 중단(Exited)된 Container 까지 리스트
 
@@ -80,6 +83,7 @@ e1a00c5934a7        ubuntu:16.04                    "/bin/bash"              32 
 ```
 
 ### $ docker exec [OPTIONS] CONTAINER COMMAND [ARG...]
+container가 start된 상태에서 container에 셸명령어를 날리기 위한, 이 명령어를 이용해서 container 셸에 직접 접근할 수도 있다.
 
 - -it : -i와 -t를 동시에 사용한 것으로 터미널 입력을 위한 옵션
 
@@ -87,16 +91,25 @@ e1a00c5934a7        ubuntu:16.04                    "/bin/bash"              32 
 $ docker exec -it mysql /bin/bash
 ```
 
-
 ### $ docker build
+미리 작성된 Dockerfile(작성법은 [여기](./Dockerfile-작성법)) 를 이용해 Docker Image 를 만든(Build)다.
 
 ### $ docker volume
+container들이 저장공간을 공유하기 위한 공간을 volume 이라고 한다.
 
-### $ docker create
+### $ docker [network, volume] create
+기본적으로 container를 생성할때 사용하는 명령어지만 앞에 옵션(networkd, volume, 등..) 을 붙이면 옵션에 대한 생성을 담당한다.
+> create flow: docker pull(이미지가 없다면) -> docker create
 
 ### $ docker start
+container를 시작 한다.
+
+### docker attach
+start와 비슷한 명령어지만 attach는 컨테이너의 내부로 들어가는 명령어다. (run에서 -it 옵션을 준것과 같은)
 
 ### $ docker stop CONTAINER [CONTAINER...]
+container를 중지 한다. (삭제 되지는 않는다.)
+
 ```sh
 $ docker ps # get container ID
 $ docker stop ${TENSORFLOW_CONTAINER_ID}
@@ -104,6 +117,8 @@ $ docker ps -a # show all containers
 ```
 
 ### $ docker rm [OPTIONS] CONTAINER [CONTAINER...]
+container 삭제(삭제 되상인 container는 중지 상태이여야 한다.)
+
 - -f : 실행중인 container 도 삭제
 ```sh
 $ docker ps -a # get container ID
@@ -114,14 +129,14 @@ $ docker rm -v $(docker ps -a -q -f status=exited)
 ```
 
 ### $ docker pull [OPTIONS] NAME[:TAG|@DIGEST]
-> run 할때 pull이 실행되어서 자동으로 이미지를 다운 받지만, 이미지가 업데이트 된 경우 새로 다운 받을 수 있다.
+run 할때 pull이 실행되어서 자동으로 이미지를 다운 받지만, 이미지가 업데이트 된 경우 새로 다운 받을 수 있다.
 
 ```sh
 $ docker pull ubuntu:14.04
 ```
 
 ### $ docker rmi [OPTIONS] IMAGE [IMAGE...]
-
+docker image를 삭제한다.(삭제 하기 위해선 해당 image를 이용해 생성된 container가 삭제 되어 있어야한다.)
 ```sh
 $ docker images # get image ID
 $ docker rmi ${TENSORFLOW_IMAGE_ID}
@@ -140,8 +155,9 @@ $ docker rmi ${TENSORFLOW_IMAGE_ID}
 $ docker logs --tail 10 ${CONTAINER_ID}
 ```
 
-### docker inspect
+### docker [container ID, networdk, volume] inspect
+상세내용을 확인하는 명령어
 
 ### docker network
-
-### docker attach
+Container 의 네트워크 환경 구성관련
+[Dokcerfile-network 문서 참조](./Docker-network)
