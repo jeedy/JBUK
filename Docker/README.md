@@ -92,7 +92,7 @@ $ docker exec -it mysql /bin/bash
 ```
 
 ### $ docker build
-미리 작성된 Dockerfile(작성법은 [여기](./Dockerfile-작성법)) 를 이용해 Docker Image 를 만든(Build)다.
+미리 작성된 Dockerfile(작성법은 [여기](./Dockerfile-작성법.md)) 를 이용해 Docker Image 를 만든(Build)다.
 
 ### $ docker volume
 container들이 저장공간을 공유하기 위한 공간을 volume 이라고 한다.
@@ -160,4 +160,4 @@ $ docker logs --tail 10 ${CONTAINER_ID}
 
 ### docker network
 Container 의 네트워크 환경 구성관련
-[Dokcerfile-network 문서 참조](./Docker-network)
+[Dokcerfile-network 문서 참조](./Docker-network.md)
