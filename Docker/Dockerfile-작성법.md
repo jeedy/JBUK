@@ -44,7 +44,6 @@ LABEL "purpose"="practice"
 > `RUN ["실행 가능한 파일", "명령줄 인자 1", "명령줄 인자 2", ... ]`
 
 ```dockerfile
-
 RUN ["echo", "$MY_ENV"] # (x)
 RUN ["sh", "-c", "echo $MY_ENV"] # (o)
 ```
@@ -63,7 +62,8 @@ RUN apt-get install apache2 -y
 
 ### ENV
 
-Dockerfile 내부 그리고 Docker에서 사용할 환경변수를 선언
+Dockerfile 내부 그리고 Docker에서 사용할 환경변수를 선언.
+`docker run -e HELLO=4321 example` 을 이용해 선언도 가능하지만 dockerfile에서 미리 선언해 사용한다.
 
 ```dockerfile
 ...
@@ -155,6 +155,10 @@ CMD apachectl -DFOREGROUND
 
 ### ARG
 build 명령어를 실행할 때 추가로 입려을 받아 Dockerfile 내에서 변수의 값으로 사용가능
+
+```bash
+$ docker build --build-arg env=prod -t test/test:v1 .
+```
 
 ### USER
 컨테이너 내에서 사용될 사용자 계정 이름이나 UID를 설정하면 그 아래 명령어는 해당 사용자 권한으로 실행된다. 일반적으로 RUN은 사용자의 그룹과 계정을 생성한 뒤 사용한다. 루트 권한이 필요하지 않다면 USER를 사용하는 것을 권장.
