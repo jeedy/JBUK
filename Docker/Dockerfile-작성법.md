@@ -1,5 +1,8 @@
 # Dockerfile 작성법
 
+참고
+- [maven 빌드후 타켓으로 실행](https://blog.frankel.ch/dockerfile-maven-based-github-projects/)
+
 ## 명령어
 ```dockerfile
 FROM ubuntu:14.04
