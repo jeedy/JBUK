@@ -1,8 +1,8 @@
-# Statistics (스테티스틱스: 통계학)
+# RxJava (리액티브 자바))
 
 참고
 
-- ``도서`` [해드퍼스트 Statistics](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9788979147278&orderClick=LEA&Kc=)
+- ``도서`` [RxJava 프로그래밍](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9788968488658&orderClick=LAG&Kc=)
 
 ## 용어해석
 
