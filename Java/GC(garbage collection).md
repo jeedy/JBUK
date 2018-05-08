@@ -24,6 +24,16 @@ Full GC 후에 남아 있는 Old 영역의 메모리가 300MB 정도라면 300MB
 만약, 1GB일때 1초 소요될때 1.5GB때 1.2초가 소요된다면 1.5GB일때 GC가 수행되는 빈도가 적어지게 되므로 1.5GB 로 선택이 좋을 수 있다. 
 
 ## jar 실행 후 GC메모리 확인
-```sh
+```bash
 $ java -verbosegc -XX:+PrintGCTimeStamps -Xmx1g -Xms1g -jar project1.jar  &
+```
+
+## 자바사용 메모리 사용량 & gc 퍼포먼스 확인(퍼센트)
+```bash
+$ jstat -gcutil -t -h10 [JID] 1s > jstat_1.log
+```
+
+## 자바사용 메모리 사용량(용량)
+```bash
+$ jstat -gccapacity -t -h10 [JID] 1s > jstat_1.log
 ```
