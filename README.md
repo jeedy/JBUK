@@ -39,6 +39,7 @@ Sysout.out.println(msg);
 ## 로컬 설치 (git clone)
 ```bash
 $ git clone https://github.com/jeedy/JBUK.git
+$ cd JBUK
 $ git remote set-url origin https://jeedy@github.com/jeedy/JBUK.git
 ```
 이후 설정파일(.git/config)에서 
