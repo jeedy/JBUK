@@ -9,3 +9,7 @@
     - 프로젝트 빌드 Item 정보 ~/.jenkins/jobs/
     - 유저 정보 ~/.jenkins/users/
 1.
+
+## Exception
+1. /usr/lib/tomcat/temp/jenkins480174068218113004.sh: line 2: unexpected EOF while looking for matching `"'
+    - Execute shell command 값에 잘못된 표현식이 있는지 확인
