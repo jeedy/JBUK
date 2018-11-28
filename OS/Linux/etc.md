@@ -27,24 +27,26 @@ ex) ln -Tfs /sample/change_path/20161219 /root/user/change
 
 ----
 
-1.ping test를 한다.
+### telnet으로 port 확인 방법
+
+1. ping test를 한다.
 [svr:usr] ping 172.0.0.1
 응답없으면(ping이 되지 않으면) firewall에 등록이 되지 않은 것이다.
 정상적 결과 172.0.0.1  is alive
 
-2.1.telnet ip port 로 확인한다.
+2. telnet ip port 로 확인한다.
 [svr:usr] telnet 172.0.0.1 9999
 Trying 172.0.0.1...
 계속 대기 중이면 방화벽 오픈이 안된 것이다.
 
-2.2
+3.
 [svr:usr] telnet 172.0.0.1 9999
 Trying 172.0.0.1...
 telnet: Unable to connect to remote host: Connection refused
 바로 연결거부가 발생하면 방화벽 오픈은 되었으나 프로세스가 안 떠있는 것이다.
 (포트를 열고 대기하고 있지 않은 상태)
 
-2.3
+4.
 [svr:usr] telnet 172.0.0.1 9999
 Trying 172.0.0.1...
 Connected to 172.0.0.1
@@ -53,10 +55,9 @@ Escape character is '^]'.
 (포트를 열고 대기하고 있는 상태)
 => 이상태가 되야 통신테스트를 할 수 있다
 
-3. 라우팅 테이블 확인하기
+5. 라우팅 테이블 확인하기
 [svr:usr] netstat -rn | grep 172.0.0.1
 172.0.0.1         172.0.0.1            UG       1 186064
 여기에 값이 있으면 올바로 설정된 것임.
 
 ----
-
