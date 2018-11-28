@@ -1,6 +1,8 @@
 # tip memo
 
+```bash
 netstat -atp
+```
 
 ----
 
@@ -61,3 +63,19 @@ Escape character is '^]'.
 여기에 값이 있으면 올바로 설정된 것임.
 
 ----
+
+### 마운트 정보 또는 용량 확인
+
+```bash
+$ df -h
+```
+----
+
+### 파일 압축 복사
+
+```bash
+$ tar cvf test_module.tar ./test_module --exclude test_module/log --exclude test_module/tmp
+$ tar xvf test_module.tar
+$ cp ./test_module.tar /nas/share
+```
+
