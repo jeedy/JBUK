@@ -14,6 +14,7 @@ TMOUT=0
 $ ln -Tfs [새로바꿀경로] [바꿀심볼릭링크]
 ex) ln -Tfs /sample/change_path/20161219 /root/user/change
 ```
+----
 
 1) 원격 서버 → 로컬 서버로 파일 전송
     ```bash
@@ -95,4 +96,17 @@ $ tar cvf test_module.tar ./test_module --exclude test_module/log --exclude test
 $ tar xvf test_module.tar
 $ cp ./test_module.tar /nas/share
 ```
+----
 
+### 텔넷으로 포트 체크
+```bash
+$ telnet localhost 80
+Trying ::1...
+Connected to localhost.
+Escape character is '^]'.
+
+GET / HTTP/1.0
+
+....
+
+```
