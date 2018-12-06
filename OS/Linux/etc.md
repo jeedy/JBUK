@@ -155,5 +155,34 @@ fg (job번호)
 
 ---
 
+특정 파일이나 디렉토리를 사용하는 프로세스의 user/pid/접근 권한 등을 자세히 볼 때
+fuser -v /usr/bin/java
+
+---
+
+접속한 사용자 보기
+w
+
+---
+
+nfs 마운트 설정
+local(192.168.0.2) --> remote(192.168.0.3)
+
+```bash
+# remote(192.168.0.3)
+$ vim /etc/exports
+/sdb1/share 192.168.0.2(rw)
+$ service nfs restart
+```
+
+```bash
+# local(192.168.0.2)
+$ mount -t nfs 192.168.0.3:/sdb1/share /sdb1/nfs/share
+$ df
+```
+
+---
+
+
 
 
