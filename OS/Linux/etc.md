@@ -149,4 +149,11 @@ df
 
 ---
 
+VIM ctrl +z 터미널 빠져나오기
+jobs
+fg (job번호)
+
+---
+
+
 
