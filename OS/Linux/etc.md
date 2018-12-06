@@ -1,9 +1,19 @@
 # tip memo
 
+
+ps -ef | grep java | grep --color 'offset'
+
+------------------------------------------
+
 ```bash
 netstat -atp
+netstat -anp
 ```
 ----
+
+find ./ -name "*.conf"|xargs grep 'staging'
+
+---
 
 ```bash
 TMOUT=0
@@ -100,13 +110,43 @@ $ cp ./test_module.tar /nas/share
 
 ### 텔넷으로 포트 체크
 ```bash
-$ telnet localhost 80
-Trying ::1...
-Connected to localhost.
+$ telnet www.google.com 80
+Trying 172.217.24.196...
+Connected to www.google.com.
 Escape character is '^]'.
 
-GET / HTTP/1.0
+GET / HTTP/1.1
+host: www.google.com
 
-....
+...something more...
 
 ```
+---
+
+### netstat -anp|grep java
+
+---
+
+mkdir -p /home2/test/test/test
+
+---
+
+chown -R sam:abbey example
+
+---
+
+폴더별용량
+```bash
+du -sch *
+```
+
+---
+
+disk mount 접속정보
+```bash
+df
+```
+
+---
+
+
