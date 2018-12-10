@@ -183,6 +183,15 @@ $ df
 
 ---
 
+rsync 전송 시
+failed: Permission denied (13)
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1039) [sender=3.0.6]
+에러 발생
+
+
+
+
+
 
 
 
