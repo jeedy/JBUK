@@ -85,7 +85,7 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
 
 해당 프로젝트 POM.xml -> build 태그 -> sonar-maven-plugin 플러그인 추가
 
-```bash
+```xml
 <project>
  ...
 
