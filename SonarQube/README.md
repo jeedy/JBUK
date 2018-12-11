@@ -24,7 +24,7 @@ root:/usr/lib#unzip sonarqube-6.7.6.zip
 root:/usr/lib#cd sonarqube-6.7.6
 ```
 
-```
+```bash
 root:/usr/lib/sonarqube-6.7.6#vi ./conf/sonar.conf
 
 # in conf/sonar.conf
@@ -81,8 +81,25 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
 ![젠킨스 SonarQube Scanner](./images/sonarqube-scanner.PNG)
 
 
-## 프로젝트 소스 SonarQube 셋팅
+## 젠킨스 job에 SonarQube 셋팅
 
+메이븐을 이용한 sonar-scanner 일 경우 mvn 명령어에 값을 통해 properties 셋팅 해야함(sonar-project.properties 를 읽게하는 방법을 못찾았음)
+
+1. 빌드 환경 -> Prepare SonarQube Scanner environment 체크
+
+    ![젠킨스job 셋팅](./images/jenkins-sonarqube-jobs-buildenvironment.PNG)
+
+1. Build -> Goals and options
+
+    ```bash
+    # sonarqube admin 에서 프로젝트 생성하지 않아도 알아서 생성됨
+    clean install $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.projectKey=Sonarqube 프로젝트 KEY -Dsonar.projectName=Sonarqube 프로젝트 이름
+    ```
+
+    ![젠킨스job 셋팅](./images/jenkins-sonarqube-jobs-build.PNG)
+
+
+## 직접 sonar-scanner를 이용할 경우(생략)
 해당 프로젝트 최상위 디렉토리에 sonar-project.properties 생성
 
 ```bash
