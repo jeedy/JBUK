@@ -11,23 +11,34 @@ Jenkins + SonarQube + SVN
 참조2: https://okky.kr/article/439198
 
 
-SVN은 사용하나 기본적인 컨셉은 비슷해 참조한 이미지
-
-
 ## 메이븐 설치
 [메이븐 설치](/OS/Linux/install-maven-with-centos.md)
 
 ## SonarQube 설치
+
 ```bash
 root:/usr/lib#wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.6.zip
---2018-12-10 11:57:17--  https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.6.zip
-
+....
+...
 root:/usr/lib#unzip sonarqube-6.7.6.zip
+root:/usr/lib#cd sonarqube-6.7.6
+```
+
+```
+root:/usr/lib/sonarqube-6.7.6#vi ./conf/sonar.conf
+
+# in conf/sonar.conf
+# 소나큐브 웹서비스 기본포트 9000
+# 소나큐브 엘라스틱서치 9001
+sonar.web.port=9000
+sonar.web.context=/sonarqube
+
 root:/usr/lib#cd sonarqube-6.7.6/bin/linux-x86-64
 root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64#./sonar.sh start
 Starting SonarQube...
 Started SonarQube.
 ```
+
 
 ### SonarQube setting for SVN
 Administration (http://sonarqube:9000/sonarqube/admin/settings?category=scm) -> SCM -> SVN
@@ -48,16 +59,6 @@ Administration (http://sonarqube:9000/sonarqube/admin/settings?category=scm) -> 
     ```
 
 ### 젠킨스 SonarQube 셋팅
-
-소나큐브 웹서비스 기본포트 9000
-
-소나큐브 엘라스틱서치 9001
-
-```bash
-# ./conf/sonar.conf
-sonar.web.port=9000
-sonar.web.context=/sonarqube
-```
 
 1. SonarQube login Tokens 생성
 
