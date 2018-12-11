@@ -157,7 +157,21 @@ sonar.java.binaries=target/classes
 ### 참고
 - https://www.lesstif.com/pages/viewpage.action?pageId=39126262
 
+```sql
+# sql sonar DB Schema 생성 및 유저 생성
+CREATE DATABASE sonar CHARACTER SET utf8 COLLATE utf8_bin;
+GRANT ALL PRIVILEGES ON sonar.* TO 'sonar'@'localhost' IDENTIFIED BY 'sonarPwd';
+```
 
+```bash
+# vi conf/sonar.properties
+sonar.jdbc.username=sonar
+sonar.jdbc.password=sonarPwd
+sonar.jdbc.url=jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance
+
+root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64#./sonar.sh stop
+root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64#./sonar.sh start
+```
 
 
 
