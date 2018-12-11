@@ -127,6 +127,7 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
 
 ```bash
 # sonar-project.properties
+# Analysis Parameters https://docs.sonarqube.org/latest/analysis/analysis-parameters/
 # must be unique in a given SonarQube instance
 sonar.projectKey=소나큐브에서 생성된 프로젝트 KEY
 # this is the name and version displayed in the SonarQube UI. Was mandatory prior to SonarQube 6.1.
@@ -146,6 +147,20 @@ sonar.java.binaries=target/classes
 #sonar.svn.password.secured=SVN패스워드
 
 ```
+
+## SonarQube Database setting
+
+> 기본으로 제공되는 Embadded Database 실운영에 사용하지 않을 것을 권고함
+
+[사용가능한 Database 목록](https://docs.sonarqube.org/7.4/requirements/requirements/)
+
+### 참고
+- https://www.lesstif.com/pages/viewpage.action?pageId=39126262
+
+
+
+
+
 
 ## troubleshooting
 1. [ERROR] Failed to execute goal org.codehaus.mojo:sonar-maven-plugin:2.6:sonar (default-cli) on project privia-payment: Can not execute SonarQube analysis: Plugin org.codehaus.sonar:sonar-maven3-plugin:6.7.6.38781 or one of its dependencies could not be resolved: Could not find artifact org.codehaus.sonar:sonar-maven3-plugin:jar:6.7.6.38781 in central (http://repo.maven.apache.org/maven2) -> [Help 1]
