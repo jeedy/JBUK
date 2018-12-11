@@ -147,3 +147,11 @@ sonar.java.binaries=target/classes
 
 ```
 
+## troubleshooting
+1. [ERROR] Failed to execute goal org.codehaus.mojo:sonar-maven-plugin:2.6:sonar (default-cli) on project privia-payment: Can not execute SonarQube analysis: Plugin org.codehaus.sonar:sonar-maven3-plugin:6.7.6.38781 or one of its dependencies could not be resolved: Could not find artifact org.codehaus.sonar:sonar-maven3-plugin:jar:6.7.6.38781 in central (http://repo.maven.apache.org/maven2) -> [Help 1]
+
+   > 메이븐 POM.XML 설정에 sonar-maven-plugin 플러그인 셋팅이 되어있는지 확인
+
+1. jobs -> 빌드환경 -> Prepare SonarQube Scanner environment 가 안보일경우
+
+   > jenkins 관리 -> 시스템설정(http://jenkins:8080/jenkins/configure) -> SonarQube servers 세션 ->  	Environment variables -> Enable injection of SonarQube server configuration as build environment variables 체크확인
