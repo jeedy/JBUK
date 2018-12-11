@@ -4,11 +4,12 @@ Jenkins + SonarQube + SVN
 
 ![SonarQube 컨셉디자인](./images/concept.png)
 
-참조1: https://medium.com/@joypinkgom/%EC%86%8C%EC%8A%A4-%EC%A0%95%EC%A0%81-%EB%B6%84%EC%84%9D%EB%8F%84%EA%B5%AC-sonarqube-%EB%A6%AC%EC%84%9C%EC%B9%AD-9d48fc62b01f
-
-참조2: https://www.popit.kr/%EB%82%B4%EC%BD%94%EB%93%9C%EB%A5%BC-%EC%9E%90%EB%8F%99%EC%9C%BC%EB%A1%9C-%EB%A6%AC%EB%B7%B0%ED%95%B4%EC%A4%80%EB%8B%A4%EB%A9%B4-by-sonarqube/
-
-참조2: https://okky.kr/article/439198
+### 참조
+- https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+Jenkins
+- https://stackoverflow.com/questions/31470594/svn-authentication-failure-when-running-a-sonar-analysis-in-jenkins-1-620-sonarq
+- https://medium.com/@joypinkgom/%EC%86%8C%EC%8A%A4-%EC%A0%95%EC%A0%81-%EB%B6%84%EC%84%9D%EB%8F%84%EA%B5%AC-sonarqube-%EB%A6%AC%EC%84%9C%EC%B9%AD-9d48fc62b01f
+- https://www.popit.kr/%EB%82%B4%EC%BD%94%EB%93%9C%EB%A5%BC-%EC%9E%90%EB%8F%99%EC%9C%BC%EB%A1%9C-%EB%A6%AC%EB%B7%B0%ED%95%B4%EC%A4%80%EB%8B%A4%EB%A9%B4-by-sonarqube/
+- https://okky.kr/article/439198
 
 
 ## 메이븐 설치
@@ -80,7 +81,29 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
 
 ![젠킨스 SonarQube Scanner](./images/sonarqube-scanner.PNG)
 
+## 프로젝트 POM.XML 셋팅
 
+해당 프로젝트 POM.xml -> build 태그 -> sonar-maven-plugin 플러그인 추가
+
+```bash
+<project>
+ ...
+
+    <build>
+
+        ...
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.5.0.1254</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+     </build>
+</project>
+```
 ## 젠킨스 job에 SonarQube 셋팅
 
 메이븐을 이용한 sonar-scanner 일 경우 mvn 명령어에 값을 통해 properties 셋팅 해야함(sonar-project.properties 를 읽게하는 방법을 못찾았음)
@@ -93,7 +116,7 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
 
     ```bash
     # sonarqube admin 에서 프로젝트 생성하지 않아도 알아서 생성됨
-    clean install $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.projectKey=Sonarqube 프로젝트 KEY -Dsonar.projectName=Sonarqube 프로젝트 이름
+    clean install $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.projectKey=Sonarqube_프로젝트_KEY -Dsonar.projectName=Sonarqube_프로젝트_이름
     ```
 
     ![젠킨스job 셋팅](./images/jenkins-sonarqube-jobs-build.PNG)
