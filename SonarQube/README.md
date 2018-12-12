@@ -73,7 +73,7 @@ git을 사용하면 SonarQube marketplace 에서 git 플러그인을 설치후 �
 
 1. 젠킨스 SonarQube 셋팅
 
-    jenkins 관리 ->  시스템설정(http://jenkins:8080/jenkins/configure) ->  SonarQube servers 세션 -> name 입력(sonarqube에서 생성한 login token name) -> 	Server authentication token 입력(sonarqube에서 생성한 login token)
+    jenkins 관리 ->  시스템설정(http://jenkins:8080/jenkins/configure) ->  SonarQube servers 세션 -> name 입력(sonarqube에서 생성한 login token name) -> 	Server authentication token 입력(sonarqube에서 생성한 login token) -> "Enable injection of SonarQube server configuration as build environment variables" 체크
 
     ![젠킨스 SonarQube 셋팅](./images/sonarqube-security-2.PNG)
 
@@ -132,6 +132,8 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
 
     예_) /project/maven-project/sonar-project.properties
 
+    > maven 과 특별히 다른점은 빌드 환경 설정에서 "Prepare SonarQube Scanner environment" 체크 해제 한다.
+
     ```bash
     # sonar-project.properties
     # Analysis Parameters https://docs.sonarqube.org/latest/analysis/analysis-parameters/
@@ -157,6 +159,7 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
 1. Jenkins -> job configure -> Build -> Execute SonarQube Scanner -> Analysis properties 입력
 
     ![jenkins 설정](./images/jenkins-sonarqube-jobs-build-ant.PNG)
+
 
 ## 7. SonarQube Database setting
 
@@ -190,4 +193,10 @@ root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh start
 
 1. jobs -> 빌드환경 -> Prepare SonarQube Scanner environment 가 안보일경우
 
-   > jenkins 관리 -> 시스템설정(http://jenkins:8080/jenkins/configure) -> SonarQube servers 세션 ->  	Environment variables -> Enable injection of SonarQube server configuration as build environment variables 체크확인
+   > jenkins 관리 -> 시스템설정(http://jenkins:8080/jenkins/configure) -> SonarQube servers 세션 ->  	Environment variables -> "Enable injection of SonarQube server configuration as build environment variables" 체크확인
+
+   >
+
+1. Source Code Management (소스 코드 관리, SCM: git, svn, cvs ...) 을 사용시 반드시 SonarQube 에서 셋팅 해야함.
+
+    > [sonarqube-setting-for-svn](#sonarqube-setting-for-svn)
