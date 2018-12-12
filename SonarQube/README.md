@@ -1,6 +1,6 @@
 # Install SonarQube With Jenkins
 
-Jenkins + SonarQube + SVN
+Jenkins + SonarQube + SVN + Maven
 
 ![SonarQube 컨셉디자인](./images/concept.png)
 
@@ -43,6 +43,8 @@ Started SonarQube.
 
 ### SonarQube setting for SVN
 Administration (http://sonarqube:9000/sonarqube/admin/settings?category=scm) -> SCM -> SVN
+
+git을 사용하면 SonarQube marketplace 에서 git 플러그인을 설치후 셋팅
 
 #### 해당 프로젝트에 접근 가능한 svn 계정 셋팅
 1. 글로벌 셋팅 방법
@@ -122,31 +124,39 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
     ![젠킨스job 셋팅](./images/jenkins-sonarqube-jobs-build.PNG)
 
 
-## 6. 직접 sonar-scanner를 이용할 경우(MAVEN 사용시 생략가능)
-해당 프로젝트 최상위 디렉토리에 sonar-project.properties 생성
+## 6. 번외 JENKINS + ANT(unused MAVEN) 직접 sonar-scanner를 이용할 경우
 
-```bash
-# sonar-project.properties
-# Analysis Parameters https://docs.sonarqube.org/latest/analysis/analysis-parameters/
-# must be unique in a given SonarQube instance
-sonar.projectKey=소나큐브에서 생성된 프로젝트 KEY
-# this is the name and version displayed in the SonarQube UI. Was mandatory prior to SonarQube 6.1.
-sonar.projectName=소나큐브에서 생성된 프로젝트 NAME
-sonar.projectVersion=1.0
+1. 해당 프로젝트 최상위 디렉토리(/project/maven-project/)에 sonar-project.properties 생성
 
-# Path is relative to the sonar-project.properties file. Replace "\" by "/" on Windows.
-# This property is optional if sonar.modules is set.
-sonar.language=java
-sonar.sources=src/main/java
-sonar.java.binaries=target/classes
+    Jenkins -> job configure -> Build -> Execute SonarQube Scanner -> Path to project properties 에 해당 sonar-project.properties 위치 입력
 
-# Encoding of the source code. Default is default system encoding
-#sonar.sourceEncoding=UTF-8
+    예_) /project/maven-project/sonar-project.properties
 
-#sonar.svn.username=SVN계정
-#sonar.svn.password.secured=SVN패스워드
+    ```bash
+    # sonar-project.properties
+    # Analysis Parameters https://docs.sonarqube.org/latest/analysis/analysis-parameters/
+    # must be unique in a given SonarQube instance
+    sonar.projectKey=소나큐브에 생성할 프로젝트 KEY
+    # this is the name and version displayed in the SonarQube UI. Was mandatory prior to SonarQube 6.1.
+    sonar.projectName=소나큐브에 생성할 프로젝트 NAME
+    sonar.projectVersion=1.0
 
-```
+    # Path is relative to the sonar-project.properties file. Replace "\" by "/" on Windows.
+    # This property is optional if sonar.modules is set.
+    sonar.projectBaseDir=/project/maven-project/
+    sonar.sources=src/main/java
+    sonar.java.binaries=target/classes
+
+    # Encoding of the source code. Default is default system encoding
+    #sonar.sourceEncoding=UTF-8
+
+    #sonar.svn.username=SVN계정
+    #sonar.svn.password.secured=SVN패스워드
+    ```
+
+1. Jenkins -> job configure -> Build -> Execute SonarQube Scanner -> Analysis properties 입력
+
+    ![jenkins 설정](./images/jenkins-sonarqube-jobs-build-ant.PNG)
 
 ## 7. SonarQube Database setting
 
@@ -172,7 +182,6 @@ sonar.jdbc.url=jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncodi
 root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh stop
 root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh start
 ```
-
 
 ## :bomb: troubleshooting
 1. [ERROR] Failed to execute goal org.codehaus.mojo:sonar-maven-plugin:2.6:sonar (default-cli) on project privia-payment: Can not execute SonarQube analysis: Plugin org.codehaus.sonar:sonar-maven3-plugin:6.7.6.38781 or one of its dependencies could not be resolved: Could not find artifact org.codehaus.sonar:sonar-maven3-plugin:jar:6.7.6.38781 in central (http://repo.maven.apache.org/maven2) -> [Help 1]
