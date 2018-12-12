@@ -14,9 +14,11 @@
 
 job configure > 빌드 환경 > "Use secret text(s) or file(s)" 체크 > Bindings > Add
 
+등록후 Build.xml 설정에서 아래
 #### 참고
 https://support.cloudbees.com/hc/en-us/articles/203802500-Injecting-Secrets-into-Jenkins-Build-Jobs
 
+![패스워드 환경변수 설정](./images/binding-secret-text.PNG)
 
 
 
