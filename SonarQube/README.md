@@ -12,21 +12,21 @@ Jenkins + SonarQube + SVN
 - https://okky.kr/article/439198
 
 
-## 메이븐 설치
+## 1. 메이븐 설치
 [메이븐 설치](/OS/Linux/install-maven-with-centos.md)
 
-## SonarQube 설치
+## 2. SonarQube 설치
 
 ```bash
-root:/usr/lib#wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.6.zip
+root:/usr/lib$ wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.6.zip
 ....
 ...
-root:/usr/lib#unzip sonarqube-6.7.6.zip
-root:/usr/lib#cd sonarqube-6.7.6
+root:/usr/lib$ unzip sonarqube-6.7.6.zip
+root:/usr/lib$ cd sonarqube-6.7.6
 ```
 
 ```bash
-root:/usr/lib/sonarqube-6.7.6#vi ./conf/sonar.conf
+root:/usr/lib/sonarqube-6.7.6$ vi ./conf/sonar.conf
 
 # in conf/sonar.conf
 # 소나큐브 웹서비스 기본포트 9000
@@ -34,8 +34,8 @@ root:/usr/lib/sonarqube-6.7.6#vi ./conf/sonar.conf
 sonar.web.port=9000
 sonar.web.context=/sonarqube
 
-root:/usr/lib#cd sonarqube-6.7.6/bin/linux-x86-64
-root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64#./sonar.sh start
+root:/usr/lib$ cd sonarqube-6.7.6/bin/linux-x86-64
+root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh start
 Starting SonarQube...
 Started SonarQube.
 ```
@@ -75,13 +75,13 @@ Administration (http://sonarqube:9000/sonarqube/admin/settings?category=scm) -> 
 
     ![젠킨스 SonarQube 셋팅](./images/sonarqube-security-2.PNG)
 
-## SonarQube Scanner 설치
+## 3. SonarQube Scanner 설치
 
 jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configureTools/) -> SonarQube Scanner 세션
 
 ![젠킨스 SonarQube Scanner](./images/sonarqube-scanner.PNG)
 
-## 프로젝트 POM.XML 셋팅
+## 4. 프로젝트 POM.XML 셋팅
 
 해당 프로젝트 POM.xml -> build 태그 -> sonar-maven-plugin 플러그인 추가
 
@@ -104,7 +104,7 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
      </build>
 </project>
 ```
-## 젠킨스 job에 SonarQube 셋팅
+## 5. 젠킨스 job에 SonarQube 셋팅
 
 메이븐을 이용한 sonar-scanner 일 경우 mvn 명령어에 값을 통해 properties 셋팅 해야함(sonar-project.properties 를 읽게하는 방법을 못찾았음)
 
@@ -122,7 +122,7 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
     ![젠킨스job 셋팅](./images/jenkins-sonarqube-jobs-build.PNG)
 
 
-## 직접 sonar-scanner를 이용할 경우(생략)
+## 6. 직접 sonar-scanner를 이용할 경우(MAVEN 사용시 생략가능)
 해당 프로젝트 최상위 디렉토리에 sonar-project.properties 생성
 
 ```bash
@@ -148,7 +148,7 @@ sonar.java.binaries=target/classes
 
 ```
 
-## SonarQube Database setting
+## 7. SonarQube Database setting
 
 > 기본으로 제공되는 Embadded Database 실운영에 사용하지 않을 것을 권고함
 
@@ -169,14 +169,12 @@ sonar.jdbc.username=sonar
 sonar.jdbc.password=sonarPwd
 sonar.jdbc.url=jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance
 
-root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64#./sonar.sh stop
-root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64#./sonar.sh start
+root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh stop
+root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh start
 ```
 
 
-
-
-## troubleshooting
+## :bomb: troubleshooting
 1. [ERROR] Failed to execute goal org.codehaus.mojo:sonar-maven-plugin:2.6:sonar (default-cli) on project privia-payment: Can not execute SonarQube analysis: Plugin org.codehaus.sonar:sonar-maven3-plugin:6.7.6.38781 or one of its dependencies could not be resolved: Could not find artifact org.codehaus.sonar:sonar-maven3-plugin:jar:6.7.6.38781 in central (http://repo.maven.apache.org/maven2) -> [Help 1]
 
    > 메이븐 POM.XML 설정에 sonar-maven-plugin 플러그인 셋팅이 되어있는지 확인
