@@ -10,6 +10,18 @@
     - 유저 정보 ~/.jenkins/users/
 1.
 
-## Exception
+## Job configure 에서 패스워드 환경변수 설정
+
+job configure > 빌드 환경 > "Use secret text(s) or file(s)" 체크 > Bindings > Add
+
+#### 참고
+https://support.cloudbees.com/hc/en-us/articles/203802500-Injecting-Secrets-into-Jenkins-Build-Jobs
+
+
+
+
+
+## :bomb: troubleshooting
 1. /usr/lib/tomcat/temp/jenkins480174068218113004.sh: line 2: unexpected EOF while looking for matching `"'
     - Execute shell command 값에 잘못된 표현식이 있는지 확인
+
