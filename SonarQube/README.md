@@ -123,8 +123,32 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
 
     ![젠킨스job 셋팅](./images/jenkins-sonarqube-jobs-build.PNG)
 
+## 6. SonarQube Database setting
 
-## 6. 번외 JENKINS + ANT(unused MAVEN) 직접 sonar-scanner를 이용할 경우
+> 기본으로 제공되는 Embadded Database 실운영에 사용하지 않을 것을 권고함
+
+[사용가능한 Database 목록](https://docs.sonarqube.org/7.4/requirements/requirements/)
+
+### 참고
+- https://www.lesstif.com/pages/viewpage.action?pageId=39126262
+
+```sql
+# sql sonar DB Schema 생성 및 유저 생성
+CREATE DATABASE sonar CHARACTER SET utf8 COLLATE utf8_bin;
+GRANT ALL PRIVILEGES ON sonar.* TO 'sonar'@'localhost' IDENTIFIED BY 'sonarPwd';
+```
+
+```bash
+# vi conf/sonar.properties
+sonar.jdbc.username=sonar
+sonar.jdbc.password=sonarPwd
+sonar.jdbc.url=jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance
+
+root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh stop
+root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh start
+```
+
+## 7. [번외] JENKINS + ANT(unused MAVEN) 직접 sonar-scanner를 이용할 경우
 
 1. 해당 프로젝트 최상위 디렉토리(/project/maven-project/)에 sonar-project.properties 생성
 
@@ -161,30 +185,6 @@ jenkins 관리 -> Global Tool Configuration (http://jenkins:8080/jenkins/configu
     ![jenkins 설정](./images/jenkins-sonarqube-jobs-build-ant.PNG)
 
 
-## 7. SonarQube Database setting
-
-> 기본으로 제공되는 Embadded Database 실운영에 사용하지 않을 것을 권고함
-
-[사용가능한 Database 목록](https://docs.sonarqube.org/7.4/requirements/requirements/)
-
-### 참고
-- https://www.lesstif.com/pages/viewpage.action?pageId=39126262
-
-```sql
-# sql sonar DB Schema 생성 및 유저 생성
-CREATE DATABASE sonar CHARACTER SET utf8 COLLATE utf8_bin;
-GRANT ALL PRIVILEGES ON sonar.* TO 'sonar'@'localhost' IDENTIFIED BY 'sonarPwd';
-```
-
-```bash
-# vi conf/sonar.properties
-sonar.jdbc.username=sonar
-sonar.jdbc.password=sonarPwd
-sonar.jdbc.url=jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance
-
-root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh stop
-root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh start
-```
 
 ## :bomb: troubleshooting
 1. [ERROR] Failed to execute goal org.codehaus.mojo:sonar-maven-plugin:2.6:sonar (default-cli) on project privia-payment: Can not execute SonarQube analysis: Plugin org.codehaus.sonar:sonar-maven3-plugin:6.7.6.38781 or one of its dependencies could not be resolved: Could not find artifact org.codehaus.sonar:sonar-maven3-plugin:jar:6.7.6.38781 in central (http://repo.maven.apache.org/maven2) -> [Help 1]
