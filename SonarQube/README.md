@@ -187,6 +187,9 @@ root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh start
 
 
 ## :bomb: troubleshooting
+
+https://github.com/SonarOpenCommunity/sonar-cxx/wiki/FAQ
+
 1. [ERROR] Failed to execute goal org.codehaus.mojo:sonar-maven-plugin:2.6:sonar (default-cli) on project privia-payment: Can not execute SonarQube analysis: Plugin org.codehaus.sonar:sonar-maven3-plugin:6.7.6.38781 or one of its dependencies could not be resolved: Could not find artifact org.codehaus.sonar:sonar-maven3-plugin:jar:6.7.6.38781 in central (http://repo.maven.apache.org/maven2) -> [Help 1]
 
    > 메이븐 POM.XML 설정에 sonar-maven-plugin 플러그인 셋팅이 되어있는지 확인
@@ -195,8 +198,15 @@ root:/usr/lib/sonarqube-6.7.6/bin/linux-x86-64$ ./sonar.sh start
 
    > jenkins 관리 -> 시스템설정(http://jenkins:8080/jenkins/configure) -> SonarQube servers 세션 ->  	Environment variables -> "Enable injection of SonarQube server configuration as build environment variables" 체크확인
 
-   >
-
 1. Source Code Management (소스 코드 관리, SCM: git, svn, cvs ...) 을 사용시 반드시 SonarQube 에서 셋팅 해야함.
 
     > [sonarqube-setting-for-svn](#sonarqube-setting-for-svn)
+
+1. ERROR: Caused by: File [...] can't be indexed twice. Please check that inclusion/exclusion patterns produce disjoint sets for main and test files
+
+    ```
+    sonar.sources=.
+    sonar.tests=.
+    sonar.test.inclusions=**/*Test*/**
+    sonar.exclusions=**/*Test*/**
+    ```
