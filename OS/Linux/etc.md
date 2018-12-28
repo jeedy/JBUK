@@ -195,11 +195,14 @@ w
 
 nfs 마운트 설정
 local(192.168.0.2) --> remote(192.168.0.3)
+loca2(192.168.0.4) -->
 
 ```bash
 # remote(192.168.0.3)
 $ vim /etc/exports
-/sdb1/share 192.168.0.2(rw)
+/sdb1/share 192.168.0.2(rw) 192.168.0.4(rw)
+# or /sdb1/share 192.168.0.*(rw)
+
 $ service nfs restart
 ```
 
