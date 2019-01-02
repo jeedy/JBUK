@@ -294,3 +294,39 @@ COMMON.password=ENC(....암호화된 패스워드 코드...)
     <scope>provided</scope>
 </dependency>
 ```
+
+## 번외. Spring 없이 pure java 로 구현해야할 경우
+DecryptDataSource.getKey() 메소드 에서 `keyPair/privateClient8.der` 파일을 가져오는 부분만 java 에서 제공하는 라이브러리로 처리하면 됨.
+
+```java
+public class DecryptDataSource extends BasicDataSource {
+
+// ...(생략)...
+    
+    public static Object getKey(final String filename, final String flag) throws Exception {
+        URL url = System.class.getResource("/"+filename);   // ※ 중요 파일주소 앞에 '/'를 붙여주지 않으면 파일위치를 못찾음.
+        byte[] keyBytes = Files.readAllBytes(new File(url.toURI()).toPath());
+        
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        if ("public".equals(flag)) {
+            // https://docs.oracle.com/javase/8/docs/api/java/security/spec/X509EncodedKeySpec.html
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            return kf.generatePublic(spec);
+        } else if ("private".equals(flag)) {
+            // https://docs.oracle.com/javase/8/docs/api/java/security/spec/PKCS8EncodedKeySpec.html
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+            return kf.generatePrivate(spec);
+        }
+        return null;
+
+    }
+
+// ...(생략)...
+    
+//    public static void main(String[] args) {
+//        BasicDataSource dataSource = new DecryptDataSource();
+//        dataSource.setPassword("ENC(d5hLo0d+EBq64vo6eYu/gD3iScdQSYp5qXWnFVweoRK3xSU5R+x4+DFkqnqtLZ6Gg0lUWbxlqOgjCNxi/NKNkybcU6poO9q/lO8cXS3jqIfxWDVzq0+wsdkzlANTR2pc674P06n4Vcy9AYDcvk2+nI47LQ91x+63754C43g6iKYglSyN7PhwRg8sA2Elp6IprjVw/xaL8qgtlkBnDqkNA/ZbiOrv+hWdzX1JBX9IaHD+/j8VNhMs+tdYVzgETJ1jpLkz4tgLvcQk19+0xIpDuZ44MstWNsXDYnuOUL72gZL8YmS2+mrIvMCsSWaN38umz/RNVVotIy3JZESJjoZbBQ==)");
+//    }
+
+}
+```
