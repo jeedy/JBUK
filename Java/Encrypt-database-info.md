@@ -296,7 +296,25 @@ COMMON.password=ENC(....암호화된 패스워드 코드...)
 ```
 
 ## 번외. Spring 없이 pure java 로 구현해야할 경우
+
 DecryptDataSource.getKey() 메소드 에서 `keyPair/privateClient8.der` 파일을 가져오는 부분만 java 에서 제공하는 라이브러리로 처리하면 됨.
+
+lib 로 제공되는 application을 경우 jar에 있는 resource에 접근해 사용해야한다.
+Spring을 사용하면 스프링이 알아서 res
+
+```xml
+<!-- pom.xml 에 의존성 추가 -->
+
+...
+<!-- inputstream to byte 로 변환시 라이브러리 사용 -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>1.3.2</version>
+</dependency>
+...
+
+```
 
 ```java
 public class DecryptDataSource extends BasicDataSource {
@@ -304,9 +322,10 @@ public class DecryptDataSource extends BasicDataSource {
 // ...(생략)...
     
     public static Object getKey(final String filename, final String flag) throws Exception {
-        URL url = System.class.getResource("/"+filename);   // ※ 중요 파일주소 앞에 '/'를 붙여주지 않으면 파일위치를 못찾음.
-        byte[] keyBytes = Files.readAllBytes(new File(url.toURI()).toPath());
-        
+        //URL url = System.class.getResource("/"+filename);   // 파일주소 앞에 '/'를 붙여주지 않으면 파일위치를 못찾음.
+        InputStream is = DecryptDataSource.class.getResourceAsStream("/"+filename); // ※※ 중요 DecryptDataSource.class 에 있는 resouce를 가져와야 이 프로젝트(jar)에 있는 resource에 접근해서 가져온다.
+        byte[] keyBytes = IOUtils.toByteArray(is);
+
         KeyFactory kf = KeyFactory.getInstance("RSA");
         if ("public".equals(flag)) {
             // https://docs.oracle.com/javase/8/docs/api/java/security/spec/X509EncodedKeySpec.html
