@@ -1,5 +1,33 @@
 # tip memo
 
+umount /sdb1/nfs/develop2/server
+mount -t nfs 172.16.2.207:/svc/AWP/www_root/omega_tide /sdb1/AWP/www_root/omega_tide
+
+-----
+
+mysql 접속한 사용자 권한
+show grants for CURRENT_USER;
+
+-----
+
+rsync -Cavpr --delete /sdb1/svc/AWP/www_root/omega_privia/WebContent.war/css 172.16.1.6::OMEGA_PRIVIA_TEST
+
+------
+
+폴더별용량
+du -sch *
+
+----
+
+chown -R sam:abbey example
+
+--------------------------
+
+VIM ctrl +z 터미널 빠져나오기
+jobs
+fg (job번호)
+
+-----------------
 
 ps -ef | grep java | grep --color 'offset'
 
@@ -154,6 +182,73 @@ jobs
 fg (job번호)
 
 ---
+
+특정 파일이나 디렉토리를 사용하는 프로세스의 user/pid/접근 권한 등을 자세히 볼 때
+fuser -v /usr/bin/java
+
+---
+
+접속한 사용자 보기
+w
+
+---
+
+nfs 마운트 설정
+local(192.168.0.2) --> remote(192.168.0.3)
+loca2(192.168.0.4) -->
+
+```bash
+# remote(192.168.0.3)
+$ vim /etc/exports
+/sdb1/share 192.168.0.2(rw) 192.168.0.4(rw)
+# or /sdb1/share 192.168.0.*(rw)
+
+$ service nfs restart
+```
+
+```bash
+# local(192.168.0.2)
+$ mount -t nfs 192.168.0.3:/sdb1/share /sdb1/nfs/share
+$ df
+
+$ umount /sdb1/nfs/share
+```
+
+---
+
+rsync 전송 시
+failed: Permission denied (13)
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1039) [sender=3.0.6]
+에러 발생
+
+rsync 서버 설정 4) rsync 설정
+vi /etc/rsyncd.conf
+[rsync_test]                   -> 사용할 rsync 서비스 이름
+path=/data/rsync_test/           -> 데이터 원본 경로
+comment = rsync_test             -> 코멘트
+uid = root                       -> 권한 사용자
+gid = root                       -> 권한 그룹
+use chroot = yes
+read only = yes
+hosts allow = 192.168.123.11     -> rsync 클라이언트 IP. localhost일 경우 입력하지 않아도 됨
+max connections = 3
+timeout=600
+
+sync 서버 설정 5) xinetd 서비스 재시작 및 방화벽 확인
+/etc/init.d/xinetd restart
+
+----
+
+vim  ip 변경
+%s/192\.16\.0\.1/192\.16\.2\.2/gc
+
+----
+
+여러파일 특정 문자열 한번에 치환하기
+find ./ -name "*.properties" -exec sed -i 's/192\.16\.0\.1/192\.16\.2\.2/g' {} \;
+
+----
+
 
 
 

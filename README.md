@@ -9,9 +9,15 @@
 
 [Github markdown document 참조](https://guides.github.com/features/mastering-markdown/)
 
+[이모지 라이브러리](https://www.webpagefx.com/tools/emoji-cheat-sheet/)
+
+![이미지](./images/markdown-syntax-language.png)
+
 **굵은 글씨**
 
 *기울림*
+
+~~this~~
 
 1. 목록
 1. 목록
