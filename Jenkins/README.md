@@ -53,3 +53,6 @@ https://wiki.jenkins.io/display/JENKINS/Role+Strategy+Plugin
 1. /usr/lib/tomcat/temp/jenkins480174068218113004.sh: line 2: unexpected EOF while looking for matching `"'
     - Execute shell command 값에 잘못된 표현식이 있는지 확인
 
+1. jenkins에서 빌드된 war를 ant로 전송하려고 할때 permission 에러 발생
+    - 원인: TOMCAT을 통해 jenkins를 올렸을 경우 파일을 권한이 750으로 권한주고 빌드하기 때문이라고함.
+    - 해결방법: {TOMCAT_HOME}/bin/catalina.sh  파일안에 `umask = "0027"` 이부분을 `umask = "0022"` 로 수정해야함.
