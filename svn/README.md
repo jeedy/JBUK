@@ -146,3 +146,24 @@ $ yum install cyrus-sasl-md5.x86_64
 (또는)
 $ yum install cyrus-sasl-plain.x86_64
 ```
+
+2. yes / no 질문에 '예' 라고 답해야한다.
+```
+$ svn status
+-----------------------------------------------------------------------
+ATTENTION!  Your password for authentication realm:
+
+   <svn://172.16.0.21:8889> STATIC
+
+can only be stored to disk unencrypted!  You are advised to configure
+your system so that Subversion can store passwords encrypted, if
+possible.  See the documentation for details.
+
+You can avoid future appearances of this warning by setting the value
+of the 'store-plaintext-passwords' option to either 'yes' or 'no' in
+'/home/jboss/.subversion/servers'.
+-----------------------------------------------------------------------
+Store password unencrypted (yes/no)? yes
+Please type 'yes' or 'no': 예
+
+```
