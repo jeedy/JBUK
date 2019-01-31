@@ -149,7 +149,7 @@ $ yum install cyrus-sasl-plain.x86_64
 
 2. yes / no 질문에 '예' 라고 답해야한다.
 ```
-$ svn status
+$ svn list svn://localhost/STATIC/trunk/ --username=static --password=privia1234
 -----------------------------------------------------------------------
 ATTENTION!  Your password for authentication realm:
 
