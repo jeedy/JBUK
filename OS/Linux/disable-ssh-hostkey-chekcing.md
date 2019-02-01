@@ -55,3 +55,12 @@ Host *
 ```bash
 $ sudo chmod 400 ~/.ssh/config
 ```
+
+## about ssh
+
+> SSH 서버는 접속을 시도하는 호스트의 키 지문(key fingerprint)을 저장합니다. 기본적으로 ECDSA 방식의 암호화 기술을 사용하기 때문에 호스트 공개키는 /etc/ssh/ssh_host_ecdsa_key.pub에 저장됩니다. ssh-keygen 명령으로 호스트 키 지문을 확인할 수 있습니다.
+
+```
+administrator@server001:~$ ssh-keygen -lf /etc/ssh/ssh_host_ecdsa_key.pub
+256 d9:ca:30:2b:6c:80:7a:41:ac:07:7e:ec:f2:ec:af:57 root@server01 (ECDSA)
+```
