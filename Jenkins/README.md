@@ -51,8 +51,12 @@ https://wiki.jenkins.io/display/JENKINS/Role+Strategy+Plugin
 
 ## :bomb: troubleshooting
 1. /usr/lib/tomcat/temp/jenkins480174068218113004.sh: line 2: unexpected EOF while looking for matching `"'
-    - Execute shell command 값에 잘못된 표현식이 있는지 확인
+    - 프로젝트 job > 구성(configure) > `Execute shell command` 필드에 잘못된 표현식이 있는지 확인
 
 1. jenkins에서 빌드된 war를 ant로 전송하려고 할때 permission 에러 발생
     - 원인: TOMCAT을 통해 jenkins를 올렸을 경우 파일을 권한이 750으로 권한주고 빌드하기 때문이라고함.
     - 해결방법: {TOMCAT_HOME}/bin/catalina.sh  파일안에 `umask = "0027"` 이부분을 `umask = "0022"` 로 수정해야함.
+
+1. jenkins 서버 용량 부족 에러 (No space left on device)
+    - 원인: JENKINS_HOME(기본위치 /home/user/.jenkins) 가 속한 root 디렉토리의 용량이 (`df -h`로 확인가능) full로 차있어서 `.jenkins/jobs` 에 있는 build history 파일들을 생성을 못해 발생하는 오류
+    - 해결방법: root 디렉토리 용량을 늘려주던가 아님, /home/user 디렉토리를 용량 많은 디렉토리(`/sdb1/`)로 `symbolick link` 한다.
