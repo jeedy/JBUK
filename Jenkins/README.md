@@ -59,4 +59,7 @@ https://wiki.jenkins.io/display/JENKINS/Role+Strategy+Plugin
 
 1. jenkins 서버 용량 부족 에러 (No space left on device)
     - 원인: JENKINS_HOME(기본위치 /home/user/.jenkins) 가 속한 root 디렉토리의 용량이 (`df -h`로 확인가능) full로 차있어서 `.jenkins/jobs` 에 있는 build history 파일들을 생성을 못해 발생하는 오류
-    - 해결방법: root 디렉토리 용량을 늘려주던가 아님, /home/user 디렉토리를 용량 많은 디렉토리(`/sdb1/`)로 `symbolick link` 한다.
+    - 해결방법:
+        1. root 디렉토리 용량을 늘린다.
+        2. /home/user 디렉토리를 용량 많은 디렉토리(`/sdb1/`)로 `symbolick link` 한다.
+        3. .bash_profile에서 `JENKINS_HOME` 경로를 변경해 준다. (Default : ~/.jenkins)
