@@ -249,6 +249,10 @@ find ./ -name "*.properties" -exec sed -i 's/192\.16\.0\.1/192\.16\.2\.2/g' {} \
 
 ----
 
+현재 살아
+netstat -an|grep EST|grep "172.16.0.22"|wc -l
+
+---
 
 
 
