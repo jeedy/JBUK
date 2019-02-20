@@ -1,1 +1,0 @@
-# Spring Batch XML 설정 방법
