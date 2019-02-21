@@ -16,7 +16,7 @@ https://www.travel.com/ 에서 https://static.travel.com/css/font/no-english.tof
 https://static.travel.com Apache 서버에서 `Access-Control-Allow-Origin` 을 해줘야한다.
 
 
-## Access-Control-Allow-Credentials
+## Access-Control-Allow-Credentials ( Cross Origin Resource Sharing - CORS )
 
 참고 자료
 - http://huns.me/development/1291  cross domain 해결 방법에 대해 자세히 다루고 있다
