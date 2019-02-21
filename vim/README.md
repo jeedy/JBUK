@@ -39,6 +39,15 @@ exit
 
 창이동
 Ctrl + w
+
+"Swap top/bottom or left/right split
+Ctrl+W R
+
+"Break out current window into a new tabview
+Ctrl+W T
+
+"Close every window in the current tabview but the current one
+Ctrl+W o
 ```
 
 ## 단축키
