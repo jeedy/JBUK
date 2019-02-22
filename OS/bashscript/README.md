@@ -3,9 +3,6 @@
 ### 참고자료
 - https://blog.gaerae.com/2015/10/what-is-the-preferred-bash-shebang.html
 
-- k
-
-
 
 # env
 ```bash

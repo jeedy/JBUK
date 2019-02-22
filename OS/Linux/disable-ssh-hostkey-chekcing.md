@@ -39,7 +39,7 @@ OR
 $ ssh-keyscan -t rsa -f host명들 이들어있는 파일명 >> ~/.ssh/known_host
 ```
 
-## (비추천) ssh 설정 바꾸기
+### (비추천) ssh 설정 바꾸기
 
 이방식은 진짜 **비추천** 하지만 혹시 이렇게 셋팅해 사용하는 사이트를 관리해야할 때를 대비해 알아두면 좋을것 같다.
 
@@ -56,7 +56,7 @@ Host *
 $ sudo chmod 400 ~/.ssh/config
 ```
 
-## about ssh
+### about ssh
 
 > SSH 서버는 접속을 시도하는 호스트의 키 지문(key fingerprint)을 저장합니다. 기본적으로 ECDSA 방식의 암호화 기술을 사용하기 때문에 호스트 공개키는 /etc/ssh/ssh_host_ecdsa_key.pub에 저장됩니다. ssh-keygen 명령으로 호스트 키 지문을 확인할 수 있습니다.
 

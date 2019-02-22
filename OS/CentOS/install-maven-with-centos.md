@@ -1,4 +1,4 @@
-# CentOS 에서 메이븐 설치
+# [CentOS] 에서 메이븐 설치
 
 ## 선행작업
 CentOS에 JDK 설치
