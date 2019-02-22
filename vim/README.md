@@ -50,6 +50,22 @@ Ctrl+W T
 Ctrl+W o
 ```
 
+## 옵션
+옵션 | 옵션 약어 | 기능 | 디폴트
+---|---|---|---
+autoindent | ai | 들여 쓰기 가능, 탭으로 들여 쓰기 범위 지정 | off
+autoprint | ap | 줄이 바뀔 때 현재 줄을 화면상에서 출력 | on
+errobells | ed | 명령 에러가 발생시 삑 소리나게 함 | off
+number | nu | 줄 번호를 나타나게 함 | off
+report | report | 편집시 메시지를 보낼 편집 변화 크기 지정 | 5
+showmatch | sm | 가로 닫기 괄호를 사용할 때 일치하는 가로 열기 괄호를 보여줌 | off
+wam | wam | 저장하지 않고 vi 종료할 때 경고 메시지를 뿌려 줌 | on
+ignorecase | ic | 검색 패턴에 사용되는 대소문자 구별하지 않음 | on
+tabstopp=n | ts=n | 탭 공백을 n 수 만큼 지정 | 8
+wrapmargin=n | wm=n | 텍스트 오른쪽 여백을 n 수 만큼 지정 | 0
+
+
+
 ## 단축키
 ![이동단축키](./images/Vim_이동_단축키_white.jpg)
 
