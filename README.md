@@ -13,6 +13,8 @@
 
 ![이미지](./images/markdown-syntax-language.png)
 
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/3Wf29RiKp70/0.jpg)](http://www.youtube.com/watch?v=3Wf29RiKp70)
+
 **굵은 글씨**
 
 *기울림*
