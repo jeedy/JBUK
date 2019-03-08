@@ -20,12 +20,12 @@
 1. ~~[HTTP client 비동기 통신 방법 정리](./Java/HttpClient-async-통신.md)~~
 
 1. 자바기반 마이크로서비스 이해와 아키텍처 구축하기
-https://github.com/architectstory
+    출처: https://github.com/architectstory
 
-1. TCP의 3 way Handshake과 4 way Handshake
+1. ~~[TCP의 3 way Handshake과 4 way Handshake](./)~~
    출처: https://needjarvis.tistory.com/157
 
-1. OSI 7 LAYER와 TCP/IP
+1. ~~OSI 7 LAYER와 TCP/IP~~
    출처: https://needjarvis.tistory.com/21
 
 1. 네트워크 계층별 프로토콜(LAYER PROTOCOL)
