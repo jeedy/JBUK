@@ -28,5 +28,4 @@
 1. ~~OSI 7 LAYER와 TCP/IP~~
    출처: https://needjarvis.tistory.com/21
 
-1. 네트워크 계층별 프로토콜(LAYER PROTOCOL)
-https://needjarvis.tistory.com/158?category=619248
+1. 네트워크 계층별 프로토콜(LAYER PROTOCOL) https://needjarvis.tistory.com/158?category=619248
