@@ -15,9 +15,9 @@
     1. [UNIX 공통]
         1. ~~Top 사용법~~
 
-1. [bashscript](./OS/bashscript/README.md) 정리 필요
+1. ~~[bashscript](./OS/bashscript/README.md) 정리 필요~~
 
-1. [HTTP client 비동기 통신 방법 정리](./Java/HttpClient-async-통신.md)
+1. ~~[HTTP client 비동기 통신 방법 정리](./Java/HttpClient-async-통신.md)~~
 
 1. 자바기반 마이크로서비스 이해와 아키텍처 구축하기
 https://github.com/architectstory
