@@ -32,3 +32,5 @@
    출처: https://needjarvis.tistory.com/158?category=619248
 
 1. [tcpdump 명령어](./OS/tcpdump-command.md)
+
+1. watct 명령어에 대해서 알아보자

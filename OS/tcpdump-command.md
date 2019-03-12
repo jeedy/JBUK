@@ -18,3 +18,12 @@ $ tcpdump -D
 $ tcpdump -nn -i eth1 port 4000
 ```
 
+
+
+### 번외
+
+추후 알게되었지만 tcpdump를 이용하지 않고 netstat로 확인할 수 있다.
+
+```
+$ watch -n 1 "netstat -ntu | awk '{print \$5}' | cut -d: -f1 | sort | uniq -c | sort -n"
+```
