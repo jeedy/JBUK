@@ -253,3 +253,10 @@ find ./ -name "*.properties" -exec sed -i 's/192\.16\.0\.1/192\.16\.2\.2/g' {} \
 netstat -an|grep EST|grep "172.16.0.22"|wc -l
 
 ---
+
+A서버에서 B서버 호출하는지 확인할때
+
+$ netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+watch -n 1 "netstat -ntu | awk '{print \$5}' | cut -d: -f1 | sort | uniq -c | sort -n"
+
+----
