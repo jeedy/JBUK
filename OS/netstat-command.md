@@ -21,8 +21,15 @@ $ netstat -anp
 
 ## 상태값
 
-자세한 설명은 [Network Handshake](/network/tcp-3way-4way-handshake.md) 에서 확인 가능하다.
+> SYN, ACK 등 handshake 관련 용어의 자세한 설명은 [Network Handshake](/network/tcp-3way-4way-handshake.md) 을 참고한다.
 
 상태 | 내용
 ---|---
 LISTEN | 연결 요구를 기다리는 상태, 포트가 열려 있음
+ESTABLISHED | 서로 연결되어 있는 상태
+SYN_SEND | [클라이언트 기준] 클라이언트가 서버에 SYN 패킷을 보내고 연결을 요청한 상태
+SYN_RECV | [서버 기준] 서버가 클라이언트의 SYN 패킷으로 요청을 받은 후 응답으로 SYN/ACK 패킷을 보내고 클라이언트에게 ACK 를 받기 위해 기다리는 상태
+TIME_WAIT | [클라이언트 기준] 이미 해당 사이트와 연결이 종료되었거나 다음 연결을 위해 기다리는 상태
+CLOSE_WAIT | [서버 기준] 원격의 연결 요청을 받고 연결이 종료되길 기다리는 상태
+LAST_ACK | [서버 기준] 연결이 종료되었고 승인을 기다리는 상태
+CLOSED | 완전히 연결이 종료된 상태

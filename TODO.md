@@ -35,5 +35,5 @@
 
 1. watch  명령어에 대해서 알아보자
 
-1. [netstat 명령어에 대해서 알아보자](./OS/netstat-command.md)
+1. ~~[netstat 명령어에 대해서 알아보자](./OS/netstat-command.md)~~
 
