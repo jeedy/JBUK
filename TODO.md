@@ -33,4 +33,7 @@
 
 1. [tcpdump 명령어](./OS/tcpdump-command.md)
 
-1. watct 명령어에 대해서 알아보자
+1. watch  명령어에 대해서 알아보자
+
+1. [netstat 명령어에 대해서 알아보자](./OS/netstat-command.md)
+
