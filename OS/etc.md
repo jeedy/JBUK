@@ -91,6 +91,21 @@ ex) ln -Tfs /sample/change_path/20161219 /root/user/change
     ```
     계속 대기 중이면 방화벽 오픈이 안된 것이다.
 
+2. curl 로 IP port 확인한다.
+```bash
+$ curl -v 172.0.0.1:999
+* About to connect() to 1172.0.0.1 port 9224 (#0)
+*   Trying 172.0.0.1... connected
+* Connected to 172.0.0.1 (172.0.0.1) port 9224 (#0)
+> GET / HTTP/1.1
+> User-Agent: curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 NSS/3.27.1 zlib/1.2.3 libidn/1.18 libssh2/1.4.2
+> Host: 1172.0.0.1:999
+> Accept: */*
+>
+...
+
+```
+
 3.
     ```bash
     [svr:usr] telnet 172.0.0.1 9999
