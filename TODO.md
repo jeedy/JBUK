@@ -1,4 +1,4 @@
-# 정리 해야할 작업들
+# 정리 해야할 작업들 
 
 1. OneNote 자료 정리
     1. ~~[CentOS 자료 정리]~~
@@ -31,10 +31,10 @@
 1. ~~[네트워크 계층별 프로토콜(LAYER PROTOCOL)](./network/layer-protocol.md)~~
    출처: https://needjarvis.tistory.com/158?category=619248
 
-1. [tcpdump 명령어](./OS/tcpdump-command.md)
+1. ~~[tcpdump 명령어](./OS/tcpdump-command.md)~~
 
 1. watch  명령어에 대해서 알아보자
 
 1. ~~[netstat 명령어에 대해서 알아보자](./OS/netstat-command.md)~~
 
-1. 이니시스 결제
+1. 
