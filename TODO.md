@@ -37,4 +37,6 @@
 
 1. ~~[netstat 명령어에 대해서 알아보자](./OS/netstat-command.md)~~
 
-1. 
+1. 서버 모니터링 좋은 명령어 정리
+    - [리눅스 프로세스 관리](./OS/Linux-process-관리.md)
+    - 그밖에 명령어 정리 사이트 [참조](https://www.aonenetworks.kr/official.php/home/info/1399)
