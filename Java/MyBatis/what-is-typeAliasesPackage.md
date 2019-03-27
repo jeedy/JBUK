@@ -2,6 +2,8 @@
 
 참고 자료
 - https://bryan7.tistory.com/70 typeAliasesPackage 정의
+- http://www.mybatis.org/spring/ko/factorybean.html 마이바티스 스프링 가이드 메뉴얼
+- https://www.holaxprogramming.com/2015/10/18/spring-boot-with-mybatis/
 
 ```xml
 <!-- define the SqlSessionFactory -->

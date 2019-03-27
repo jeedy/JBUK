@@ -21,10 +21,15 @@ WHERE RNUM >= #{startRow}
 ## :bomb: troubleshooting
 
 1. Where 조건 식에서 "!=" 가 정상동작 하지 않는다.
+```sql
+-- 오라클 version
+SELECT * FROM v$version WHERE banner LIKE 'Oracle%';
+-- Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+```
 
 예를 들어
 
-```
+```sql
 select * from emp where YN = 'Y' OR (YN != 'Y' AND VIEW ='PC')
 ```
 
@@ -34,6 +39,27 @@ select * from emp where YN = 'Y' OR (YN != 'Y' AND VIEW ='PC')
 `YN is null` 이렇게 작성해야 나오는데, 빈공간(''), 'N', NULL 값으로 입력되었을때 일일이 처리하기 힘들다
 
 그래서 이럴경우 `NVL()` 함수를 이용하자, 아래는 수정된 예제이다.
-```
+```sql
 select * from emp where YN = 'Y' OR ( NVL(YN, 'N') != 'Y' AND VIEW ='PC')
+```
+이렇게 처리하도록 하자
+
+1. Function execute ERROR ORA-00904 : "부적합한 식별자"  
+```sql
+-- 오라클 version
+SELECT * FROM v$version WHERE banner LIKE 'Oracle%';
+-- Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+```
+A 계정에서 A.sampleFunction() 을 만들어 호출 할 경우 ORA-00904 : "부적합한 식별자" 오류가 발행하는 경우가 있다.
+
+특이한 점은 매번 발생하는 것이 아닌 간혈적(특정조건)으로 발생하는 데, 원인을 알 수 없어 재현하기 힘들다.
+```sql
+-- A 계정
+A.sampleFunction()  
+```
+
+해결방법은 해당 계정이 가지고 있는 Function은 "A." 을 붙이지 않고 아래처럼 호출하면 발생하진 않는다. 
+```sql
+-- A계정
+sampleFunction()
 ```
