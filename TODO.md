@@ -41,4 +41,4 @@
     - ~~[리눅스 프로세스 관리](./OS/Linux-process-관리.md)~~
     - 그밖에 명령어 정리 사이트 [참조](https://www.aonenetworks.kr/official.php/home/info/1399)
     
-1. Spring swagger2 Annotation 정리
+1. ~~Spring swagger2 Annotation 정리~~
