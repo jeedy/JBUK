@@ -32,3 +32,5 @@ mysql wait_timeout 설정(기본값 28800 , 8시간) 에 의해 커넥션이 연
     - testWhileIdle - true 일 경우 비활성화 커넥션을 추출할때 커넥션이 유효한지 여부를 검사해서 유효하지 않으면 제거
     - timeBetweenEvctionRunsMillis - 사용되지 않는 커넥션을 추출하는 쓰레드의 실행 주기를 지정 이값을 알맞게 지정해서 사용되지 않는 커넥션을 제거하는것이 좋다 보통 10~20분 단위 검사
     - testOnBorrow - 퍼포먼스가 문제 될거라고 생각된다면 testOnBorrow( default : true ) 값을 false 로 추가해주면 된다. true일 경우 커넥션을 가져올 때 커넥션이 유효한지의 여부를 검사
+
+## 오라클 RAC JDBC 설정
