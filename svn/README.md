@@ -108,7 +108,7 @@ svn status
 
 
 ## :bomb: troubleshooting
-1. client에서 svn 명령어 실행시 `svn: 인증 방법 협상 불가능` 오류 발생
+### 1. client에서 svn 명령어 실행시 `svn: 인증 방법 협상 불가능` 오류 발생
 
     sasl 인증 방식을 사용하여 cyrus package 설치가 되어있어야 한다. 설치가 안되어있으면 발생할 수 있다.
 
@@ -147,7 +147,7 @@ $ yum install cyrus-sasl-md5.x86_64
 $ yum install cyrus-sasl-plain.x86_64
 ```
 
-2. yes / no 질문에 '예' 라고 답해야한다.
+### 2. yes / no 질문에 '예' 라고 답해야한다.
 ```
 $ svn list svn://localhost/STATIC/trunk/ --username=static --password=privia1234
 -----------------------------------------------------------------------
@@ -167,3 +167,28 @@ Store password unencrypted (yes/no)? yes
 Please type 'yes' or 'no': 예
 
 ```
+
+### 3. SVN LOCK 해제
+
+검색결과 1차로는 team - cleanup을 하고, 그래도 에러가나면 lock이 걸린 위치로 가서 .svn 폴더(숨김폴더이다.) 안에 lock파일을 삭제하라는데 
+찾아보니 나는 lock 이라는 파일이없다...
+
+그것도 안되면 프로젝트를 새로받으라는.... 멋진 해결책이 적혀있었다-_- 
+에러가 날 때마다 프로젝트를 새로 받을 수는 없으니.. 계속 구글링하다 찾아낸 해법!
+
+.svn폴더 안에 wc.db 파일이 존재한다. 
+
+이 파일을 sqlite로 열어보자 (Sqlite Browser 링크 -> http://sqlitebrowser.org/)
+
+설치하고 데이터베이스 열기를 한 후 파일을 오픈해보면 내부에 
+WC_LOCK 테이블이 있다.
+
+SVN에 이상이 없다면 이 테이블에는 아무데이터도 존재하지 않는다. 
+select 해보면 아마 데이터가 들어있을 것이다. (lock이 걸린 위치가 적혀있다.)
+
+과감하게 해당 테이블의 데이터를 모조리 지워버리자.
+DELETE FROM WC_LOCK
+
+완료 후 변경사항을 저장하고 해당 LOCK이 걸린 곳에서 cleanup 해주고 작업을 하면 정상적으로 동작하는 것을 볼 수 있다.
+
+출처: https://piterjige.tistory.com/22 [뭐라도 해야 뭐가되지]
