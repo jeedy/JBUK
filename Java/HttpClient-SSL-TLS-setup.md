@@ -23,11 +23,16 @@ Java 1.8 부터는 Defualt `TLSv1.2` 를 지원하지만 Java1.7은 `TLSv1.1` �
       String[] bodys) {
 
     int timeout = 480;    // sec
-    RequestConfig requestConfig = RequestConfig.custom()
-        .setSocketTimeout(timeout * 1000)
-        .setConnectionRequestTimeout(timeout * 1000)
-        .setConnectTimeout(timeout * 1000)
-        .build();
+    RequestConfig requestConfig = null;
+    if(timeout > 0){
+        requestConfig = RequestConfig.custom()
+                .setConnectTimeout(timeout *1000)
+//                .setConnectionRequestTimeout(timeout*1000)
+                .setSocketTimeout(timeout*1000)
+                .build();
+    }else{
+        requestConfig = RequestConfig.DEFAULT;
+    }
     
     /*
      * ※ TLSv1.2 셋팅
