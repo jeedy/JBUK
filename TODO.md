@@ -42,3 +42,7 @@
     - 그밖에 명령어 정리 사이트 [참조](https://www.aonenetworks.kr/official.php/home/info/1399)
     
 1. ~~Spring swagger2 Annotation 정리~~
+
+1. spring security 파헤치기 (구조, 인증과정, 설정, 핸들러 및 암호화 예제 
+    - 출처: https://sjh836.tistory.com/165 [빨간색코딩]
+    
