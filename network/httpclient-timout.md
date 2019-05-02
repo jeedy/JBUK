@@ -15,16 +15,16 @@ IBM 정의 :
 <!-- Proxy Http Client: The timeout in seconds used when requesting a connection from the connection manager/pool. -->
 <ConnectionRequestTimeout>300</ConnectionRequestTimeout>
 ```
-ConnectionManager(커넥션풀)로부터 꺼내올 때의 타임아웃
+ConnectionManager(커넥션풀)로부터 Connection을 꺼내올 때의 타임아웃
 
 ## ConnectTimeout
 ```xml
 <!-- Proxy Http Client: The timeout in seconds to establish a connection with the Proxy Server. -->
 <ConnectTimeout>100</ConnectTimeout>
 ```
-HTTP request를 날릴때 Client(송신측,browser) 에서 Server(수신측)로  서로 간에 연결(connect) 상태가 되어야 한다.
-연결을 구성하기 위해서 보통 TCP Connection 과 동일하게 3-way Handshake 방식을 수행한다. 3-way Handshake를 정상적으로 수행하게 되면 Client와 Server가 연결된 상태가 되는데,
-**이 때까지 소요된 시간을 ConnectionTimeout** 으로 설정한다.
+HTTP request를 날릴때 Client(송신측,browser) 에서 Server(수신측)로 서로 간에 연결(connect) 상태가 되어야 한다. 연결을
+구성하기 위해서 보통 TCP Connection 과 동일하게 3-way Handshake 방식을 수행한다. **3-way Handshake를 정상적으로 수행하게
+되면 Client와 Server가 연결된 상태가 되는데, 이 때까지 소요된 시간을 ConnectionTimeout** 으로 설정한다.
 
 ## SocketTimeout
 ```xml

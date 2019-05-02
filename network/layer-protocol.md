@@ -22,7 +22,7 @@ OSI(Open Systems Interconnction) 7 Layer는 ISO(국제표준기구)에서 만든
 ![OSI TCP/IP 프로토콜 구조](./images/osi-7layer-tcpip-4layer.jpg)
 
 - TCP/IP는 OSI 7 Layer를 4개로 단순화 하여 구현
-- TCP/IP는 3,4 계층을 중심으로 한 통신 프로토콜의 계층 집합
+- TCP/IP는 3(Session layer),4(Transport layer)계층을 중심으로 한 통신 프로토콜의 계층 집합
 
 ## OSI 7 Layer별 주요 프로토콜 설명
 
