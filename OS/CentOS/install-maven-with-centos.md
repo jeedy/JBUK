@@ -1,7 +1,7 @@
-# CentOS 에서 메이븐 설치
+# [CentOS] 에서 메이븐 설치
 
 ## 선행작업
-CentOS에 JDK 설치
+[CentOS에 JDK_설치](https://zetawiki.com/wiki/CentOS_JDK_%EC%84%A4%EC%B9%98)
 
 ## 메이븐 다운로드
 ```bash

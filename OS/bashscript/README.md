@@ -1,6 +1,5 @@
 # Bash 스크립팅 가이드
 
-### 참고자료
-- https://blog.gaerae.com/2015/10/what-is-the-preferred-bash-shebang.html
-
-- https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/
+목차
+1. [env가 무엇인가?](./what-is-env.md)
+1. [awk는 무엇인가?](./what-is-awk.md)
