@@ -92,3 +92,13 @@ Topic:my-replicated-topic   PartitionCount:1    ReplicationFactor:3 Configs:
     Topic: my-replicated-topic  Partition: 0    Leader: 1   Replicas: 1,2,0 Isr: 1,2,0
 ```
 
+
+## 그 밖에 알아낸 사실
+- 프로듀서(or consumer) 는 broker 한대만 바라보고 액션을 해도 된다. (kafka_2.12-2.2.0 기준)
+- ReplicationFactor 1 이라고 해도 다른 broker에 send를 보내더라도 전송된다. 
+- AWS 의 경우 public DNS 주소는 매번 바뀐다. `private DNS` 주소는 인서턴스 삭제하지 않는 한 고정인듯 하다 
+  (주키퍼 앙상블 셋팅이나 카프카 셋팅시 `private DNS`를 이용하자, 서로 서브마스크 주소와 port는 열어놔야 한다.) 
+- bin/kafka-topic.sh, bin/kafka-console-*.sh는 클라이언트 명령어들이다. (kafka 압축 풀고 다른설정 필요없이 카프카 서버로 명령어 날릴 수 있다.)
+- config/server.properties 안에 주키퍼 서버 주소를 넣는 것으로 봐서 주키퍼를 통해 서로 연결된 broker들을 서로 알 수 있는 것같다.
+그래서 메시지를 보낼때(또는 받을때) `--bootstrap-server` 값에 모든 broker들의 주소를 넣을 필요가 없어진듯하다.
+(이것은 멀티 서버로 구성한 뒤에 다시 확인해볼 필요가 있음)
