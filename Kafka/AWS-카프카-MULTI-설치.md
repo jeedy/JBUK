@@ -1,4 +1,5 @@
 # 카프카 Mulit Server 설치
+tag: kafka, aws, 설치, 가이드, 카프카
 
 ## 주키퍼 앙상블 셋팅
 
@@ -55,6 +56,11 @@ kafka-0 config/server.properties
 # The id of the broker. This must be set to a unique integer for each broker.
 broker.id=0
 ...
+
+# A comma separated list of directories under which to store log files (broker.id 값이 이 로그에 기록되기 때문에 이미 구축했었다면 다른 폴더로 생성해야한다.)
+log.dirs=/tmp/kafka-logs-cluster
+
+...
 # Zookeeper connection string (see zookeeper docs for details).
 # This is a comma separated host:port pairs, each corresponding to a zk
 # server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".
@@ -69,6 +75,11 @@ kafka-1 config/server.properties
 
 # The id of the broker. This must be set to a unique integer for each broker.
 broker.id=1
+...
+
+# A comma separated list of directories under which to store log files (broker.id 값이 이 로그에 기록되기 때문에 이미 구축했었다면 다른 폴더로 생성해야한다.)
+log.dirs=/tmp/kafka-logs-cluster
+
 ...
 # Zookeeper connection string (see zookeeper docs for details).
 # This is a comma separated host:port pairs, each corresponding to a zk
