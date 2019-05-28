@@ -56,10 +56,14 @@ kafka-0 config/server.properties
 # The id of the broker. This must be set to a unique integer for each broker.
 broker.id=0
 ...
-
+# Hostname and port the broker will advertise to producers and consumers. If not set,
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+# 외부에서 접근하려면 public DNS 주소를 입력해야한다.
+advertised.listeners=PLAINTEXT://public-ip-52.79.116.39.compute.internal:9092
+...
 # A comma separated list of directories under which to store log files (broker.id 값이 이 로그에 기록되기 때문에 이미 구축했었다면 다른 폴더로 생성해야한다.)
 log.dirs=/tmp/kafka-logs-cluster
-
 ...
 # Zookeeper connection string (see zookeeper docs for details).
 # This is a comma separated host:port pairs, each corresponding to a zk
@@ -76,10 +80,14 @@ kafka-1 config/server.properties
 # The id of the broker. This must be set to a unique integer for each broker.
 broker.id=1
 ...
-
+# Hostname and port the broker will advertise to producers and consumers. If not set,
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+# 외부에서 접근하려면 public DNS 주소를 입력해야한다.
+advertised.listeners=PLAINTEXT://public-ip-54.180.117.24.compute.internal:9092
+...
 # A comma separated list of directories under which to store log files (broker.id 값이 이 로그에 기록되기 때문에 이미 구축했었다면 다른 폴더로 생성해야한다.)
 log.dirs=/tmp/kafka-logs-cluster
-
 ...
 # Zookeeper connection string (see zookeeper docs for details).
 # This is a comma separated host:port pairs, each corresponding to a zk
@@ -96,12 +104,15 @@ kafka-2 config/server.properties
 # The id of the broker. This must be set to a unique integer for each broker.
 broker.id=2
 ...
-
+# Hostname and port the broker will advertise to producers and consumers. If not set,
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+# 외부에서 접근하려면 public DNS 주소를 입력해야한다.
+advertised.listeners=PLAINTEXT://public-ip-52.79.226.201.compute.internal:9092
+...
 # A comma separated list of directories under which to store log files (broker.id 값이 이 로그에 기록되기 때문에 이미 구축했었다면 다른 폴더로 생성해야한다.)
 log.dirs=/tmp/kafka-logs-cluster
-
 ...
-
 # Zookeeper connection string (see zookeeper docs for details).
 # This is a comma separated host:port pairs, each corresponding to a zk
 # server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".

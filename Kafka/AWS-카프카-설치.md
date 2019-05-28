@@ -57,21 +57,43 @@ $ cp config/server.properties config/server-1.properties
 $ cp config/server.properties config/server-2.properties 
 ```
 
-2. config/server-1.properties :
+2. config/server.properties : 기본값으로 설정했기 때문에 `advertised.listeners` 빼고는 수정할 것이 없다.
+```bash
+broker.id=0
+#listeners=PLAINTEXT://:9092
+log.dirs=/tmp/kafka-logs-1
+
+# Hostname and port the broker will advertise to producers and consumers. If not set,
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+advertised.listeners=PLAINTEXT://your_public_dns_host:9092
+```
+
+3. config/server-1.properties :
 ```bash
 broker.id=1
 listeners=PLAINTEXT://:9093
 log.dirs=/tmp/kafka-logs-1
+
+# Hostname and port the broker will advertise to producers and consumers. If not set,
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+advertised.listeners=PLAINTEXT://your_public_dns_host:9093
 ```
 
-3. config/server-2.properties :
+4. config/server-2.properties :
 ```bash
 broker.id=2
 listeners=PLAINTEXT://:9094
 log.dirs=/tmp/kafka-logs-2
+
+# Hostname and port the broker will advertise to producers and consumers. If not set,
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+advertised.listeners=PLAINTEXT://your_public_dns_host:9094
 ```
 
-4. 카프카 서버1, 서버2 실행 : 
+5. 카프카 서버1, 서버2 실행 : 
 ```bash
 $ bin/kafka-server-start.sh config/server-1.properties &
 ...
@@ -107,7 +129,19 @@ Topic:my-replicated-topic   PartitionCount:1    ReplicationFactor:3 Configs:
 그래서 메시지를 보낼때(또는 받을때) `--bootstrap-server` 값에 모든 broker들의 주소를 넣을 필요가 없어진듯하다.
 (이것은 멀티 서버로 구성한 뒤에 다시 확인해볼 필요가 있음)
 - bin/kafka-server-stop.sh 명령어 날리면 모든 카프카서버들 한번에 내린다. (port 번호도 입력안했는데, 어떻게 다 내리지?) 
-```bash
-$ bin/kafka-server-stop.sh
-```
+    ```bash
+    $ bin/kafka-server-stop.sh
+    ```
+- 외부에서 producer, consumer 연결을 할때 `server.properties`에 `advertised.listeners` 값을 셋팅해야한다. 외부에서 접근하는 공개 IP로 입력하자.
+
+    > ?  ?
+    
+    ```bash
+    ...
+    # Hostname and port the broker will advertise to producers and consumers. If not set,
+    # it uses the value for "listeners" if configured.  Otherwise, it will use the value
+    # returned from java.net.InetAddress.getCanonicalHostName().
+    advertised.listeners=PLAINTEXT://your_public_dns_host:9092
+    ...
+    ```
 
