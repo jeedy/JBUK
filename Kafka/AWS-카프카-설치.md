@@ -32,6 +32,12 @@ $ sudo yum -y install wget
 
 $ sudo wget http://mirror.navercorp.com/apache/kafka/2.2.0/kafka_2.12-2.2.0.tgz
 ...
+
+$ sudo tar -xzf kafka_2.12-2.2.0.tgz
+...
+
+$ sudo chown -R ec2-user:ec2-user kafka_2.12-2.2.0
+...
 ```
 
 ## 3. Zookeeper 실행
@@ -63,7 +69,6 @@ test
 $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 > This is a message
 > This is another message
-
 ```
 
 ## 6. Consumer topic 메시지 가져오기
@@ -72,7 +77,6 @@ $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 $ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
 This is a message
 This is another message
-
 ```
 
 ## 7. Setting up a Multi-broker cluster (멀티 클러스터 구성하기)
@@ -145,22 +149,17 @@ Topic:my-replicated-topic   PartitionCount:1    ReplicationFactor:3 Configs:
 - 프로듀서(or consumer) 는 broker 한대만 바라보고 액션을 해도 된다. (kafka_2.12-2.2.0 기준)
 - ReplicationFactor 1 이라고 해도 다른 broker에 send를 보내더라도 전송된다. 
 - AWS 의 경우 public DNS 주소는 매번 바뀐다. `private DNS` 주소는 인서턴스 삭제하지 않는 한 고정인듯 하다 
-  (주키퍼 앙상블 셋팅이나 카프카 셋팅시 `private DNS`를 이용하자, 서로 서브마스크 주소와 port는 열어놔야 한다.
-   확인결과 private DNS 주소도 바뀐다고 한다. 바뀌는 타이밍이 좀 늦을뿐 바뀌는 듯
-   test-server pivateDNS kafka-0: ip-172-31-41-231.ap-northeast-2.compute.internal
-   내일 바뀌는지 확인해보자.
-   ) 
 - bin/kafka-topic.sh, bin/kafka-console-*.sh는 클라이언트 명령어들이다. (kafka 압축 풀고 다른설정 필요없이 카프카 서버로 명령어 날릴 수 있다.)
 - config/server.properties 안에 주키퍼 서버 주소를 넣는 것으로 봐서 주키퍼를 통해 서로 연결된 broker들을 서로 알 수 있는 것같다.
 그래서 메시지를 보낼때(또는 받을때) `--bootstrap-server` 값에 모든 broker들의 주소를 넣을 필요가 없어진듯하다.
 (이것은 멀티 서버로 구성한 뒤에 다시 확인해볼 필요가 있음)
-- bin/kafka-server-stop.sh 명령어 날리면 모든 카프카서버들 한번에 내린다. (port 번호도 입력안했는데, 어떻게 다 내리지?) 
+- ~~bin/kafka-server-stop.sh 명령어 날리면 모든 카프카서버들 한번에 내린다. (port 번호도 입력안했는데, 어떻게 다 내리지?)~~ 물리적으로 나뉘어 있으면 전체 stop 되지 않는다. 
     ```bash
     $ bin/kafka-server-stop.sh
     ```
 - 외부에서 producer, consumer 연결을 할때 `server.properties`에 `advertised.listeners` 값을 셋팅해야한다. 외부에서 접근하는 공개 IP로 입력하자.
 
-    > ? 모든 broker 서버들을 다 적어야 하는지, 확인 필요 ?
+    > ? 모든 broker 서버들을 다 적어야 하는지, 본인 IP만 적으면 되는지 확인 필요 ?
     
     ```bash
     ...
@@ -170,4 +169,4 @@ Topic:my-replicated-topic   PartitionCount:1    ReplicationFactor:3 Configs:
     advertised.listeners=PLAINTEXT://your_public_dns_host:9092
     ...
     ```
-
+- 카프카 서버(broker) 한대 띄우기 위한 요구 메모리는 기본 `1GB` 이다. 테스트를 위해 하나의 서버에서 3대의 카프카를 띄우기 위해선 적어도 `4GB` 이상 메모리가 필요하다.
