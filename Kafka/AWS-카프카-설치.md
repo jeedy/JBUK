@@ -1,12 +1,38 @@
 # AWS 서버에 카프카 설치하기
-tag: kafka, aws, 설치, 가이드, 카프카
+tags: kafka, aws, 설치, 가이드, 카프카
  
 ### 참고자료
 - https://kafka.apache.org/quickstart (카프카 퀵스타트 가이드 문서)
 
+## 0. vim 설치하기
+
+> vim 은 Editor, properties 파일 수정을 위해 
+
+```bash
+$ sudo yum install vim-enhanced
+..
+$ sudo yum list installed | grep vim
+...
+```
+
 ## 1. Open JDK(java 1.8) 설치하기
 
+```bash
+$ sudo yum -y install java-1.8.0-openjdk
+```
+
 ## 2. Kafka 다운로드
+
+> wget은 웹 다운로드
+
+```bash
+# 만약 wget이 없다면...
+$ sudo yum -y install wget
+...
+
+$ sudo wget http://mirror.navercorp.com/apache/kafka/2.2.0/kafka_2.12-2.2.0.tgz
+...
+```
 
 ## 3. Zookeeper 실행
 
@@ -26,8 +52,8 @@ $ bin/kafka-server-start.sh config/server.properties
 
 ```bash
 $ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic test
-
-bin/kafka-topics.sh --list --bootstrap-server localhost:9092
+...
+$ bin/kafka-topics.sh --list --bootstrap-server localhost:9092
 test
 ```
 
@@ -134,7 +160,7 @@ Topic:my-replicated-topic   PartitionCount:1    ReplicationFactor:3 Configs:
     ```
 - 외부에서 producer, consumer 연결을 할때 `server.properties`에 `advertised.listeners` 값을 셋팅해야한다. 외부에서 접근하는 공개 IP로 입력하자.
 
-    > ?  ?
+    > ? 모든 broker 서버들을 다 적어야 하는지, 확인 필요 ?
     
     ```bash
     ...

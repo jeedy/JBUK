@@ -1,5 +1,5 @@
 # 카프카 Mulit Server 설치
-tag: kafka, aws, 설치, 가이드, 카프카
+tags: kafka, aws, 설치, 가이드, 카프카
 
 ## 주키퍼 앙상블 셋팅
 
