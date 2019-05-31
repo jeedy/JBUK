@@ -17,13 +17,33 @@ $ sudo yum list installed | grep vim
 
 ## 1. Open JDK(java 1.8) 설치하기
 
+참고: https://openjdk.java.net/install/
+
 ```bash
+# 자바 패키지 검색
+$ sudo yum search java-1.8 
+==================================================== Name Matched: java-1.8 =====================================================
+java-1.8.0-openjdk.x86_64 : OpenJDK Runtime Environment 8
+java-1.8.0-openjdk.x86_64 : OpenJDK Runtime Environment 8
+java-1.8.0-openjdk-src.x86_64 : OpenJDK Source Bundle 8
+java-1.8.0-openjdk-demo.x86_64 : OpenJDK Demos 8
+java-1.8.0-openjdk-devel.x86_64 : OpenJDK Development Environment 8
+java-1.8.0-openjdk-javadoc.noarch : OpenJDK 8 API documentation
+java-1.8.0-openjdk-headless.x86_64 : OpenJDK Headless Runtime Environment 8
+java-1.8.0-openjdk-headless.x86_64 : OpenJDK Headless Runtime Environment 8
+java-1.8.0-openjdk-javadoc-zip.noarch : OpenJDK 8 API documentation compressed in single archive
+java-1.8.0-openjdk-accessibility.x86_64 : OpenJDK 8 accessibility connector
+
+# 자바 런타임 버전 
 $ sudo yum -y install java-1.8.0-openjdk
+
+# or 자바 Develop kit 버전
+# sudo yum -y install java-1.8.0-openjdk-devel
 ```
 
 ## 2. Kafka 다운로드
 
-> wget은 웹 다운로드
+> wget은 웹 파일 다운로드 어플리케이션
 
 ```bash
 # 만약 wget이 없다면...
