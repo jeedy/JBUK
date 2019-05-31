@@ -46,6 +46,9 @@ $ sudo yum -y install java-1.8.0-openjdk
 > wget은 웹 파일 다운로드 어플리케이션
 
 ```bash
+# 설치될 폴더로 이동
+$ cd /usr/local/
+
 # 만약 wget이 없다면...
 $ sudo yum -y install wget
 ...
@@ -58,6 +61,9 @@ $ sudo tar -xzf kafka_2.12-2.2.0.tgz
 
 $ sudo chown -R ec2-user:ec2-user kafka_2.12-2.2.0
 ...
+
+$ cd kafka_2.12-2.2.0
+
 ```
 
 ## 3. Zookeeper 실행
