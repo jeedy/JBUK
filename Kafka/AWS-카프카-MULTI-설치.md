@@ -1,22 +1,40 @@
 # 카프카 Mulit Server 설치
 tags: kafka, aws, 설치, 가이드, 카프카
 
+### 참고자료
+- https://kafka.apache.org/quickstart (카프카 퀵스타트 가이드 문서)
+- https://arisu1000.tistory.com/27786 (클러스터 구축)
+- https://epicdevs.com/20 (클러스터 구성 셋팅)
+- https://engkimbs.tistory.com/560 (주키퍼 앙상블 셋팅)
+- https://zookeeper.apache.org/doc/r3.1.2/zookeeperStarted.html (주키퍼 started guide)
+
 ## 주키퍼 앙상블 셋팅
 
 zookeeper-공통 config/zookeeper.properties : 
 ```bash
-dataDir=/tmp/zookeeper
+# tick 단위 시간을 설정, milliseconds 단위. 위에서는 2초로 설정됨  (기본값 2000ms)
+# tickTime=2000
+
+# zookeeper가 사용할 데이터 디렉토리
+# 주키퍼의 상태, 스냅션, 트랜잭션 로그들을 저장하고 업데이트하는 디렉토리의 위치를 지정
+dataDir=/tmp/zookeeper 
+
 # the port at which the clients will connect
-clientPort=2181
+# zookeeper가 사용할 포트, 클라이언트 연결을 감지하는 포트의 번호
+clientPort=2181 
+
 # disable the per-ip limit on the number of connections since this is a non-production config
-maxClientCnxns=0
-# multi setting require (앙상블 셋팅시 반드시 필요셋팅
-initLimit=10
-syncLimit=5
+# 하나의 클라이언트에서 동시접속하는 개수 제한. 기본은 60. (0으로 두면 무제한)
+maxClientCnxns=0 
+
+# multi setting require (앙상블 셋팅시 반드시 필요셋팅)
+initLimit=10  #처음 주키퍼의 follower가 leader와의 연결 시도시 가지는 tick 제한 횟수. tick 제한 횟수가 넘으면 timeout. 위에서는 20초로 설정됨  
+syncLimit=5   #follower가 leader와 연결된 후, 계속 ensemble 안에서 leader와 동기화되기 위한 tick 제한 횟수. tick 제한 횟수가 넘으면 timeout 위에서는 10초로 설정됨.
+
 # setting servers
-server.1=ip-172-31-41-231.ap-northeast-2.compute.internal:2888:3888
-server.2=ip-172-31-45-231.ap-northeast-2.compute.internal:2888:3888
-server.3=ip-172-31-39-41.ap-northeast-2.compute.internal:2888:3888
+server.1=ip-172-31-41-231.ap-northeast-2.compute.internal:2888:3888  #server.id=host:port:port
+server.2=ip-172-31-45-231.ap-northeast-2.compute.internal:2888:3888  #server.id=host:port:port
+server.3=ip-172-31-39-41.ap-northeast-2.compute.internal:2888:3888   #server.id=host:port:port
 
 ```
 
