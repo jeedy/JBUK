@@ -43,21 +43,22 @@ RSA 참고
 
 
 ```bash
-#개인키(privateClient.key) 생성 후에 소스상에서 사용하기 위해 DER 파일 형식으로 변환이 필요(privateClient-PKCS8.der) 키 변환
-#개인키(privateClient.key)를 이용해 공개키(publicClient.der) 생성
+#개인키(privateClient.pem) 생성 후에 소스상에서 사용하기 위해 DER 파일 형식으로 변환이 필요(privateClient-PKCS8.der) 키 변환
+#개인키(privateClient.pem)를 이용해 공개키(publicClient.der) 생성
 # in windows console
 
 # 2048 비트 RSA 개인 키(원본) 생성
-openssl genrsa -out privateClient.key 2048
+openssl genrsa -out privateClient.pem 2048
 
-# 개인 키를 PKCS # 8 형식(소스상 사용키)으로 변환 - 원본 개인키로 소스상에서 사용시 에러발생 그래서 DER 형식으로 변환사용 필요.
-openssl pkcs8 -topk8 -inform PEM -outform DER -in privateClient.key -out privateClient-PKCS8.der -nocrypt
+# 개인 키를 PKCS8 형식(소스상 사용키)으로 변환 - 원본 개인키로 소스상에서 사용시 에러발생 그래서 DER 형식으로 변환사용 필요.
+openssl pkcs8 -topk8 -inform PEM -outform DER -in privateClient.pem -out privateClient-PKCS8.der -nocrypt
 
-# DER 형식으로 공개 키(소스상 사용키) 부분을 출력-
-openssl rsa -in privateClient.key -pubout -outform DER -out publicClient.der
+# DER 형식으로 공개 키(소스상 사용키) 부분을 출력 -
+# 참고사이트에선 publicClient.pem -> publicClient.der 로 변환했지만, 아래처럼 privateClient.pem 으로 publicClient.der를 생성해 사용해도 문제가 없었다. 이는 다시 확인이 필요하다.
+openssl rsa -in privateClient.pem -pubout -outform DER -out publicClient.der
 ```
 
-## 2. 원본개인키(privateClient.key), 공개키(publicClient.der), 개인키(privateClient8.der) src/main/resource/keyPair 디렉토리 밑에 복사
+## 2. 원본개인키(privateClient.pem), 공개키(publicClient.der), 개인키(privateClient8.der) src/main/resource/keyPair 디렉토리 밑에 복사
 
 ## 3. DecryptDataSource.java 생성
 
