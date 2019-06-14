@@ -419,7 +419,7 @@ Your verification code is ***<br>
 Copy and paste this code now into the form at your open browser window.
 
 
-15. *** 표시된 텍스트를 복사해서 Vertification code 필드에 입력한다.
+15. *** 표시된 텍스트를 복사해서 Verification code 필드에 입력한다.
 
 ![이메일인증](./images/https-startssl-complete-validation.gif)
 
@@ -579,3 +579,12 @@ sudo a2ensite default-ssl
 SSL 서비스를 성공적으로 제공하기 시작한 것이다.
 
 ![브라우저 확인](./images/https-apache2-browser-test.gif)
+
+
+
+## 참고
+- http://www.moserware.com/2009/06/first-few-milliseconds-of-https.html 
+- SSL이란 무엇인가 [1](http://minix.tistory.com/395), [2](http://minix.tistory.com/397) (미닉스의 작은 이야기들)
+- http://www.phpschool.com/link/tipntech/77347
+- http://www.phpschool.com/link/tipntech/77348
+
