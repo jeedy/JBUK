@@ -322,6 +322,7 @@ http://en.wikipedia.org/wiki/Comparison_of_SSL_certificates_for_web_servers 또 
 
 1. 로그인페이지로 이동한다. 
 
+
 2. Express Lane 옵션을 선택한다. 
 
 > StartSSL은 클라이언트 측 인증서를 요구한다. 아직 인증서를 발급받지 않은 상태라면 인증서 오류가 발생할 것이기 때문에 
@@ -330,12 +331,251 @@ Express Lane 옵션을 빠르게 선택해서 이동한다.
 ![Express Lane](./images/startcom-express-lane.gif)
 
 
+3. 요구하는 정보를 '사실대로' 입력한다. 만약 허위 정보가 입력되면 가입 승인이 거부된다.
+
+![startcom form](./images/https-startcom-form.gif)
+
+
+4. 이메일로 인증코드가 반송된다. 이메일을 확인한다.
+
+
+5. 필자는 이런 내용의 이메일을 받았다.
+
+> This electronic mail message was created by StartCom's Administration Personnel:
+Thank you for registering with StartSSL. It seems that you provided the address details of an organization. However our terms and conditions require from our subscribers to disclose the private address of residence. Please reply to this message and send us the details of your personal residence.
+<br><br>
+내용은 당신이 보낸 메일이 진짜 자신의 메일인지 증명하기 위해서 아까 입력한 내용을 메일로 회신해주세요.
+
+
+이것은 인증의 단계로 회원가입 시에 입력한 주소를 다시 적어서 메일로 회신하면 startssl 측에서 아래와 같이 물어볼 것이다.
+
+> It's your company address or it's a personal residence?
+<br><br>
+이것이 회사 주소인가요? 집 주소인가요?
+
+
+6. 아래와 같이 답변한다.
+
+> My Personal residence.
+<br><br>
+집주소 입니다.
+
+
+7. 그럼 인증에 성공했다는 메시지가 도착할 것이다. 내용은 아래와 비슷할 것이다.
+
+>  Your request for an account at StartSSL™ (www.startssl.com) has been approved and is available during the next 24 hours at the following location:
+<br><br>
+https://www.startssl.com/?app=12&action=release
+<br><br>
+The verification code in order to continue the process is ***
+<br><br>
+Thank you!
+
+
+8. 위의 주소로 ***로 표시한 부분이 자신의 인증코드이다. 인증코드를 복사한 후에 링크를 클릭해보자. 아래와 같은 메시지가 출력될 것이다.
+인증코드를 붙여넣기 한다.
+
+![인증코드 입력](./images/https-startssl-authorized-code.gif)
+
+
+9. 비공개의 암호화 방식을 지정한다. 2048을 사용하자
+
+![암호화방식](./images/https-startssl-generate-privatekey.gif)
+ 
+ 
+10.install 버튼을 누른다.
+
+![install certificate](./images/https-startssl-install-certificate.gif)
+
+
+11. 축하 메시지가 출력되면 인스톨에 성공한 것이다.
+
+![인스톨 성공메시지](./images/https-startssl-congratulations.gif)
+
+이 때 크롬의 경우 브라우저 상단에 클라이언트 인증서가 설치되었다는 메시지가 보일 것이다. 앞으로 startssl의 관라자에 접속할 때는 이 인증서를 
+이용할 것이기 때문에 등록된 이메일에 해당하는 startssl 계정의 관리자로 접속할 때는 꼭 이 인증서가 설치된 브라우저로 접속해야 한다. continue를 누른다.
+
+![브라우저에 인증서 저장](./images/https-startssl-browser-save.gif)
+
+
+12. 도메인 주소를 입력한다.
+
+![도메인주소 입력](./images/https-startssl-enter-domain.gif)
+
+
+13. 인증 메일을 선택한다. 
+
+자신의 도메인임을 증명하기 위해서 도메인과 연관된 이메일 주소 중에 하나를 선택한다. 꼭 사용할 수 있는 이메일 주소를 선택해야 한다. 
+만약 사용할 수 있는 이메일 주소가 없다면 네임서버의 설정을 변경해야 한다. 
+
+![인증이메일 선택](./images/https-startssl-verification-email.gif)
+
+
+14. 수신 받은 이메일을 확인한다. 메시지는 아래와 유사할 것이다.
+
+> This mail is intended for the person who requested verification of domain control at StartSSL™ (http://www.startssl.com).
+<br><br>
+Your verification code is ***<br>
+Copy and paste this code now into the form at your open browser window.
+
+
+15. *** 표시된 텍스트를 복사해서 Vertification code 필드에 입력한다.
+
+![이메일인증](./images/https-startssl-complete-validation.gif)
+
+
+16. 아래와 같은 화면이 출력된다면 인증에 성공한 것이다. 30일 안에 인증서를 발급받아야 한다는 내용이다.
+
+![이메일인증 성공](./images/https-startssl-validation-success.gif)
+
+<label id="generate-privatekey"></label>
+17. 비공개키를 발급 받는다. 비공개키는 직접 생성할 수도 있지만 startssl 제공하는 키를 사용하면 편리하다.
+
+![비공개키 생성](./images/https-startssl-generate-privatekey-2.gif)
+
+Key Password는 비공개키가 유출 되었을 때 비공개키를 보호해주는 수단이다. 비공개키가 있다고해도 이 비밀번호가 없다면 데이터를 복호화 
+할 수 없다. 이 값을 설정하면 보안의 레벨은 상승 하지만 서버를 재부팅 할 때마다 Apache와 같은 웹서버에 비밀번호를 입력해줘야 하는 불편함이 있다. 
+이 비밀번호는 꼭 기억해야 한다. keysize 는 2048, Secure Hash Algorithm은 sha1을 선택한다.
+
+
+18. 비공개키를 복사한다.
+
+![비공개키 저장](./images/https-startssl-save-privatekey.gif)
+
+비공개키는 매우 중요한 정보다. 비공개키가 유출되면 ssl을 통해서 서버로 전달되는 정보가 해독될 수 있기 때문에 절대로 노출되서는 안된다. 
+이 정보는 별도의 파일로 복사해서 저장한다. 파일명으로 필자는 ssl.key를 사용했다.
+
+
+19. 도메인 추가
+
+![도메인 추가](./images/https-startssl-add-domains.png)
+
+> 만약 opentutorials.org의 서브 도메인인 www.opentutorials.org로 ssl로 보호하고 싶다면 아래 화면에서 www를 입력한다.
+
+> 아래와 같이 입력하면 StartSSL은 opentutorials.org와 www.opentutorials.org에 대해서만 보호 기능을 제공한다. 
+만약 dev.opentutorials.org에 대해서 SSL 서비스를 하고 싶다면 인증서를 하나 더 만들어야 한다. 
+www나 dev와 같은 부분을 호스트 네임이라고 하는데 모든 호스트 네임에 대해서 보호되는 인증서를 사용하고 싶다면 와일드 카드 인증서를 구입해야 한다. 
+인증서를 비교한 차트에서 와일드 카드 항목을 참고하면 된다. http://www.startssl.com/?app=40
+
+![호스트 네임 등록](./images/https-startssl-add-domains-2.gif)
+
+
+20. 인증서 발급을 위한 모든 정보의 입력이 끝났다. Continue를 누른다.
+
+![인증서 발급 준비완료](./images/https-startssl-ready-processing-certificate.png)
+
+
+21. 인증서가 발급되었다. 이 내용을 복사해서 ssl.crt 파일에 저장한다. 
+
+화면 하단에 "Save also the intermediate and root CA certificates for the installation at your server(Save AS...)" 라고 되어 
+있는 부분의 내용을 클릭해서 파일로 저장한다.
+
+![인증서 저장](./images/https-startssl-save-certificate.gif)
+
+인증서 발급이 끝났다. 이제 StartSSL을 통해서 발급 받은 인증서를 이용해서 서버쪽 셋팅을 하면 SSL을 사용할 수 있다.
+
+
+### 정리
+
+이상의 절차를 통해서 얻은 정보는 크게 4가지다. 이 정보들을 이용해서 SSL을 제공하는 방법을 알아보자.
+
+- ssl.key : 서버쪽 비공개키
+- ssl.crt : 디지털 인증키
+- ca.pem : ROOT CA 인증서
+- sub.class1.server.ca.pem : 중계자 인증서
 
 
 
+## 웹서버 셋팅
 
+SSL을 서비스하는 마지막 단계는 웹서버에 인증서를 설치하는 것이다. SSL 통신을 할 때 사용할 인증서를 웹서버에게 알려주면 웹서버는 
+정해진 절차에 따라서 SSL 통신을 하게 된다.
 
+인증서를 웹서버에 설치하는 방법은 웹서버 별로 다르다. 이번 시간에는 가장 표준적인 웹서버인 Apache에 인증서를 설치하는 방법을 살펴볼 
+것이다. 다른 웹서버에 인증서를 설치하는 방법은 인증기관에서 메뉴얼을 제공하기 때문에 그것을 참고하면 된다. StartSSL은 아래 URL을 
+통해서 메뉴얼을 제공하고 있다.
 
+http://www.startssl.com/?app=20
 
+1. apache 설치
+```bash
+$ sudo apt-get install apache2;
+```
 
+2. 아파치의 SSL 모듈을 활성화 한다.
+```bash
+$ sudo a2enmod ssl
+```
 
+3. 아파치를 재시작 한다.
+```bash
+$ sudo service apache2 restart
+```
+
+4. SSL 인증서 관련된 파일을 위치시킬 디렉토리를 만든다.
+```bash
+$ sudo mkdir /etc/apache2/ssl
+```
+
+5. /etc/apache2/ssl 디렉토리에 인증서 파일들을 위치시킨다. 파일들의 경로는 아래와 같다.
+- /etc/apache2/ssl/ca.pem
+- /etc/apache2/ssl/ssl.crt
+- /etc/apache2/ssl/ssl.key
+- /etc/apache2/ssl/sub.class1.server.ca.pem
+
+6. 보안을 위해서 디렉토리와 파일의 권한을 조정한다.
+
+디렉토리와 파일의 소유자는 root로 지정한다.
+
+```bash
+$ sudo chown -R root:root /etc/apache2/ssl;
+```
+
+파일의 권한을 600(소유자만 읽기, 쓰기 허용)
+
+```bash
+$ sudo sudo chmod 600 /etc/apache2/ssl/*.*
+```
+
+디렉토리의 권한을 700(소유자만 읽기, 쓰기, 실행 허용)
+
+```bash
+$ sudo chmod 700 /etc/apache2/ssl;
+```
+
+필자의 경우 아래와 같은 상태가 되었다. 
+
+![아피치 ssl 폴더](./images/https-apache2-ssl.gif)
+
+7. virtualhost를 설정한다. 하나의 웹서버(apache)에서 여러개의 서비스를 도메인 별로 운영할 수 있도록 돕는 apache의 기능이다. 
+기본 설정 파일인 /etc/apache2/sites-available/default-ssl을 수정한다. 아래에서는 편집기로 nano를 사용하고 있다. nano에 대한 
+사용법은 [nano 수업](https://opentutorials.org/course/128/3682)을 참고한다.
+
+```bash
+sudo nano /etc/apache2/sites-available/default-ssl
+```
+
+8. 파일의 내용에서 지시자의 값을 아래와 같이 변경한다.
+
+```bash
+SSLCertificateFile    /etc/apache2/ssl/ssl.crt
+SSLCertificateKeyFile /etc/apache2/ssl/ssl.key
+SSLCertificateChainFile /etc/apache2/ssl/sub.class1.server.ca.pem
+SSLCACertificateFile /etc/apache2/ssl/ca.pem
+```
+
+9. 버추얼 호스트 default-ssl 을 활성화된 서비스로 등록한다.
+
+```bash
+sudo a2ensite default-ssl
+```
+
+10. apache를 재시작한다. 재시작 할 때 비밀번호를 물어보는 경우가 있다. 
+이것은 [비공개키를 생성하는 단계](#generate-privatekey)에서 입력한 비밀번호를 입력하면 된다.
+
+![apache 재시작](./images/https-apache2-restart.gif)
+
+11. https 프로토콜로 접속한다. (구글 크롬 기준) 아래와 같이 녹색 자물쇠가 도메인 앞에 표시되고, 인증서와 관련된 팝업이 표시된다면 
+SSL 서비스를 성공적으로 제공하기 시작한 것이다.
+
+![브라우저 확인](./images/https-apache2-browser-test.gif)
