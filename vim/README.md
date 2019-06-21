@@ -5,6 +5,7 @@
 - http://www.mimul.com/pebble/default/2014/07/15/1405420918073.html 점진적으로 학습하기
 - https://vim.rtorr.com/lang/ko/ Vim Cheat Sheet
 - https://vim-adventures.com/  vim-adventures
+
 ## 쉘로 빠져나가기
 ```vim
 :shell 또는 :sh
