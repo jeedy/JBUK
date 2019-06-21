@@ -75,7 +75,21 @@ cluster.name: kjy-cluster
 
 ...
 
-network.host: 0.0.0.0
+node.name: kjy-node-1
+
+...
+
+# network.host: {퍼블릭 DNS(IPv4)}
+network.host: ec2-13-125-154-96.ap-northeast-2.compute.amazonaws.com
+
+...
+
+# discovery.seed_hosts: {프라이빗 IP}
+discovery.seed_hosts: ["172.31.36.18"]
+
+...
+
+cluster.initial_master_nodes: ["kjy-node-1"]
 
 ```
 
@@ -104,46 +118,46 @@ max number of threads [1024] for user [space_home] likely too low, increase to a
 -  https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
 
 
-    1. max file descriptors 늘려주기
-        - Mac OS 및 Linux만 해당 (Windows는 불필요)
-        - Elasticsearch를 구동중인 사용자의 open files descriptors를 65536까지 올려야 함
-        - RPM and Debian 패키지의 경우 default로 65536으로 설정되어 있으므로 이 설정이 불필요하다
-        - 방법
-            - 작업 전 확인 : `$ ulimit -a`
-            - limits.conf 편집: 
+1. max file descriptors 늘려주기
+    - Mac OS 및 Linux만 해당 (Windows는 불필요)
+    - Elasticsearch를 구동중인 사용자의 open files descriptors를 65536까지 올려야 함
+    - RPM and Debian 패키지의 경우 default로 65536으로 설정되어 있으므로 이 설정이 불필요하다
+    - 방법
+        - 작업 전 확인 : `$ ulimit -a`
+        - limits.conf 편집: 
+        ```bash
+        $ sudo vim /etc/security/limits.conf
+        
+        /etc/security/limits.conf:
+        
+        *        hard    nofile           65536
+        *        soft    nofile           65536
+        
+        ```
+        - 재접속 후 확인 : `$ ulimit -a`
+
+2. virtual memory areas 늘리기
+    - Elasticsearch는 mmapfs 디렉토리에 index를 저장한다 (default 설정)
+    - mmap counts에 대한 운영체제의 limit이 default로는 낮게 되어 있어서 높혀주지 않으면 out of memory 발생
+    - 방법
+        - 임시(재접속시 해제)
+            - 작업 전 확인 : $ sudo sysctl -a | grep vm.max_map_count => 65530 (/proc/sys/vm/max_map_count)
+            - 늘리기 : sudo sysctl -w vm.max_map_count=262144
+            - 작업 후 확인 : $ sudo sysctl -a | grep vm.max_map_count => 262144
+        
+        - 영구적(재접속 후에도 효과 지속)
+            - sysctl.conf 편집 :
             ```bash
-            $ sudo vim /etc/security/limits.conf
+            $ sudo vim /etc/sysctl.conf
             
-            /etc/security/limits.conf:
+            /etc/sysctl.conf:
             
-            *        hard    nofile           65536
-            *        soft    nofile           65536
+            vm.max_map_count=262144
+            ...
             
             ```
-            - 재접속 후 확인 : `$ ulimit -a`
-
-    2. virtual memory areas 늘리기
-        - Elasticsearch는 mmapfs 디렉토리에 index를 저장한다 (default 설정)
-        - mmap counts에 대한 운영체제의 limit이 default로는 낮게 되어 있어서 높혀주지 않으면 out of memory 발생
-        - 방법
-            - 임시(재접속시 해제)
-                - 작업 전 확인 : $ sudo sysctl -a | grep vm.max_map_count => 65530 (/proc/sys/vm/max_map_count)
-                - 늘리기 : sudo sysctl -w vm.max_map_count=262144
-                - 작업 후 확인 : $ sudo sysctl -a | grep vm.max_map_count => 262144
-            
-            - 영구적(재접속 후에도 효과 지속)
-                - sysctl.conf 편집 :
-                ```bash
-                $ sudo vim /etc/sysctl.conf
-                
-                /etc/sysctl.conf:
-                
-                vm.max_map_count=262144
-                ...
-                
-                ```
-                - 재시작 : `$ sudo reboot`
-                - 
+            - 재시작 : `$ sudo reboot`
+            - 
                 
                 
 
