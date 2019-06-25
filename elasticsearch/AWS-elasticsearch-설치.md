@@ -157,10 +157,3 @@ max number of threads [1024] for user [space_home] likely too low, increase to a
             
             ```
             - 재시작 : `$ sudo reboot`
-            - 
-                
-                
-
- 
- 
-
