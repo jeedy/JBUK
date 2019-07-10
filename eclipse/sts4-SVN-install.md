@@ -27,8 +27,9 @@ eclipse > window > preferences > Team > SVN :
 
 
 ## sta4 (eclipse 설정)
-1. Java 12버전 사용하자
-2. Java12 버전에 맞는 최신 GC를 사용하자
+1. Java 12버전 사용하자 
+    `-vm C:\java\zulu12.2.3-ca-jdk12.0.1-win_x64\bin\javaw.exe)`
+2. Java12 버전에 맞는 최신 GC를 사용하자 `-XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC`
 
 SpringToolSuite4.ini: 
 ```bash
@@ -44,11 +45,12 @@ openFile
 -Dosgi.requiredJavaVersion=1.8
 -Xms2048m
 -Xmx2048m
--XX:+UnlockExperimentalVMOptions
--XX:+UseShenandoahGC
+-XX:+UnlockExperimentalVMOptions    # 숨겨진 옵션 unlock
+-XX:+UseShenandoahGC                # java12에서 지원하는 gc
 -XX:+UseStringDeduplication
 --add-modules=ALL-SYSTEM
 -javaagent:C:\HCC_PRIVIA\sts-4.3.0.RELEASE\lombok.jar
 -vm
 C:\java\zulu12.2.3-ca-jdk12.0.1-win_x64\bin\javaw.exe
 ```
+
