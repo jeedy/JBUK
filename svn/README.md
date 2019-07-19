@@ -192,3 +192,83 @@ DELETE FROM WC_LOCK
 완료 후 변경사항을 저장하고 해당 LOCK이 걸린 곳에서 cleanup 해주고 작업을 하면 정상적으로 동작하는 것을 볼 수 있다.
 
 출처: https://piterjige.tistory.com/22 [뭐라도 해야 뭐가되지]
+
+
+### 4. 쉘(sh script) 셀 스크립트 배포시 주의사항
+
+참고 자료: [SVN에서 특정 파일에 실행권한 설정하기&줄바꿈 변환](https://blog.managr.us/entry/SVN%EC%97%90%EC%84%9C-%ED%8A%B9%EC%A0%95-%ED%8C%8C%EC%9D%BC%EC%97%90-%EC%8B%A4%ED%96%89%EA%B6%8C%ED%95%9C-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0)
+
+#### 1) 실행권한이 있는 상태로 배포가 되어야한다.
+svn에 파일을 올리고 linux에 배포하게 되면 기본적으로 읽기권한(644)만 부여된다. 
+하지만 shell script 파일 등과 같이 실행이 필요한 파일인 경우, 
+매번 배포한 script 파일에 chmod를 이용해 실행권한을 다시 부여해야하는 불편함이 있다. 
+이 경우 파일에 svn property를 설정하여 배포 시 실행권한이 있는 상태에서 배포가 되도록 만들어두면 편리하다.
+
+CLI: 
+```bash
+# 문법
+# svn propset <property-name> <property-value> <path>
+
+$ svn propset "svn:executable" "*" "archiveLogsWithCrypto.sh" 
+property 'svn:executable' set on 'extractLogsWithCrypto.sh'
+
+```
+
+Eclipse: 이클립스에서는 아래와 같은 방법으로 설정할 수 있다.
+
+1) 설정할 파일 우클릭 -> Team -> Set Property... 클릭
+
+    ![이클립스 설정법 step 1](./images/eclipse-setproperty-executable-1.png)
+
+2) Property name에는 "svn:executable"을 입력하고, Property content에는 "*"을 입력한다.
+
+    ![이클립스 설정법 step 2](./images/eclipse-setproperty-executable-2.png)
+
+
+
+#### 2) windows 식의 줄바꿈(CRLF)이 linux 방식 줄바꿈(LF)으로 바뀌였는지 확인해야한다. ([Windows, Linux 줄바꿈 차이](/OS/windows-to-linux-LFCR-차이.md))
+
+윈도우즈에서 작업한 파일을 svn에 저장하고 리눅스 시스템에 배포하고 실행시키면 아래와 같은 에러를 만나는 경우가 있다.
+
+에러 내용:
+```bash
+line 57: syntax error: unexpected end of file
+
+```
+
+이것은 검색해보면 문법 자체에 대한 것부터 다양한 문제들과 얽혀있다. 
+그 중 한 가지는 파일 포맷이 각 OS마다 달라서 발생하는 문제이다. 
+OS별로 파일의 각 라인 마지막에 newline을 의미하는 문자를 넣는 방식이 다르기 때문에 윈도우에서 생성한 쉘스크립트 파일을 
+리눅스에서 받아서 실행하면 위와 같은 에러가 발생하는 경우가 있다. 리눅스에서 vi로 간단히 확인해볼 수 있는데, 
+파일을 열 때 '-b' 옵션을 주고 실행하여 각 라인 마지막에 '^M'라는 문자열이 붙어 있다면 윈도우즈에서 사용하는 CR+LF이며, 
+별다른 문자가 없다면 unix에서 사용하는 LF방식의 newline으로 구성되어 있는 것이다. 
+또한 vi에서 다음 명령어로도 확인해볼 수 있다.
+
+```
+:set ff?
+```
+파일을 vi로 연 상태에서 위와 같은 명령어를 입력하면 'fileformat=unix' 혹은 'fileformat=dos'와 같은 문구를 확인할 수 있다.
+
+
+CRLF 방식으로 된 파일을 실행할 때 위와 같은 에러가 발생한다면, `svn:eol-style native`라는 옵션을 설정해서 
+svn 업데이트 시 각 운영체제에 맞는 파일포맷으로 배포되도록 할 수 있다.
+
+CLI:
+```bash
+# 문법
+# svn propset <property-name> <property-value> <path>
+
+$ svn propset "svn:eol-style" "native" "shutdown-tomcat.sh"
+property 'svn:eol-style' set on 'shutdown-tomcat.sh'
+```
+
+Eclipse: 이클립스에서는 아래와 같은 방법으로 설정할 수 있다.
+
+1) 설정할 파일 우클릭 -> Team -> Set Property... 클릭
+
+    ![이클립스 설정법 step 1](./images/eclipse-setproperty-executable-1.png)
+
+2) Property name에는 "svn:eol-style"을 입력하고, Property content에는 "native"을 입력한다.
+
+![이클립스 설정법 step 1](./images/eclipse-setproperty-eolstyle.png)
+
