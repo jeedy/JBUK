@@ -240,7 +240,7 @@ line 57: syntax error: unexpected end of file
 그 중 한 가지는 파일 포맷이 각 OS마다 달라서 발생하는 문제이다. 
 OS별로 파일의 각 라인 마지막에 newline을 의미하는 문자를 넣는 방식이 다르기 때문에 윈도우에서 생성한 쉘스크립트 파일을 
 리눅스에서 받아서 실행하면 위와 같은 에러가 발생하는 경우가 있다. 리눅스에서 vi로 간단히 확인해볼 수 있는데, 
-파일을 열 때 '-b' 옵션을 주고 실행하여 각 라인 마지막에 '^M'라는 문자열이 붙어 있다면 윈도우즈에서 사용하는 CR+LF이며, 
+파일을 열 때 `-b` 옵션을 주고 실행하여 각 라인 마지막에 `^M`라는 문자열이 붙어 있다면 윈도우즈에서 사용하는 CR+LF이며, 
 별다른 문자가 없다면 unix에서 사용하는 LF방식의 newline으로 구성되어 있는 것이다. 
 또한 vi에서 다음 명령어로도 확인해볼 수 있다.
 
@@ -270,5 +270,4 @@ Eclipse: 이클립스에서는 아래와 같은 방법으로 설정할 수 있�
 
 2) Property name에는 "svn:eol-style"을 입력하고, Property content에는 "native"을 입력한다.
 
-![이클립스 설정법 step 1](./images/eclipse-setproperty-eolstyle.png)
-
+    ![이클립스 설정법 step 1](./images/eclipse-setproperty-eolstyle.png)
