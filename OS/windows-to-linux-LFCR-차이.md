@@ -82,6 +82,10 @@ Unix/Linux의 /etc/passwd 파일을 FTP를 통해 윈도PC로 다운로드 받�
 바로 줄바꿈의 표기방법의 차이로 인한 것이다.
 
 *binary 모드로 windows에서 linux로 FTP 파일 복사:<br>*
+> vi 에디터로 open 할 경우 옵션 `-b`를 붙여줘야 아래 이미지와 같이 보인다.
+```bash
+$ vi -b /etc/passwd
+```
 ![FTP copy with binary mod windows to linux](./images/ftpcopy-binarymod-windowstolinux.jpg)
 
 윈도에서는 인식되어 줄바꿈 표시의 일부로 인식되던 `^M (캐리지리턴문자)`가 줄바꿈으로 인식되지 않고 화면에 표시되어 버린다.
