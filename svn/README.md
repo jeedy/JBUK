@@ -194,6 +194,8 @@ DELETE FROM WC_LOCK
 출처: https://piterjige.tistory.com/22 [뭐라도 해야 뭐가되지]
 
 
+
+
 ### 4. 쉘(sh script) 셀 스크립트 배포시 주의사항
 
 참고 자료: [SVN에서 특정 파일에 실행권한 설정하기&줄바꿈 변환](https://blog.managr.us/entry/SVN%EC%97%90%EC%84%9C-%ED%8A%B9%EC%A0%95-%ED%8C%8C%EC%9D%BC%EC%97%90-%EC%8B%A4%ED%96%89%EA%B6%8C%ED%95%9C-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0)
@@ -271,3 +273,30 @@ Eclipse: 이클립스에서는 아래와 같은 방법으로 설정할 수 있�
 2) Property name에는 "svn:eol-style"을 입력하고, Property content에는 "native"을 입력한다.
 
     ![이클립스 설정법 step 1](./images/eclipse-setproperty-eolstyle.png)
+
+
+
+### 5. Spring svn - merge 이후 commit 에러가 날 때(svn: Aborting commit: ... remains in conflict)
+출처: https://cmohgate.tistory.com/entry/Spring-svn-merge-이후-commit-에러가-날-때svn-Aborting-commit-remains-in-conflict [DevMoon's 살아가는 이야기]
+
+branch들을 merge 한 후 몇 개 파일에서 conflict가 발생했고, 
+파일 수정 후 commit 하려고 하니 다음과 같은 에러가 떴다.
+```
+svn: Commit failed (details follow):
+svn: Aborting commit: 'xxxx' remains in conflict
+```
+경고 메시지에 포함된 경로에 가면 ".working", ".rxx" 파일들이 존재하는데 이 파일들을 삭제해주니 잘 된다.
+
+- 좀 더 근본적으로 -
+
+두 개의 branch를 merge 한 후 conflict가 발생하면 스프링 오른쪽 하단에 Merge Result view가 생긴다.
+여기서 `show conflicts only` button을 누르면 conflict 나는 파일을 확인할 수 있다.
+파일을 열어서 변경 내용을 확인한 후 닫으면 conflict 해결 여부를 묻는 창이 뜨는데 거기서 적절히 선택해주면 된다.
+
+![Resolve conflict](./images/eclipse-resolve-conflict-dialog.png)
+
+예를 들어, 덮어쓰려는 파일말고 원래 있던 파일을 계속 유지하고 싶으면 이에 해당하는 옵션(`Resolve the conflict by using my version of the file.`)
+을 선택하면 된다. 그럼 알아서 conflict로 인해 생성된 파일들을 삭제 해준다.
+
+처음에는 이걸 모르고 왼쪽 소스트리에 'x' 표시된 파일을 열어 conflict 흔적(>>>> working .. 따위)을 지우다보니, 
+conflict로 인해 생성된 파일이 그대로 남아있던 것이었다.
