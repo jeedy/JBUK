@@ -19,6 +19,18 @@ eclipse > window > preferences > Team > SVN :
 
 ![설정화면](./images/sts4-preferences-svn.PNG)
 
+
+### SVN 단축키가 먹지 않을때
+SVN 작업시 아래 단축키들을 자주 사용하는데 keys 셋팅을 해도 먹통인 경우가 있다. 
+```
+Ctrl + alt + C, Ctrl + alt + U, Ctrl + alt + U
+```
+
+이럴경우, `window > perspective > Customize perspective` 메뉴를 들어가서 `Action Set Availability` 탭에 들어가서
+`SVN` 항목을 체크 하도록 한다. 그리고 저장(Apply and close) 버튼을 누르고 단축키를 테스트 해보자  
+
+![svn 메뉴 활성화](./images/sts4-svn-keys-customize-perspective.PNG)
+
 ## Maven 설정
 
 `window > preferences > Maven > user settings` Global Settings에 Maven settings.xml 위치 등록하자
