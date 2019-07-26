@@ -10,10 +10,10 @@ Collections, sort,  Comparator, inner class,
 
 ```java
 Collections.sort(reserveList, new Comparator<ReserveVO>() {
-                @Override
-                public int compare(ReserveVO o1, ReserveVO o2) {
-                    //
-                    return o1.getId() - o2.getId();
-                }
-            });
+    @Override
+    public int compare(ReserveVO o1, ReserveVO o2) {
+        //
+        return o1.getId() - o2.getId();
+    }
+});
 ```

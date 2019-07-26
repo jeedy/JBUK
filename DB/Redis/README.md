@@ -1,35 +1,9 @@
 # Redis
 
-## 설치방법
+## 목차
 
-1. docker를 통한 설치 (추천)
-
-    - [Docker 설치](https://docs.docker.com/install/)
-    - Redis 3.2 서버 이미지 다운로드 후 Run
-    ```bash
-    $ docker run -d -name dispatch-redis -p 6379:6379 redis:3.2
-    b85e3cb2ddc....(docker_container_id)
-    $ docker exec dispatch-redis redis-cli ping
-    pong
-    ```
-
-1. 직접 Local에 설치(비추)
-    ```bash
-    $ wget http://download.redis.io/releases/redis-3.2.11.tar.gz
-    $ tar xzf redis-3.2.11.tar.gz
-    $ cd redis-3.2.11
-    $ cd deps
-    $ sudo make hiredis lua jemalloc linenoise
-    $ cd ..
-    $ sudo make
-    ```
-## 실행
-    ```bash
-    $ ./redis-server
-    $ ps aux | grep redis-server
-    ```
-
-## Redis Client (redisdesktop for mac)
-```bash
-$ brew cask install rdm
-```
+1. [레디스 설치방법](./redis-server-install.md)
+2. [레디스 GUI 클라이언트 프로그램 설치](./Redis-client-install.md)
+3. [레디스 replication 구성 방법](./redis-replication-setting.md)
+4. [레디스 클러스터링 구성 방법(미완)](./redis-cluster-setting.md)
+5. [레디스 백업 및 성능 퍼포먼스 셋팅](./Redis-backup-performance-setting.md)
