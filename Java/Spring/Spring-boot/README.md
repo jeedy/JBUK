@@ -49,3 +49,49 @@
         return "index";
      }
     ```
+    
+3. get method 방식으로 @PathVariable 값에 '.' 이 들어갈 경우 Error 406 에러와 서버에 "org.springframework.web.HttpMediaTypeNotAcceptableException: Could not find acceptable representation"와 같은 에러가 발생할 경우
+
+WebMvcConfiguration 셋팅하는 소스에서 `configurer.favorPathExtension(false);` 값을 셋팅한다.
+참고 URL
+- https://stackoverflow.com/questions/22329393/springmvc-inconsistent-mapping-behavior-depending-on-url-extension
+- https://stackoverflow.com/questions/23578742/spring-does-not-ignore-file-extension
+```java
+@Configuration
+public class WebMvcConfig extends WebMvcConfigurationSupport {
+    @Override
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        return new ApiVersionRequestMappingHandlerMapping("api/v");
+    }
+    
+    @Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry
+        .addResourceHandler("swagger-ui.html")
+        .addResourceLocations("classpath:/META-INF/resources/");
+        
+        registry
+        .addResourceHandler("/webjars/**")
+        .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        
+        super.addResourceHandlers(registry);
+    }
+    
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setPrefix("/WEB-INF/jsp/");
+        resolver.setSuffix(".jsp");
+        resolver.setViewClass(JstlView.class);
+        registry.viewResolver(resolver);
+    }
+
+    /**
+     * /api/v1/privia/memberinfo/hisnext@naver.com 과 같은 '.' 이 들어간 @PathVariable 값을 받기 위해선 아래 셋팅이 필요하다. 
+     */
+    @Override
+    protected void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.favorPathExtension(false);
+    }
+}
+```
