@@ -95,3 +95,31 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     }
 }
 ```
+
+4. @Autowired private Environment environment; 값이 null 로 나올경우
+POJO(DTO, VO) 에서 properties 값을 쓰려고 하는 경우 Spring 에 life-cycle 로 인해 `environment` 객체를 못가져 오는 경우가 있다.
+이럴 경우를 대비해 DefaultListableBeanFactory - Creating shared instance of singleton bean 'propertiesUtil' 를 미리 올려놓고 사용하자.
+
+`EnvironmentAware` 인터페이스를 구현해 놓으면 beanFactory에 올라갈때 자동으로 실행되어 Environment 객체를 주입시켜놓는다. 
+```java
+package com.priviatravel.api.common.utils;
+
+import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+
+@Configuration
+public class PropertiesUtil implements EnvironmentAware {
+
+    private static Environment environment;
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        PropertiesUtil.environment = environment;
+    }
+
+    public static String get(String propertyName) {
+        return environment.getProperty(propertyName);
+    }
+}
+```
