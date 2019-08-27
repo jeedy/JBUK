@@ -125,14 +125,13 @@ max number of threads [1024] for user [space_home] likely too low, increase to a
     - 방법
         - 작업 전 확인 : `$ ulimit -a`
         - limits.conf 편집: 
-        ```bash
-        $ sudo vim /etc/security/limits.conf
         
         /etc/security/limits.conf:
-        
+        ```bash
+        $ sudo vim /etc/security/limits.conf
+
         *        hard    nofile           65536
         *        soft    nofile           65536
-        
         ```
         - 재접속 후 확인 : `$ ulimit -a`
 
@@ -147,11 +146,11 @@ max number of threads [1024] for user [space_home] likely too low, increase to a
         
         - 영구적(재접속 후에도 효과 지속)
             - sysctl.conf 편집 :
+
+            /etc/sysctl.conf:
             ```bash
             $ sudo vim /etc/sysctl.conf
-            
-            /etc/sysctl.conf:
-            
+
             vm.max_map_count=262144
             ...
             
