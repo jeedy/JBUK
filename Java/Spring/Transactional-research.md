@@ -599,7 +599,7 @@ Transaction context를 관리하는 중간 클래스 추가:
  10         this.invoker = invoker; 
  11     }     
  12  
- 13     @Transactional(propagation = Propagation.REQUIRED)     
+ 13     @Transactional(propagation = Propagation.REQUIRED)
  14     public void invoke(){ 
  15         this.invoker.insert1(); 
  16         this.invoker.insert2(); 
@@ -608,7 +608,7 @@ Transaction context를 관리하는 중간 클래스 추가:
  19 
 ```
 ~~기존 클래스에 Gateway method를 추가하지 않고 새로운 클래스를 생성한 이유는 Spring Transaction 이 Proxy 로 동작하기 때문에 외부에서 호출하는 경우에만 @Transactional 이 동작하기 때문이다.~~ 
-(주: 기존 클래스에 Gateway method 를 추가해서 호출해도 된다. 테스트해봄)
+(주: 기존 클래스에 Gateway method 를 추가해서 호출해도 된다. 테스트완료, 외부에 호출될 메소드는 @transactional을 붙여줘야 한다.)
 
 
 호출하는 Bean 수정:
@@ -642,8 +642,10 @@ DEBUG: org.springframework.jdbc.datasource.DataSourceUtils - Returning JDBC Conn
 
 여기서 알 수 있는 점은 다음과 같다.
 
-Propagation 정책은 transaction 이 선언된 method 내에서 transaction이 선언된 다른 method를 호출할  때 적용된다.
-(주: @tansactional을 선언하지 않은 method는 기본 @transactional(propagation = Propagation.REQUIRED) 로 선언된다.) 
+Propagation 정책은 transaction 이 선언된 method 내에서 transaction이 선언된 다른 method를 호출할 때 적용된다.
+(주: 기본 @transactional(propagation = Propagation.REQUIRED) 로 선언된다. Aservice.insert() 에서 Bservice.get() 를 
+     호출하려면 Bservice.get() 에 명시적으로 `@transactional(propagation = Propagation.REQUIRED_NEW)`로 선언되어있지
+     않으면(또는 @Transactional를 선언하지 않았다면) 기본값(Propagation.REQUIRED)으로 동작하는 것으로 보인다.) 
 
 여기서 insert2()의 정책을 REQUIRES_NEW 로 변경 하면 다음과 같이 실행 된다.
 ```
