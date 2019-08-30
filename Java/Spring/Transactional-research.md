@@ -672,11 +672,223 @@ DEBUG: org.springframework.jdbc.datasource.DataSourceTransactionManager - Commit
 대부분의 경우에는 REQUIRED로 충분하나 간혹 REQUIRES_NEW를 통해 새로운 Transaction 을 생성하고자 하는 경우에는 위와 같이 동작함을 이해해야 한다.
 
 
+## 5. 다중 Datasource 처리 (multi Transaction)
+위에서 하나의 Connection에서(하나의 Database) 안에서 Transaction을 처리하는 로직에 대한 설명을 했다.
+그러나 실운영에선 한개의 database를 사용하는 경우는 거의 없다고 봐야한다. 다수의 database를 이용하거나 또는 
+서로 다른 Database들을 이용해 비즈니스 로직이 들어가기 때문에 single Transaction은 거의 사용할 일이 없다고 생각한다.
+
+
+### 그렇다면 Multi Transaction은 어떻게 진행되어야 할까? 
+couponServiceImpl: 
+```java
+  0 @Transactional
+  1 public void downloadCoupon() throws Exception{ 
+  2         int result1 = userMapper.update();
+  3         int result2 = couponMapper.insert();
+  4         if(result1+result2 == 2){
+  5             throw new RuntimeException();
+  6         }
+  7 }
+```
+우리가 기대하는 결과는 result1=1, result2=1 이 되어 result1+result2=2가 되는 결과로 throw new RuntimeException()을 일으키고,
+`2라인`, `3라인` 가 rollback이 되는 결과를 예상할 것이다. 
+하지만 위 셋팅에서 그대로 테스트를 진행했다면 2라인, 3라인 중에 둘중에 하나만 rollback을 진행할 것이다. 
+
+왜 둘중 하나만? 그리고 하나는 왜 rollback이 진행될까? 
+이는 위에서 설명한 Spring에서 제공하는 @Transactional 에 대한 이해가 필요하다.
+
+0라인에 선언된 `@Transactional`은 기본적으로 생략된 속성 값이 있다. `transactionManager` 이 값이 생략되어있고 이 값은
+`@primary` 로 선언된 "transactionManager" Bean이 자동으로 들어간다.
+
+즉, userMapper, couponMapper 이 사용하는 Datasource config 설정하는 파일중에 `@primary` 로 선언된 `transactionManager` bean이 
+자동으로 들어간다.(그렇기 때문에 Spring-boot에서 다중 DataSouce config 셋팅할때 어느 한쪽에 반드시 `@primary` 값을 설정하라고 메시지가 나온다.)
+
+### 적용방법
+참고 : 
+- https://supawer0728.github.io/2018/03/22/spring-multi-transaction/#comment-4596136323 (매우 잘 설명되어있다.)
+
+다중 Transaction 처리 하는 방법에는 두가지 정도의 방법이 있다.
+- spring-data-commons의 `ChainedTransactionManager` 이용
+- `JtaTransactionManager` 이용 (체택)
+
+이중 `JtaTransactionManager` 로 구현해보았고 매우 잘 처리되고 표준으로 제공되는 라이브러리이니 이것을 구현하는 방법을 설명한다.
+
+### JtaTransactionManager
+JTA(Java Transaction Api)는 자바 표준으로써, 분산 transaction을 가능하게 해준다. 매우 간단하게 설명하자면, JTA를 지원하는 자원을 가리키는 XA Resource 인터페이스의 구현체들을 등록하면, 해당 구현체들에 대해서 전역 transaction을 지원해준다. 때문에 어떤 자원이든 transaction을 지원할 수 있도록 정의한 셈인데, DataSource, JMS 외에는 쓰고 있는 곳이 없는 것 같다.
+
+Java EE Application Server에서는 전역 tranction을 지원하기 위해서, JTA를 사용하기도 한다. Spring에서는 JNDI에서 Java EE Container가 사용 중인 DataSource를 가져와, JtaTransactionManager에 설정할 수도 있다.
+
+#### 1. 의존성 추가
+`atomikos` 모듈을 사용한다.  JTA 인터페이스를 구현한 오픈소스에는 다음과 같은 프로젝트가 있다.
+- Atomikos
+- Bitronix
+- Narayana
+
+pom.xml:
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jta-atomikos</artifactId>
+</dependency>
+``` 
+또는 grandle
+```groovy
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-jta-atomikos')
+}
+```
+
+#### 2. DataSource Config 설정
+
+DatabaseConfigCommon:
+```java
+package com.api.config;
+
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import oracle.jdbc.xa.client.OracleXADataSource;
+
+@Configuration
+@MapperScan(basePackages = { "com.api.mapper.common" }, sqlSessionFactoryRef = "commonSqlSessionFactory")
+public class DatabaseConfigCommon {
+    @Autowired
+    private Environment environment;
+
+    @Bean(destroyMethod = "close")
+    public DataSource commonDataSource() {
+        /**
+         * 분상처리를 위한 Datasource 셋팅
+         */
+        AtomikosDataSourceBean dataSource = new AtomikosDataSourceBean();
+        //XA 처리를 위한 MySQL 드라이버 변경: AtomikosDataSourceBean은 XADataSource 인터페이스를 참조하고 있다.
+        //System.out.println("OracleXADataSource.class.getCanonicalName() = "+OracleXADataSource.class.getCanonicalName());
+        dataSource.setXaDataSourceClassName(environment.getRequiredProperty("COMMON.driverClassName"));
+        //XA 리소스를 식별할 고유 이름을 지정한다. 각 데이터소스별 고유한 값을 지정해도 되고 url이 각각 다르다면 식별 가능한 url로 지정해도 무방하다.
+        dataSource.setUniqueResourceName("commonDataSource");
+        dataSource.setMaxPoolSize(environment.getRequiredProperty("COMMON.maxActive", Integer.class));
+        dataSource.setMinPoolSize(environment.getRequiredProperty("COMMON.minIdle", Integer.class));
+        
+        Properties xaProperties = new Properties();
+        xaProperties.setProperty("user", environment.getRequiredProperty("COMMON.username"));
+        xaProperties.setProperty("password", environment.getRequiredProperty("COMMON.password"));
+        xaProperties.setProperty("URL", environment.getRequiredProperty("COMMON.url"));
+        dataSource.setXaProperties(xaProperties);
+        return dataSource;
+    }
+
+    @Bean
+    public SqlSessionFactory commonSqlSessionFactory(@Qualifier("commonDataSource") DataSource dataSource) throws Exception {
+        final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource);
+        
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        sessionFactory.setMapperLocations(resolver.getResources("classpath:mapper/common/**/*-query.xml"));
+        sessionFactory.setTypeAliasesPackage("com.api");
+        return sessionFactory.getObject();
+    }
+
+    @Bean
+    public SqlSessionTemplate commonSqlSessionTemplate(@Qualifier("commonSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws Exception {
+        final SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(sqlSessionFactory);
+        return sqlSessionTemplate;
+    }
+}
+```
+
+DatabaseConfigTravel:
+```java
+package com.api.config;
+
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import oracle.jdbc.xa.client.OracleXADataSource;
+
+@Configuration
+@MapperScan(basePackages = { "com.api.mapper.travel" }, sqlSessionFactoryRef = "travelSqlSessionFactory")
+public class DatabaseConfigTravel {
+    @Autowired
+    private Environment environment;
+
+    @Bean(destroyMethod = "close")
+    public DataSource travelDataSource() {
+        /**
+         * 분산처리를 위한 Datasource 셋팅
+         */
+        AtomikosDataSourceBean dataSource = new AtomikosDataSourceBean();
+        //XA 처리를 위한 MySQL 드라이버 변경: AtomikosDataSourceBean은 XADataSource 인터페이스를 참조하고 있다.
+        dataSource.setXaDataSourceClassName(environment.getRequiredProperty("TRAVEL.driverClassName"));
+        //XA 리소스를 식별할 고유 이름을 지정한다. 각 데이터소스별 고유한 값을 지정해도 되고 url이 각각 다르다면 식별 가능한 url로 지정해도 무방하다.
+        dataSource.setUniqueResourceName("travelDataSource");
+        dataSource.setMaxPoolSize(environment.getRequiredProperty("TRAVEL.maxActive", Integer.class));
+        dataSource.setMinPoolSize(environment.getRequiredProperty("TRAVEL.minIdle", Integer.class));
+        
+        Properties xaProperties = new Properties();
+        xaProperties.setProperty("user", environment.getRequiredProperty("TRAVEL.username"));
+        xaProperties.setProperty("password", environment.getRequiredProperty("TRAVEL.password"));
+        xaProperties.setProperty("URL", environment.getRequiredProperty("TRAVEL.url"));
+        dataSource.setXaProperties(xaProperties);
+        return dataSource;
+    }
+
+    @Bean
+    public SqlSessionFactory travelSqlSessionFactory(@Qualifier("travelDataSource") DataSource dataSource) throws Exception {
+        final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource);
+
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        sessionFactory.setMapperLocations(resolver.getResources("classpath:mapper/travel/**/*-query.xml"));
+        sessionFactory.setTypeAliasesPackage("com.api");
+        return sessionFactory.getObject();
+    }
+
+    @Bean
+    public SqlSessionTemplate travelSqlSessionTemplate(@Qualifier("travelSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws Exception {
+        final SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(sqlSessionFactory);
+        return sqlSessionTemplate;
+    }
+
+}
+```
+`transactionManager` 만들지 않았다는것이 중요하다. 만약 `TransactionManager`를 구현해놨었다면,
+정상적으로 올라가지 않을 뿐더러 올라가더라도 다중 Transaction을 기대할 수 없다. 
+
+
+
 ## :bomb: troubleshooting
 ### 1. Srping-boot Transactional is not working
 **3가지만 명심하자**
-- Datasource 생성시 setAutocommit(false) 로 설정
 - Transaction 할 method 에 @transactional 달아주자 (service 또는 serviceImpl 둘중에 아무대나 걸어도 되는데 보기 쉽게 impl에 걸자)
+- **다수의 Datasource 을 셋팅(다수 TrasactionManager 를 셋팅)한 경우 @transactional(transactionManager = "travelTransactionManager") `transactionManager`은 꼭 명시하자**
+    - 직 경험담을 얘기 하자면 명시안할 경우 @primary 로 선언된 connection을 setAutoCommit하고 rollback 처리한다. 
+    만약 다른 connection에서 update를 진행하는 거라면 rollback이 정상적으로 되지 않는다.   
 - @transactional은 외부에서 호출할 경우에만 걸린다. 내부에서 호출할 경우엔 안먹는다. 
     - 무슨얘기냐 Acontroller 에서 Bservice.doInsert() 호출 할 경우, spring은 내부적으로 AOP 를 이용해
       Acontroller -> AOP transaction -> Bservice.doInsert()를 호출한다.
@@ -688,3 +900,7 @@ DEBUG: org.springframework.jdbc.datasource.DataSourceTransactionManager - Commit
 - http://blog.naver.com/tkstone/50192718268 (Spring Transaction 사용법)
 - http://blog.naver.com/tkstone/50193135886 (Spring Transaction 내부 동작 메커니즘)
 - http://blog.naver.com/tkstone/50192724315 (TransactionTemplate 을 이용한 Spring Transaction 사용)
+
+### 2. 분산 데이터베이스 환경 Datasource 간에 Transaction 해결하기
+참고:
+- https://supawer0728.github.io/2018/03/22/spring-multi-transaction/ (ChainedTransactionManager, JTA 예제)
