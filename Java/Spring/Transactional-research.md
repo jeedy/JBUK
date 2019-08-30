@@ -768,7 +768,7 @@ public class DatabaseConfigCommon {
     @Autowired
     private Environment environment;
 
-    @Bean(destroyMethod = "close")
+    @Bean
     public DataSource commonDataSource() {
         /**
          * 분상처리를 위한 Datasource 셋팅
@@ -837,7 +837,7 @@ public class DatabaseConfigTravel {
     @Autowired
     private Environment environment;
 
-    @Bean(destroyMethod = "close")
+    @Bean
     public DataSource travelDataSource() {
         /**
          * 분산처리를 위한 Datasource 셋팅
