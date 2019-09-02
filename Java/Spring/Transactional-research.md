@@ -1,5 +1,6 @@
 # 스프링 transactional에 대한 고찰
-tag: spring, spring-boot, transaction, transactional, annotation, autocommit, datasource, oracle, jdbc, 
+tag: spring, spring-boot, transaction, transactional, annotation, autocommit, datasource, oracle, jdbc,
+ JTA, jtaTransactionManager, atomikos
 
 ## 1. Spring Transaction 사용법
 참고: 
