@@ -673,7 +673,7 @@ DEBUG: org.springframework.jdbc.datasource.DataSourceTransactionManager - Commit
 대부분의 경우에는 REQUIRED로 충분하나 간혹 REQUIRES_NEW를 통해 새로운 Transaction 을 생성하고자 하는 경우에는 위와 같이 동작함을 이해해야 한다.
 
 
-## 5. 다중 Datasource 처리 (multi Transaction)
+## 5. 분산 트랜젝션 처리 (multi Transaction)
 위에서 하나의 Connection에서(하나의 Database) 안에서 Transaction을 처리하는 로직에 대한 설명을 했다.
 그러나 실운영에선 한개의 database를 사용하는 경우는 거의 없다고 봐야한다. 다수의 database를 이용하거나 또는 
 서로 다른 Database들을 이용해 비즈니스 로직이 들어가기 때문에 single Transaction은 거의 사용할 일이 없다고 생각한다.
