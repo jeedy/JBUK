@@ -54,6 +54,7 @@ CouponMapper.xml:
 ```
 
 ### 2. &lt;if&gt;, &lt;when&gt; 조건 식에서 '*' 값을 비교하는 방법
+참고 : http://rconglove.com/wordpress/?p=85
 `.toString()` 을 붙여줘 String 객체로 만들어서 비교해야한다. 그렇지 않으면 `NumberFormatException`을 일으킨다.(왜 NumberFormatException을 발생시키는지는 디버깅 안 해봐 모름)  
 ```xml
 <if test="code eq '*'.toString()">
