@@ -1,6 +1,7 @@
 # 마이바티스
 
 ## :bomb: troubleshooting
+
 ### 1. parameterType에 들어갈 VO class에 inner class를 선언해서 사용하는 경우 `static`으로 반드시 선언해야한다.
 
 일반 inner class로 선언해서 사용하는 경우:  
@@ -51,3 +52,10 @@ CouponMapper.xml:
  ... 
  <select>
 ```
+
+### 2. &lt;if&gt;, &lt;when&gt; 조건 식에서 '*' 값을 비교하는 방법
+`.toString()` 을 붙여줘 String 객체로 만들어서 비교해야한다. 그렇지 않으면 `NumberFormatException`을 일으킨다.(왜 NumberFormatException을 발생시키는지는 디버깅 안 해봐 모름)  
+```xml
+<if test="code eq '*'.toString()">
+```
+ 
