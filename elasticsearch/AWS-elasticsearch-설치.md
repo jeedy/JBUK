@@ -99,6 +99,48 @@ $ ./bin/elasticsearch
 
 ```
 
+## 5. Kibana 설치
+```bash
+$ cd /usr/local
+
+$ sudo wget https://artifacts.elastic.co/downloads/kibana/kibana-7.3.1-linux-x86_64.tar.gz
+...
+
+$ sudo tar -xvzf kibana-7.3.1-linux-x86_64.tar.gz
+...
+
+$ sudo chown -R ec2-user:ec2-user kibana-7.3.1-linux-x86_64
+...
+
+$ cd kibana-7.3.1-linux-x86_64
+
+```
+
+## 6. Kibana 설정
+
+config/kibana.yml:
+```bash
+# Kibana is served by a back end server. This setting specifies the port to use.
+#server.port: 5601
+
+# Specifies the address to which the Kibana server will bind. IP addresses and host names are both valid values.
+# The default is 'localhost', which usually means remote machines will not be able to connect.
+# To allow connections from remote users, set this parameter to a non-loopback address.
+# 퍼블릭 DNS(IPv4) 로 설정 퍼플릭 IP는 안됨. 
+server.host: "ec2-54-180-93-64.ap-northeast-2.compute.amazonaws.com"
+
+...
+
+# The URLs of the Elasticsearch instances to use for all your queries.
+# 엘라스틱 호스트 주소들나열
+elasticsearch.hosts: ["http://54.180.93.64:9200"]
+
+...
+
+```
+
+
+
 ## :bomb: troubleshooting
 ### 1. Elasticsearch 설치 후 production mode로 실행시 bootstrap checks failed 에러 해결
 
