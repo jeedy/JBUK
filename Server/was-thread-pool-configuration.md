@@ -7,7 +7,7 @@
  
 ## 참고자료
 - https://waspro.tistory.com/355 (Jboss) -> [삭제되면 여기](./Jboss/jboss-threadpool-configuration.md)
-- https://12bme.tistory.com/458 (Tomcat) 
+- https://12bme.tistory.com/458 (Tomcat) -> [삭제되면 여기](./tomcat/tomcat-connector-configuration.md#maxthreads-minsparethreads)
 
 
 ## 먼저 Thread Pool은 왜 사용해야할까요? 
