@@ -6,8 +6,8 @@
 결론은 WAS의 Thread(`maxThread`)는 Connection Pool(`maxActive`)의 갯수보다 여유있게 설정하는 것이 좋다.
  
 ## 참고자료
-- https://waspro.tistory.com/355 (Jboss)
-- https://12bme.tistory.com/458 (Tomcat)
+- https://waspro.tistory.com/355 (Jboss) -> [삭제되면 여기](./Jboss/jboss-threadpool-configuration.md)
+- https://12bme.tistory.com/458 (Tomcat) 
 
 
 ## 먼저 Thread Pool은 왜 사용해야할까요? 
