@@ -1,4 +1,4 @@
-# AWS 에서 Nifi를 이용해 redshift에 데이터 적제방법 (feat. kinesis firehose)
+# AWS 에서 Nifi를 이용해 redshift에 데이터 적제방법 리서치(feat. kinesis firehose)
 nifi 설치 및 실행방법은 [nifi 설치](/infi/instrall-nifi.md) 페이지를 참고한다.
 
 ## 참고
@@ -13,18 +13,18 @@ AWS Kinesis firehose,AWS S3,AWS IAM 그리고 SQLWorkbench 까지 전부 경험�
 
 ## 순서 
 1. [테스트용 csv file(GenerateFlowFile) Process 생성](#1-테스트용-csv-filegenerateflowfile-process-생성) 
-2. PutKineisisFirehose Process 생성
+2. [PutKineisisFirehose Process 생성](#2-putkineisisfirehose-process-생성)
     - SQLWorkbench 설치
-3. GenerateFlowFile -> success -> PutKineisisFirehose 연결
-4. LogAttribute Process 생성
-5. PutKineisisFirehose -> success -> LogAttribute, PutKineisisFirehose -> fail -> LogAttribute 연결
-6. 시작
+3. [GenerateFlowFile -> success -> PutKineisisFirehose 연결](#3-generateflowfile---success---putkineisisfirehose-연결)
+4. [LogAttribute Process 생성](4-logattribute-process-생성)
+5. [PutKineisisFirehose -> success -> LogAttribute, PutKineisisFirehose -> fail -> LogAttribute 연결](#5-putkineisisfirehose---success---logattribute-putkineisisfirehose---fail---logattribute-연결)
+6. [시작 및 결과물 확인](#6-시작-및-결과물-확인)
 
 큰 그림으로 보자면 위 순서로 진행된다. 이중에 핵심은 `2. PutKineisisFirehose Process 생성` 이다.
 
 ## 1. 테스트용 csv File(GenerateFlowFile) Process 생성
 1. GenerateFlowFile Process 추가
-2. `properties` 탭에서 `Custom Text` 속성 값에 csv형태의 텍스트(AO, 12, M) 로 입력.
+2. `properties` 탭에서 `Custom Text` 속성 값에 csv형태의 텍스트(AO, 12, M) 로 입력 후 `\n`(엔터) 를 꼭 넣어주자
 3. `scheduling` 탭에서 `Run Schedule` 속성 값을 `1 sec`로 데이터가 많이 쌓이지 않도록 적절하게 셋팅하자 
 
 
@@ -59,7 +59,7 @@ Redshift에 data 들어가는거 편하게 확인하려면 설치, 설치 주소
 ## 5. PutKineisisFirehose -> success -> LogAttribute, PutKineisisFirehose -> fail -> LogAttribute 연결
 
 
-## 6. 시작
+## 6. 시작 및 결과물 확인 
 
 
 
