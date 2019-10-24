@@ -89,7 +89,7 @@ redis new-redis-ip:6379> slaveof no one
 - https://github.com/junegunn/redis-stat
 - http://redisgate.kr/redis/server/info.php (각 컬럼들 한글 설명 )
 
-컬럼들 맵핑
+### redis-stat 컬럼 맵핑 
 ```
   LABELS = {
     :at                                  => 'time',
