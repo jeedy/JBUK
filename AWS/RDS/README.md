@@ -2,8 +2,8 @@
 
 
 ## 목차
-1. [Amazon RDS Aurora 생성 방법](.\aws-create-aurora-mysql-db.md)
-1. [Aamzon RDS 리소스 암호화](.\aws-rds-resouces-encryption.md)
+1. [Amazon RDS Aurora 생성 방법](./aws-create-aurora-mysql-db.md)
+1. [Aamzon RDS 리소스 암호화](./aws-rds-resouces-encryption.md)
 
 
 
@@ -16,11 +16,11 @@ DB를 생성하면 "파라미터 그룹(PARAMETER GROUPS)" 페이지에 두개�
 
 1. 파라미터 그룹 > DB 클러스터 파라미터 그룹 > 파라미터 그룹 생성
 
-![파라미터 그룹 생성](.\images\aws-rds-parametergroup.png)
+![파라미터 그룹 생성](./images/aws-rds-parametergroup.png)
 
 2. "유형" > DB Cluster Parameter Group 선택
 
-![유형 선택](.\images\aws-rds-parametergroup-creating.png)
+![유형 선택](./images/aws-rds-parametergroup-creating.png)
 
 
 3. 생성된 파라미터 그룹 편집
