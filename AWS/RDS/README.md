@@ -45,5 +45,8 @@ DB를 생성하면 "파라미터 그룹(PARAMETER GROUPS)" 페이지에 두개�
 
 6. 저장 (save changes)
 7. 데이터베이스 메뉴 > instance 선택 > 수정
-8. 
+8. RDS 설정 화면에서 DB parameter group 설정을 추가한 parameter group으로 변경
+9. Modify DB Instance 버튼으로 설정 변경 완료
+10. RDS 리부트
+11.  'show variables like 'c%';' 쿼리로 변경 확인
 
