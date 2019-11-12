@@ -285,3 +285,11 @@ public class RedisExampleServiceImpl {
     }
 }
 ```
+
+## :bomb: troubleshooting
+
+### 1. 심각: Exception sending context initialized event to listener instance of class org.springframework.web.context.ContextLoaderListener
+java.lang.AbstractMethodError: org.slf4j.impl.Log4jLoggerAdapter.log(Lorg/slf4j/Marker;Ljava/lang/String;ILjava/lang/String;[Ljava/lang/Object;Ljava/lang/Throwable;)V
+
+log4j 와 slf4j 버전이 맞지 않아서 발생하는 오류이다. 구글일을 통해 저 오류에 적합한 버전을 찾아서 maven 설정하자.
+
