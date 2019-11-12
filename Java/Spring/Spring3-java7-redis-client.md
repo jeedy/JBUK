@@ -39,14 +39,21 @@ In terms of key-value stores, Redis 2.6.x or higher is required. Spring Data Red
 
 
 ## 구현
-현재 (*Spring 3.1, Java 1.7) 버전에서 구현 가능한 현실적인 버전,
+현재 (*Spring 3.1, Java 1.7) 버전에서 구현 가능한 현실적인 버전을 살펴보자
 
 > lettuce는 Java 7(jdk 1.7)를 지원하지 않기 때문에 Jedis를 이용하기로 한다.
+
+1. Jedis client만 이용한 버전
+2. Sprig-data-redis 를 이용한 버전
+
+
+### 사전 프로퍼티 셋팅
+
+Redis 서버가 같이 구성이 되었다는 전제로 시작한다.
 
 classpath:property/db.properties:
 ```properties
 ...
-
 # REDIS
 MASTER.NAME=mymaster
 REDIS.NODES="172.16.0.207:5000,172.16.0.207:5001,172.16.0.207:5002"
@@ -57,7 +64,7 @@ SENTINEL.PASSWORD=redis1234
 
 
 ### 1. Jedis client만 이용한 버전
-가장 현실적인 버전이다. 최신버전(Jedis 3.1)까지도 올라가는 것으로 확인했고, 그래서 sentinal까지 지원하기 때문에 이렇게 이용하는 것이 적합하다.
+최종 가장 현실적인 버전이다. Spring 3.1 with java 7 버전에서 최신버전(Jedis 3.1)까지도 올라가는 것으로 확인했고, 그래서 sentinal까지 지원하기 때문에 이렇게 이용하는 것이 적합하다.
 
 #### Maven 셋팅
 pom.xml:
@@ -119,10 +126,40 @@ public class RedisConfig {
 ```
 
 #### 비지니스 로직 구현
-
-GateServiceImpl.java
+RedisExampleServiceImpl.java
 ```java
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.util.Pool;
+
+@Service("redisExampleService")
+public class RedisExampleServiceImpl {
+
+    @Autowired
+    private Pool<Jedis> jedisPool;
+    
+    @Override
+    public String getTest() {
+        //
+        String key ="";
+        System.out.println(jedisPool);
+        try(Jedis jedis = jedisPool.getResource()){
+            jedis.set("search:test", "1111");
+            System.out.println(jedis.get("search:test"));
+            String value = jedis.get("search:test")
+            List<String> list = jedis.lrange("search:lise:L2AnsVwO3YN7v234PFiO6NDfY", 0, -1);
+            for(String s : list) {
+                System.out.println(s);
+            }
+        }
+        
+        return value;
+    }
+}
 ```
 
 
@@ -210,14 +247,12 @@ public class RedisConfig {
        
        return redisTemplate;
     }
-    
-  
 }
 ```
 
 #### 비지니스 구현
 
-GateServiceImpl.java:
+RedisExampleServiceImpl.java:
 ```java
 import java.util.List;
 
@@ -227,25 +262,25 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.util.Pool;
 
-@Service("gateService")
-public class GateServiceImpl {
+@Service("redisExampleService")
+public class RedisExampleServiceImpl {
 
-   @Autowired
-   private RedisTemplate redisTemplate;
-   
-   @Override
-   public String getUrl(String uid) {
-       //
-       String key ="";
-       System.out.println(redisTemplate);
-       redisTemplate.opsForValue().set("search:test", "1111");
-       System.out.println(redisTemplate.opsForValue().get("search:test"));
-
-       List<String> list = redisTemplate.opsForList().range("search:list:L2AnsVwO3YN7v234PFiO6NDfY", 0, -1);
-       for(String s : list) {
-           System.out.println(s);
-       }
-       return null;
-   }
+    @Autowired
+    private RedisTemplate redisTemplate;
+    
+    @Override
+    public String getTest() {
+        //
+        String key ="";
+        System.out.println(redisTemplate);
+        redisTemplate.opsForValue().set("search:test", "1111");
+        System.out.println(redisTemplate.opsForValue().get("search:test"));
+        String value = redisTemplate.opsForValue().get("search:test");
+        List<String> list = redisTemplate.opsForList().range("search:list:L2AnsVwO3YN7v234PFiO6NDfY", 0, -1);
+        for(String s : list) {
+            System.out.println(s);
+        }
+        return value;
+    }
 }
 ```
