@@ -119,7 +119,15 @@ public class RedisConfig {
     public Pool<Jedis> jedisPool() {
         Set<String> sentinels = new HashSet<>();
         sentinels.add("172.16.0.207:5003");
-        JedisSentinelPool jedisSentinelPool = new JedisSentinelPool(environment.getProperty("MASTER.NAME"), sentinels, environment.getProperty("SENTINEL.PASSWORD"));
+        
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        JedisSentinelPool jedisSentinelPool = new JedisSentinelPool(
+            environment.getProperty("MASTER.NAME")
+            , sentinels
+            , jedisPoolConfig
+            , Protocol.DEFAULT_TIMEOUT
+            , environment.getProperty("SENTINEL.PASSWORD")
+            , Protocol.DEFAULT_DATABASE);
         
         return jedisSentinelPool;
     }
