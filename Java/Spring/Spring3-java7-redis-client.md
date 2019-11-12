@@ -1,5 +1,5 @@
-# 스프링 3 버전에서 lettuce(redis) 모듈 테스트 과정
-tags: spring, spring-data-redis, lettuce, redis, 
+# 스프링 3 버전에서 redis 모듈 테스트 과정
+tags: spring, spring-data-redis, lettuce, redis, jedis
 
 ## 참고 URL
 - https://spring.io/projects/spring-data-redis
