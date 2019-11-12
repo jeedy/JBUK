@@ -43,8 +43,8 @@ In terms of key-value stores, Redis 2.6.x or higher is required. Spring Data Red
 
 > lettuce는 Java 7(jdk 1.7)를 지원하지 않기 때문에 Jedis를 이용하기로 한다.
 
-1. Jedis client만 이용한 버전
-2. Sprig-data-redis 를 이용한 버전
+1. [Jedis client만 이용한 버전](https://github.com/jeedy/JBUK/blob/revision/Java/Spring/Spring3-java7-redis-client.md#1-jedis-client%EB%A7%8C-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EB%B2%84%EC%A0%84)
+2. [Sprig-data-redis 를 이용한 버전](https://github.com/jeedy/JBUK/blob/revision/Java/Spring/Spring3-java7-redis-client.md#2-sprig-data-redis-%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EB%B2%84%EC%A0%84)
 
 
 ### 사전 프로퍼티 셋팅
@@ -65,6 +65,7 @@ SENTINEL.PASSWORD=redis1234
 
 ### 1. Jedis client만 이용한 버전
 최종 가장 현실적인 버전이다. Spring 3.1 with java 7 버전에서 최신버전(Jedis 3.1)까지도 올라가는 것으로 확인했고, 그래서 sentinal까지 지원하기 때문에 이렇게 이용하는 것이 적합하다.
+단점은 Transaction을 직접 구현해줘야 한다.
 
 #### Maven 셋팅
 pom.xml:
@@ -165,7 +166,7 @@ public class RedisExampleServiceImpl {
 
 ### 2. Sprig-data-redis 를 이용한 버전
 Spring-data-redis 를 이용하겠다면 아래와 버전에 맞춰야 오류가 나지 않는다. 
-단점은 아래와 같이 너무 낮은 버전이라 sentinal을 지원하지 않는다. 그래서 jedis를 
+단점은 아래와 같이 너무 낮은 버전이라 sentinal을 지원하지 않는다.
 
 pom.xml:
 #### Maven 셋팅
