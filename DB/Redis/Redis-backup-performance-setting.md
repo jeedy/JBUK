@@ -87,8 +87,40 @@ redis new-redis-ip:6379> slaveof no one
 ## Redis 모니터링 툴
 
 - https://github.com/junegunn/redis-stat
+- http://redisgate.kr/redis/server/info.php (각 컬럼들 한글 설명 )
 
-
+### redis-stat 컬럼 맵핑 
+```
+  LABELS = {
+    :at                                  => 'time',
+    :used_cpu_user                       => 'us',   // 사용자 모드에서 사용한 CPU 시간(초)  
+    :used_cpu_sys                        => 'sy',   // 시스템 모드에서 사용한 CPU 시간(초)  
+    :connected_clients                   => 'cl',   // 현재 접속해 있는 클라이언트의 수(슬레이브 노드 접속은 제외)
+    :blocked_clients                     => 'bcl',  // BLPOP, BRPOP, BRPOPLPUSH, WAIT 명령으로 대기중인 클라이언트 수 
+    :rejected_connections_per_second     => 'rej/s',    // 초당 maxclients 제한으로 거부된 접속 수 
+    :used_memory                         => 'mem',  // Bytes   (zmalloc_used), repl-backlog-size를 포함한다.
+    :used_memory_rss                     => 'rss',  // Resident Set Size. top이나 ps 명령에서 볼 수 있다.   실제 real memory를 차지하고 있는 양 (server.cron_malloc_stats.process_rss), PAGESIZE 배수입니다.
+    :mem_fragmentation_ratio             => 'frag', // used_memory와 used_memory_rss 비율   (mh->total_frag)
+    :total_commands_processed            => 'cmd',  // 서버 시작 후 처리한 총 명령 수(저장,조회 모두)
+    :total_commands_processed_per_second => 'cmd/s',    // 초당 처리한 명령어 수(저장,조회 모두)
+    :expired_keys                        => 'exp',  // expire 명령(그런 종류)으로 삭제된 키 수
+    :expired_keys_per_second             => 'exp/s',    //  초당 expire 명령(그런 종류)으로 삭제된 키 수
+    :evicted_keys                        => 'evt',  // maxmemory 제한에 의해 퇴출된 키 수
+    :evicted_keys_per_second             => 'evt/s',    // 초당 maxmemory 제한에 의해 퇴출된 키 수
+    :keys                                => 'keys', // key 개수, dbsize 명령 결과와 같다.
+    :keyspace_hits                       => 'hit',  // get key해서 값이 나오면 1 증가  
+    :keyspace_hits_per_second            => 'hit/s',    // 초당 get key해서 값이 나오면 1 증가
+    :keyspace_misses                     => 'mis',  // get key해서 nil 이 나오면 1 증가
+    :keyspace_misses_per_second          => 'mis/s',    // 초당 get key해서 nil 이 나오면 1 증가
+    :keyspace_hit_ratio                  => 'hit%', // get key해서 값이 나오면 1 증가율
+    :keyspace_hit_ratio_per_second       => 'hit%/s',   // 초당 get key해서 값이 나오면 1 증가율
+    :aof_current_size                    => 'aofcs',    // 현재 AOF 파일 사이즈(바이트) 
+    :aof_base_size                       => 'aofbs',    // 시작했을때 또는 마지막 rewrite 했을때 사이즈(바이트), auto-aof-rewrite-percentage 100일때 current_size가 base_size보다 2배이면 rewrite를 시작한다.
+    :rdb_changes_since_last_save         => 'chsv', // RDB 파일을 마지막으로 저정한 이후로 입력된 데이터 건수이다.  
+    :pubsub_channels                     => 'psch', // pub/sub channel로 연결된 channel 수
+    :pubsub_patterns                     => 'psp',  // pub/sub pattern로 연결된 pattrn channel 수
+  }
+```
 
 
 

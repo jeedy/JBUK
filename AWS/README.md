@@ -3,6 +3,13 @@
 ## 참고자료
 - https://gun0912.tistory.com/category/IT/AWS AWS 실사용중에 있었던 트슈나 유용한 정보들이 많음
 
+## SSH EC2 instance 접속방법
+```bash
+
+$ ssh -i /path/my-key-pair.pem ec2-user@ec2-198-51-100-1.compute-1.amazonaws.com
+
+```
+
 
 ## :bomb: troubleshooting
 ### 1. EC2 인스턴스 생성시 public IP 대역대를 설정할 수 있을까?

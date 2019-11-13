@@ -57,3 +57,6 @@ $ git remote set-url origin https://jeedy@github.com/jeedy/JBUK.git
 	name = jeedy
 	email = kk59491@gmail.com
 ```
+
+## :bomb: troubleshooting
+> 스터디 하면서 겪었던 문제 그리고 해결방법을 기록하자
