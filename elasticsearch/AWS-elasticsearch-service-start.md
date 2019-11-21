@@ -88,8 +88,9 @@ vpn 안에서 private 한 설정으로 접근을 원할 경우
 설정된 내용 확인후 "확인" 버튼 클릭
 
 
-### 7. 한국어 분석을 위한 '은전한닢' 플러그인 설치
-- https://aws.amazon.com/ko/blogs/korea/amazon-elasticsearch-service-now-supports-korean-language-plugin/
+### 7. 한국어 분석을 위한 '은전한닢' 플러그인 설치 (필요없음 이미 플러그인 설치되어 배포되었음.)
+
+- https://aws.amazon.com/ko/blogs/korea/amazon-elasticsearch-service-now-supports-korean-language-plugin/ (구버전 설치방법)
 
 1. '은전한닢' 플러그인 설치
 ```bash
