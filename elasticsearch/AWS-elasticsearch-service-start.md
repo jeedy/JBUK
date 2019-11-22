@@ -182,16 +182,15 @@ $ curl -XGET 'https://search-korean-text-xxxxx.ap-northeast-2.es.amazonaws.com/m
 
 ## :bomb: troubleshooting
 
-### 한글 형태소 플러그인 설치시 에러 {"error":{"root_cause":[{"type":"parse_exception","reason":"unknown key [index] for create index"}],"type":"parse_exception","reason":"unknown key [index] for create index"},"status":400}  
 
 
 ## 별첨 (Open Distro for Elasticsearch)
-아마존에서 개발하고 OpenSource로 배포중인 Elasticsearch(이하 AWS ES) 이다.(엘라스틱서치 회사와는 별개 프로젝트) 그래서 Elasticsearch 에서 제공하는 유료 플러그인 등이 AWS ES를 이용하게 되면 추가 금액없이 사용 가능하다.
+아마존에서 개발하고 OpenSource로 배포중인 Elasticsearch(이하 AWS ES) 이다.(엘라스틱서치 회사와는 별개 프로젝트) 그래서 Elasticsearch 에서 제공하는 유료 플러그인(Alerting, Security) 등이 AWS ES를 이용하게 되면 추가 금액없이 사용 가능하다.
 
 Elasticsearch Cloud를 서비스하고 있는 엘라스틱서치 회사 입장에서는 그다지 탐탁하지 않은 상황(엘라스틱 입장 https://www.elastic.co/kr/blog/on-open-distros-open-source-and-building-a-company), 일부 유저도 대기업의 행포라고.. (http://kangmyounghun.blogspot.com/2019/03/open-distro-for-elasticsearch.html)
 
 - https://grip.news/archives/1669 (Open Distro for Elasticsearch 설치방법)
 
-- https://aws.amazon.com/ko/blogs/korea/keeping-open-source-open-open-distro-for-elasticsearch/ (Open Distro for Elasticsearch 아마존 서비스 발표 )
+- https://aws.amazon.com/ko/blogs/korea/keeping-open-source-open-open-distro-for-elasticsearch/ (Open Distro for Elasticsearch 아마존 서비스 발표)
 
 
