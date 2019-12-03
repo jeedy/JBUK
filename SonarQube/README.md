@@ -1,7 +1,7 @@
 # 소나큐브(SonarQube)
 tags: sonarqube, 소나큐브, 젠킨스, 
 ## 목차
-1. [소나큐브 설치 및 젠킨스 연결](./install-sonarqube-with-jenkins.md)
+1. [소나큐브 설치 및 젠킨스 연결](./install-sonarqube-with-jenkins-svn-maven.md)
 2. [소나큐브 개발자 가이드](./sonarqube-user-guide.md)
 
 ## :bomb: troubleshooting
