@@ -307,7 +307,62 @@ JSON 포멧:
 ```
 
 
-### 2.2.4. 집계 API  :star:
+### 2.2.4. 집계 API :star:
+
+#### 집계종류
+- Bucket Aggregation(버킷 집계)
+- Metric Aggergation(메트릭 집계)
+- Matrix Aggregation(매트릭스 집계)
+- Pipeline Aggregation(파이프라인 집계)
+
+##### Bucket Aggregation(버킷 집계)
+집계 중 가장 많이 사용한다. 문서의 필드를 기준으로 버킷을 집계한다.
+
+##### Metric Aggergation(메트릭 집계)
+문서에서 추출된 값을 가지고 Sum, Max, Min, Avg 를 계산한다.
+
+##### Matrix Aggregation(매트릭스 집계)
+행렬의 값을 합하거나 곱한다.
+
+##### Pipeline Aggregation(파이프라인 집계)
+버킷에서 도출된 결과 문서를 다른 필드 값으로 재분류한다. 즉, 다른 집계에 의해 생성된 출력 결과를 다시 한번 집계한다. 집계가 패싯보다 강력한 이유가 여기에 있다.
+
+```
+# Bucket Aggergation1
+GET movie_search/_search?size=0
+{
+  "aggs": {
+    "genre": {
+      "terms": {
+        "field": "genreAlt"
+      }
+    }
+  }
+}
+
+# Bucket Aggergation2
+GET movie_search/_search?size=0
+{
+  "aggs": {
+    "genre": {
+      "terms": {
+        "field": "genreAlt"
+      }
+      , "aggs":{
+        "nation":{
+          "terms":{
+            "field": "nationAlt"
+          }
+        }
+      }
+    }
+  }
+}
+
+```
+
+
+
 
 
 
