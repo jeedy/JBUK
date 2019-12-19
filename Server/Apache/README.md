@@ -22,7 +22,7 @@ https://static.travel.com Apache 서버에서 `Access-Control-Allow-Origin` 을 
 - http://huns.me/development/1291  cross domain 해결 방법에 대해 자세히 다루고 있다
 - https://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/
 
-표준 CORS는 기본적으로 요청을 보낼 때 쿠키를 전송하지 않는다. 쿠키를 요청에 포함하고 싶다면 XMLHttpRequest 객체의 withCredentials 프로퍼티 값을 true로 설정해준다.\
+표준 CORS는 기본적으로 요청을 보낼 때 쿠키를 전송하지 않는다. 쿠키를 요청에 포함하고 싶다면 XMLHttpRequest 객체의 withCredentials 프로퍼티 값을 true로 설정해준다.
 
 ```javascript
 xhr.withCredentials = true;
