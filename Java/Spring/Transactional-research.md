@@ -673,7 +673,7 @@ DEBUG: org.springframework.jdbc.datasource.DataSourceTransactionManager - Commit
 대부분의 경우에는 REQUIRED로 충분하나 간혹 REQUIRES_NEW를 통해 새로운 Transaction 을 생성하고자 하는 경우에는 위와 같이 동작함을 이해해야 한다.
 
 
-## 5. 분산 트랜젝션 처리 (multi Transaction)
+## 5. :star2: 분산 트랜젝션 처리 (multi Transaction)
 위에서 하나의 Connection에서(하나의 Database) 안에서 Transaction을 처리하는 로직에 대한 설명을 했다.
 그러나 실운영에선 한개의 database를 사용하는 경우는 거의 없다고 봐야한다. 다수의 database를 이용하거나 또는 
 서로 다른 Database들을 이용해 비즈니스 로직이 들어가기 때문에 single Transaction은 거의 사용할 일이 없다고 생각한다.
@@ -691,8 +691,8 @@ couponServiceImpl:
   6         }
   7 }
 ```
-우리가 기대하는 결과는 result1=1, result2=1 이 되어 result1+result2=2가 되는 결과로 throw new RuntimeException()을 일으키고,
-`2라인`, `3라인` 가 rollback이 되는 결과를 예상할 것이다. 
+위 소스에서 우리가 기대하는 결과는 result1=1, result2=1 이 되어 result1+result2=2가 되어 throw new RuntimeException()을 일으키고,
+`2라인`, `3라인`이 rollback이 되는 결과를 예상할 것이다. 
 하지만 위 셋팅에서 그대로 테스트를 진행했다면 2라인, 3라인 중에 둘중에 하나만 rollback을 진행할 것이다. 
 
 왜 둘중 하나만? 그리고 하나는 왜 rollback이 진행될까? 
@@ -715,7 +715,7 @@ couponServiceImpl:
 이중 `JtaTransactionManager` 로 구현해보았고 매우 잘 처리되고 표준으로 제공되는 라이브러리이니 이것을 구현하는 방법을 설명한다.
 
 ### JtaTransactionManager
-JTA(Java Transaction Api)는 자바 표준으로써, 분산 transaction을 가능하게 해준다. 매우 간단하게 설명하자면, JTA를 지원하는 자원을 가리키는 XA Resource 인터페이스의 구현체들을 등록하면, 해당 구현체들에 대해서 전역 transaction을 지원해준다. 때문에 어떤 자원이든 transaction을 지원할 수 있도록 정의한 셈인데, DataSource, JMS 외에는 쓰고 있는 곳이 없는 것 같다.
+JTA(Java Transaction Api)는 자바 표준으로써, 분산 transaction을 가능하게 해준다. 매우 간단하게 설명하자면, JTA를 지원하는 자원(XA Resource 인터페이스의 구현체들)을 등록하면, 해당 구현체들에 대해서 전역 transaction을 지원해준다. 때문에 어떤 자원이든 transaction을 지원할 수 있도록 정의한 셈인데, DataSource, JMS 외에는 쓰고 있는 곳이 없는 것 같다.
 
 Java EE Application Server에서는 전역 tranction을 지원하기 위해서, JTA를 사용하기도 한다. Spring에서는 JNDI에서 Java EE Container가 사용 중인 DataSource를 가져와, JtaTransactionManager에 설정할 수도 있다.
 

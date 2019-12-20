@@ -11,3 +11,4 @@ tags: nifi, ETL
 ## 참고자료
 - https://www.popit.kr/apache-nifi-overview-and-install/ (nifi 소개 와 설치)
 - https://www.batchiq.com/database-extract-with-nifi.html (Database Extract with NIFI)
+- https://community.cloudera.com/ (nifi 관련 검색)

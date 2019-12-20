@@ -71,9 +71,9 @@ SENTINEL.PASSWORD=redis1234
 pom.xml:
 ```xml
 <dependency>
-    <groupId>redis.clients</groupId>
-    <artifactId>jedis</artifactId>
-    <version>3.1.0</version>
+    <groupId>org.slf4j</groupId>
+    <artifactId>jcl-over-slf4j</artifactId>
+    <version>1.7.29</version>
 </dependency>
 <dependency>
     <groupId>org.apache.logging.log4j</groupId>
@@ -85,6 +85,11 @@ pom.xml:
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-slf4j-impl</artifactId>
     <version>2.0</version>
+</dependency>
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+    <version>3.1.0</version>
 </dependency>
 ```
 
@@ -301,3 +306,8 @@ java.lang.AbstractMethodError: org.slf4j.impl.Log4jLoggerAdapter.log(Lorg/slf4j/
 
 log4j 와 slf4j 버전이 맞지 않아서 발생하는 오류이다. 구글일을 통해 저 오류에 적합한 버전을 찾아서 maven 설정하자.
 
+### 2. 심각: Exception sending context destroyed event to listener instance of class org.springframework.web.context.ContextLoaderListener
+java.lang.NoSuchMethodError: org.slf4j.spi.LocationAwareLogger.log(Lorg/slf4j/Marker;Ljava/lang/String;ILjava/lang/String;Ljava/lang/Throwable;)V
+
+### 3. 심각: Exception sending context initialized event to listener instance of class org.springframework.web.context.ContextLoaderListener
+java.lang.NoSuchMethodError: org.slf4j.spi.LocationAwareLogger.log(Lorg/slf4j/Marker;Ljava/lang/String;ILjava/lang/String;Ljava/lang/Throwable;)V
