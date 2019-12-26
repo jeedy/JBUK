@@ -254,7 +254,7 @@ Access-Control-Allow-Headers: <field-name>[, <field-name>]*
 
 
 ## 3. CORS 관련 HTTP Request Headers
-클라이언트가 서버에 CORS 요청을 보낼 때 사용하는 헤더로, 브라우저가 자동으로 지정하며, XMLHttpRequest를 사용하는 프로그래머가 직접 지정해 줄 필요 없다.
+클라이언트가 서버에 CORS 요청을 보낼 때 사용하는 헤더로e, 브라우저가 자동으로 지정하며, XMLHttpRequest를 사용하는 프로그래머가 직접 지정해 줄 필요 없다.
 
 
 ### 3.1. Origin
