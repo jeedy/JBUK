@@ -92,6 +92,7 @@ eclipse.ini: => 각자 시스템에 맞게 변경.
 
 ## 10. Eclipse 처음 실행속도 개선
 - Preferences > General > Startup and Shutdown : 불필요한 항목 체크해제
+    - RSE(Remote System Explorer) UI 체크해제
 
 
 ## 11. 자동업데이트 끄기
