@@ -37,7 +37,7 @@
 - `Ctrl + b ` 한페이지 (back) 스크롤, `Ctrl + u` 반페이지 (up) 스크롤
 
 ### 2019-07-25
-- `:set su` 라인번호 나오게
+- `:set nu` 라인번호 나오게
 
 - `CTRL+g`, `:f` 파일명 보기
 
@@ -48,3 +48,29 @@
 - ':sh' 셀모드로 나가기 , `Ctrl +d` 복귀
 
 - 'Ctrl+z` 셀모드로 나가기, `fg` 복귀
+
+### 2020-01-13
+
+#### sp, vsp 창 분리
+```
+가로형으로 분리
+:sp 파일명
+
+세로형으로 분리
+:vsp 파일명
+
+창닫기
+:q
+
+창이동
+Ctrl + w
+
+"Swap top/bottom or left/right split
+Ctrl+W R
+
+"Break out current window into a new tabview
+Ctrl+W T
+
+"Close every window in the current tabview but the current one
+Ctrl+W o
+```
