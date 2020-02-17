@@ -47,7 +47,7 @@ Sysout.out.println(msg);
 
 ## 로컬 설치 (git clone)
 ```bash
-$ git clone https://github.com/jeedy/JBUK.git
+$ git clone -b revision --single-branch https://github.com/jeedy/JBUK.git
 $ cd JBUK
 $ git remote set-url origin https://jeedy@github.com/jeedy/JBUK.git
 ```
