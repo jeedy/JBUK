@@ -6,5 +6,5 @@ tags: front end, framwork
 
 
 ## 목차
-1. 샘플코드
+1. [html inline 샘플코드](./sample/index.html)
 
