@@ -32,7 +32,7 @@ mem_allocator:jemalloc-3.2.0    # (메모리 할당자(컴파일시에 선택한
 #### 메모리 점검
 memory doctor:
 ```bash 
-127.0.0.1:6000> MOMORY doctor
+127.0.0.1:6000> MEMORY doctor
 
 ```
 
