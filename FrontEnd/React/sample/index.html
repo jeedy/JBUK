@@ -28,7 +28,7 @@ console.log("%c경고! 로컬에서 테스트 할 경우 웹서버하나 띄워�
 // const LoginControl = require('login-control');       // CommonJS 비표준방식(node.js에서 사용되고 있어, 아직도 많이 사용되는 방식)
 console.log(React);
 
-// <elementTAG> 를 이용하는 방법: function을 이용한 JSX에서 <elementTAG> 를 이용하는 방법 (핫한 방법)
+// <elementTAG> 를 이용하는 방법1: function을 이용한 JSX에서 <elementTAG> 를 이용하는 방법
 function Header(props) {
     let headerStyle = {
         color: props.color,
@@ -41,7 +41,7 @@ function Header(props) {
     </div>);
 }
 
-// <elementTAG> 를 이용하는 방법: ES6+ 방식으로 => 연산자를 이용한 방식 function 구현 (요즘은 이렇게 생성 안하는 추세, 명시적으로 function keyword를 사용)
+// <elementTAG> 를 이용하는 방법2: ES6+ 방식으로 Arrow(=>) 연산자를 이용한 방식 function 구현 (요즘은 이렇게 생성 안하는 추세, 명시적으로 function keyword를 사용)
 const Body = (props) => {
     let bodyStyle = {
         color: props.color
@@ -52,13 +52,35 @@ const Body = (props) => {
     </div>);
 }
 
-// 변수 할당 사용
-var FOOTER =  
+// <elementTAG> 를 이용하는 방법3: 변수 할당 사용
+var FOOTER =
 <div className="footer">
     여기가 푸터
-</div>
+</div>;
+        
+/* 레이아웃
+    <elementTAG /> 를 이용하는 방법4: class 를 이용하는 방법.
+    리액트에서도 사용하지 않을 것을 권고 한다.(지원은 계속함)
 
-// 레이아웃
+    이유는 버그가 발생할 수 있는 여지가 다분한 방식이다. 
+    (자세한 내용은 https://overreacted.io/ko/how-are-function-components-different-from-classes/)
+*/
+class Main extends React.Component {
+    constructor(props){
+        super(props);
+    }
+    render() {
+        return (
+            <div className="main_div">
+                main layout
+                <Header color="red"/>
+                <Body color="yellow"/>
+                {FOOTER}
+            </div>
+        );
+    }
+}
+/* 변수 할당 사용 예)
 const main = 
 <div className="main_div">
     main layout
@@ -66,9 +88,9 @@ const main =
     <Body color="yellow"/>
     {FOOTER}
 </div>
+*/
 
-ReactDOM.render(main, document.getElementById('root'));
-
+ReactDOM.render(<Main />, document.getElementById('root'));
 </script>
     </body>
 </html>
