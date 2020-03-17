@@ -14,8 +14,8 @@
 ## Index
 1. [1장 SPA란?](./1장-SPA란.md)
 1. 서버사이드 렌더링 / 클라이언트 사이드 렌더링
-1. [뷰(Vue)](/FontEnd/Vue/README.md)
-1. [리액트(React)](/FontEnd/React/README.md)
+1. [뷰(Vue)](/FrontEnd/Vue/README.md)
+1. [리액트(React)](/FrontEnd/React/README.md)
 1. [export, exports And import, require 차이](./export-exports-import-require.md)
 2. [Default Export 란?](./default-export.md)
 
