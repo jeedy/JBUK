@@ -9,9 +9,15 @@ tags: front end, framwork
 1. [https://velopert.com/775 ](https://velopert.com/775) 리액트 사용법에 대해 자세히 설명되어있음.
 1. [https://velopert.com/867](https://velopert.com/867) JSX 사용방법에 대해 잘 설명되어있음
 1. [https://babeljs.io/repl/](https://babeljs.io/repl/) babel가 react 코드로 compiled 어떻게 시키는지 확인 할 수 있는 사이트
+1. [https://velog.io/@velopert/react-redux-hooks] React hooks 사용법
+1. [https://nikgraf.github.io/react-hooks/](https://nikgraf.github.io/react-hooks/) React Hooks 을 이용한 다양한 라이브러리
+1. [https://github.com/rehooks/awesome-react-hooks](https://github.com/rehooks/awesome-react-hooks) React Hooks 을 이용한 다양한 라이브러리2
 
 ## 샘플소스
 1. [html inline 샘플코드](./sample/index.html)
+2. [리액트 샘플 코드(영화소개 프로젝트)]()
+  참고자료 [https://ljh86029926.gitbook.io/coding-apple-react/before-start-class](https://ljh86029926.gitbook.io/coding-apple-react/before-start-class)
+
 
 
 ## 번외 (그냥 참고만하자)

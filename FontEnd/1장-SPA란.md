@@ -7,7 +7,8 @@
 1. [https://poiemaweb.com/js-spa](https://poiemaweb.com/js-spa)
 1. [https://jaroinside.tistory.com/24](https://jaroinside.tistory.com/24) 
 SAP, SinglePageApplication 페이지에 대한 설명 부터
-
+1. [https://ko.reactjs.org/docs/glossary.html#single-page-application](https://ko.reactjs.org/docs/glossary.html#single-page-application) babel, webpack, npm 등 리액트에서 나오는 용어 정리
+1. [http://hacks.mozilla.or.kr/2014/12/an-easier-way-of-using-polyfills/](http://hacks.mozilla.or.kr/2014/12/an-easier-way-of-using-polyfills/) 폴리필(Polyfill)이란?
 link tag를 사용하는 전통적인 웹 방식은 새로운 페이지 요청 시마다 정적 리소스가 다운로드되고 전체 페이지를 다시 렌더링하는 방식을 사용하므로 새로고침이 발생되어 사용성이 좋지 않다. 그리고 변경이 필요없는 부분를 포함하여 전체 페이지를 갱신하므로 비효율적이다.
 
 SPA는 기본적으로 웹 애플리케이션에 필요한 모든 정적 리소스를 최초에 한번 다운로드한다. 이후 새로운 페이지 요청 시, 페이지 갱신에 필요한 데이터만을 전달받아 페이지를 갱신하므로 전체적인 트래픽을 감소할 수 있고, 전체 페이지를 다시 렌더링하지 않고 변경되는 부분만을 갱신하므로 새로고침이 발생하지 않아 네이티브 앱과 유사한 사용자 경험을 제공할 수 있다.
