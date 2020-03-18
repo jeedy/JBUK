@@ -30,7 +30,7 @@ CORS 요청은 **Simple/Preflight, Credential/Non-Credential**의 조합으로 4
 - 커스텀 헤더를 전송하지 말아야 한다.
 
 
-Simple Request는 서버에 1번 요청하고, 서버는 1번 회시하는 것으로 처리가 종료된다.
+Simple Request는 서버에 1번 요청하고, 서버는 1번 회신하는 것으로 처리가 종료된다.
 
 Simple Request:
 ```http
