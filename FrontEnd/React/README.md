@@ -1,7 +1,7 @@
 # React(리액트)
 tags: front end, framwork
 
-**React와** **babel, webpack**의 관계를 생각해보면 React는 그냥 **라이브러리**라고 생각되고 **babel**은 마치 **javac** 와 같은 **빌드툴(build tool)**로 느껴진다. **webpack**은 여러파일을 하나의 파일로 압축하는 **tool** 인것 같다. 
+**React와** **babel, webpack**의 관계를 생각해보면 React는 그냥 **라이브러리**라고 생각되고 **babel**은 마치 **javac** 와 같은 **빌드툴(build tool)** 로 느껴진다. **webpack**은 여러파일을 하나의 파일로 압축하는 **tool** 인것 같다. 
 
 ## 참고자료
 1. [https://ko.reactjs.org/docs/hello-world.html](https://ko.reactjs.org/docs/hello-world.html) 리엑트 문서 및 API (Prototyping)
@@ -12,11 +12,12 @@ tags: front end, framwork
 1. [https://velog.io/@velopert/react-redux-hooks] React hooks 사용법
 1. [https://nikgraf.github.io/react-hooks/](https://nikgraf.github.io/react-hooks/) React Hooks 을 이용한 다양한 라이브러리
 1. [https://github.com/rehooks/awesome-react-hooks](https://github.com/rehooks/awesome-react-hooks) React Hooks 을 이용한 다양한 라이브러리2
+1. [리덕스 개념정리](https://velog.io/@nibble/React-Redux-%EC%B4%88%EB%B3%B4%EB%93%A4%EC%9D%B4-%EB%B3%B4%EB%A9%B4-%EB%8F%84%EC%9B%80%EB%90%98%EB%8A%94-%EA%B8%80-i8jxzqahcy)
 
 ## 샘플소스
 1. [html inline 샘플코드](./sample/index.html)
-2. [리액트 샘플 코드(영화소개 프로젝트)]()
-  참고자료 [https://ljh86029926.gitbook.io/coding-apple-react/before-start-class](https://ljh86029926.gitbook.io/coding-apple-react/before-start-class)
+2. [리액트 샘플 코드(영화소개 프로젝트)](https://github.com/jeedy/movie-project)
+  - 참고자료 [https://ljh86029926.gitbook.io/coding-apple-react/before-start-class](https://ljh86029926.gitbook.io/coding-apple-react/before-start-class)
 
 
 
