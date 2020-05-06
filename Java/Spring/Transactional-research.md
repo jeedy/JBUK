@@ -905,3 +905,24 @@ public class DatabaseConfigTravel {
 ### 2. 분산 데이터베이스 환경 Datasource 간에 Transaction 해결하기
 참고:
 - https://supawer0728.github.io/2018/03/22/spring-multi-transaction/ (ChainedTransactionManager, JTA 예제)
+
+
+### 3. Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userTransactionService' defined in class path resource [org/springframework/boot/autoconfigure/transaction/jta/AtomikosJtaConfiguration.class]: Invocation of init method failed; nested exception is com.atomikos.icatch.SysException: Error in init: Log already in use? api_tmlog in D:\tomcat\transaction-logs\
+- transaction 관리 파일을 같이 사용하려 할 경우 위 같은 오류가 발생한다.
+- 각 프로젝트 마다 트랜젝션 파일명이나 관리 디렉토리를 다르게 해서 해결한다. 
+- spring boot 를 이용하고 있다면 아래 설정을 통해서 디렉토리 및 파일명을 변경가능하다.
+  application.properties:
+  ```properties
+  # Set directory of log files; make sure this directory exists!
+  #
+  # com.atomikos.icatch.log_base_dir = ./
+
+  # Set base name of log file
+  # this name will be  used as the first part of 
+  # the system-generated log file name
+  #
+  # com.atomikos.icatch.log_base_name = tmlog
+
+  spring.jta.atomikos.properties.log-base-dir= # Directory in which the log files should be stored.
+  spring.jta.atomikos.properties.log-base-name=tmlog # Transactions log file base name.
+  ```
