@@ -883,6 +883,60 @@ public class DatabaseConfigTravel {
 
 
 
+#### 3. DBMS 이기종 트랜잭션 JDBC 환경설정
+참고자료:  https://bigzero37.tistory.com/64
+
+##### 3.1. MS SQL 서버
+- 참고 : <https://www.ibm.com/support/knowledgecenter/ko/SSFPJS_8.5.7/com.ibm.wbpm.imuc.stbpm.doc/topics/db_xa_sa_win.html?view=embed>
+- XA 트랜잭션을 위해 MS DTC을 사용으로 설정 단계
+  - 제어판 > 관리 도구 > 컴포넌트 서비스(구성요소서비스)를 선택
+  - 분산 트랜잭션 코디네이터컴포넌트 서비스 > 컴퓨터 > 내 컴퓨터를 선택
+  - 로컬 DTC를 마우스 오른쪽 단추로 클릭한 후 특성을 선택
+  - 로컬 DTC 특성 창에서 보안 탭을 클릭
+  - XA 트랜잭션 사용 선택란을 선택한 후 확인을 클릭 - MS DTC 서비스가 다시 시작됨.  
+  - MS DTC 변경사항과 동기화되도록 SQL Server를 다시 시작
+  ![ms-sql 셋팅](./images/mssql_xa_setting1.png)
+
+- XA 트랜잭션을 위한 JDBC 분산 트랜잭션 컴포넌트 구성
+  - SQLServer JDBC 드라이버 다운로드 : https://www.microsoft.com/en-us/download/details.aspx?id=11774
+  - 다운로드 받은 파일 중 tar.gz 압축해제 하여 sqljdbc_xa.dll, sqljdbc_auth.dll, xa_install.sql 파일을 추출
+  - sqljdbc_xa.dll 파일을 SQL Server 컴퓨터의 Binn 디렉토리로 복사 ( x64 bit는 x64 폴더의 sqljdbc_xa.dll 파일을 사용)
+  - (기본 SQL Server 설치의 경우 해당 위치는 C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\Binn).
+  ![ms-sql 셋팅](./images/mssql_xa_setting2.png)
+
+- SQL Server에서 xa_install.sql 데이터베이스 스크립트를 실행
+  - 예를 들어, 명령 프롬프트에서 sqlcmd -i xa_install.sql을 실행
+  - 이 스크립트는 sqljdbc_xa.dll에서 호출하는 확장 스토어드 프로시저를 설치함.
+  - 이러한 확장 스토어드 프로시저는 Microsoft SQL Server JDBC 드라이버에 대한 XA 지원 및 분산 트랜잭션을 구현함.
+  - 이 스크립트는 SQL Server 인스턴스의 관리자로 실행. 존재하지 않는 프로시저 삭제 불가능에 대한 오류를 무시할 수 있음
+  - grant execute 부분 스크립트에서 권한을 주고자 하는 해당계정으로 변경하여 스크립트 실행
+
+- Windows 인증 구성을 위한 단계
+  - sqljdbc_auth.dll 파일을 SQL Server 컴퓨터의 Binn 디렉토리로 복사 ( x64 bit는 x64 폴더의 sqljdbc_xa.dll 파일을 사용)
+  - (기본 SQL Server 설치의 경우 해당 위치는 C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\Binn)
+
+- XA 트랜잭션 구성한 후 서버를 시작하기 전에 TCP/IP 연결 구성 및 확인
+  - 시작 메뉴에서 Microsoft SQL Server 2014 > 구성 도구 > SQL Server 구성 관리자를 클릭
+  - SQL Server 네트워크 구성 > SQL2014용 프로토콜에서 TCP/IP 선택
+  - TCP/IP를 두 번 클릭하고 프로토콜 탭 아래에서 사용으로 설정.
+  - IP 주소 탭을 클릭하여 구성된 각 IP 주소에 대해 TCP 포트를 사용으로 설정
+
+##### 3.2. Postgre 설정 - Docker
+- postgresql.conf 에 max_prepared_transactions = 0 이 아닌 다른 숫자로 변경(10으로 변경함)
+- 만일 0으로 되어 있으면 org.postgresql.xa.PGXAException: Error preparing transaction 에러가 발생함.
+
+##### 3.3. Oracle 설정
+- sys 계정으로 로그인
+- 아래 스크립트를 실행하여 각각의 오라클 패키지의 select 권한을 해당 User 에게 부여함.
+  ```
+  grant select on sys.dba_pending_transactions to <User Name>;
+  grant select on sys.pending_trans$ to <User Name>;
+  grant select on sys.dba_2pc_pending to <User Name>;
+  grant execute on sys.dbms_system to <User Name>;
+  grant execute on dbms_xa to <User Name>;
+  ```
+
+
 ## :bomb: troubleshooting
 ### 1. Srping-boot Transactional is not working
 **3가지만 명심하자**
