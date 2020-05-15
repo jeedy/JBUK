@@ -887,7 +887,7 @@ public class DatabaseConfigTravel {
 ### 1. Srping-boot Transactional is not working
 **3가지만 명심하자**
 - Transaction 할 method 에 @transactional 달아주자 (service 또는 serviceImpl 둘중에 아무대나 걸어도 되는데 보기 쉽게 impl에 걸자)
-- **다수의 Datasource 을 셋팅(다수 TrasactionManager 를 셋팅)한 경우 @transactional(transactionManager = "travelTransactionManager") `transactionManager`은 꼭 명시하자**
+- **다수의 Datasource 을 셋팅(다수 TransactionManager 를 셋팅)한 경우 @transactional(transactionManager = "travelTransactionManager") `transactionManager`은 꼭 명시하자**
     - 직 경험담을 얘기 하자면 명시안할 경우 @primary 로 선언된 connection을 setAutoCommit하고 rollback 처리한다. 
     만약 다른 connection에서 update를 진행하는 거라면 rollback이 정상적으로 되지 않는다.   
 - @transactional은 외부에서 호출할 경우에만 걸린다. 내부에서 호출할 경우엔 안먹는다. 
@@ -926,3 +926,41 @@ public class DatabaseConfigTravel {
   spring.jta.atomikos.properties.log-base-dir= # Directory in which the log files should be stored.
   spring.jta.atomikos.properties.log-base-name=tmlog # Transactions log file base name.
   ```
+
+
+### 3. 20200515 17:04:36.729 [Atomikos:3] WARN c.a.r.x.XaResourceRecoveryManager - Error while retrieving xids from resource - will retry later...
+```
+20200515 17:04:36.729 [Atomikos:3] WARN c.a.r.x.XaResourceRecoveryManager - Error while retrieving xids from resource - will retry later...
+
+javax.transaction.xa.XAException: null
+        at oracle.jdbc.xa.OracleXAResource.recover(OracleXAResource.java:709)
+        at com.atomikos.datasource.xa.RecoveryScan.recoverXids(RecoveryScan.java:32)
+        at com.atomikos.recovery.xa.XaResourceRecoveryManager.retrievePreparedXidsFromXaResource(XaResourceRecoveryManager.java:158)
+        at com.atomikos.recovery.xa.XaResourceRecoveryManager.recover(XaResourceRecoveryManager.java:67)
+        at com.atomikos.datasource.xa.XATransactionalResource.recover(XATransactionalResource.java:449)
+        at com.atomikos.icatch.imp.TransactionServiceImp.performRecovery(TransactionServiceImp.java:490)
+        at com.atomikos.icatch.imp.TransactionServiceImp.access$000(TransactionServiceImp.java:56)
+        at com.atomikos.icatch.imp.TransactionServiceImp$1.alarm(TransactionServiceImp.java:471)
+        at com.atomikos.timing.PooledAlarmTimer.notifyListeners(PooledAlarmTimer.java:95)
+        at com.atomikos.timing.PooledAlarmTimer.run(PooledAlarmTimer.java:82)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+        at java.lang.Thread.run(Thread.java:745)
+20200515 17:04:36.752 [Atomikos:3] INFO c.a.d.x.XATransactionalResource - WWW.DATABASE.tsnbDataSource: refreshed XAResource\
+```
+oracle XA transaction 셋팅필요.
+
+Oracle 설정
+- sys 계정으로 로그인
+- 아래 스크립트를 실행하여 각각의 오라클 패키지의 select 권한을 해당 User 에게 부여함.
+  ```
+  grant select on sys.dba_pending_transactions to <User Name>;
+  grant select on sys.pending_trans$ to <User Name>;
+  grant select on sys.dba_2pc_pending to <User Name>;
+  grant execute on sys.dbms_system to <User Name>;
+  grant execute on dbms_xa to <User Name>;
+  ```
+  
+
+참고
+  - https://bigzero37.tistory.com/64
