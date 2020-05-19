@@ -254,6 +254,11 @@ Spring API 를 이용하여 프로그램 방식으로 Transaction 을 구현하�
 - http://blog.naver.com/tkstone/50192724315
 
 앞서 Spring AOP 를 이용한 Transaction 사용법을 설명 하였다. 특히 @Transactional 을 사용한 Transaction 선언이 편리하기는 하나 다음과 같은 경우에는 동작을 하지 않는다.
+
+> @Transactional(rollbackFor=Exception.class)<br>
+> 예외에 따른 롤백처리는 Checked 예외(Exception.class)는 롤백되지 않고, Unchecked 예외(RuntimeException.class)는 롤백됩니다.<br>
+> checked 예외일 경우에도 rollback을 할 경우 rollbackFor 속성에 Exception.class 을 등록하면 됩니다.
+
 ```java
   1 public class TransactionInvoker2 {
   2  
@@ -687,6 +692,8 @@ couponServiceImpl:
   2         int result1 = userMapper.update();
   3         int result2 = couponMapper.insert();
   4         if(result1+result2 == 2){
+                // 반드시 Unchecked Exception(예: RuntimeException)으로 던져야 rollback 된다.
+                // 참고: https://offbyone.tistory.com/405
   5             throw new RuntimeException();
   6         }
   7 }
