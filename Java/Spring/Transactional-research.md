@@ -714,6 +714,7 @@ couponServiceImpl:
 ### 적용방법
 참고 : 
 - https://supawer0728.github.io/2018/03/22/spring-multi-transaction/#comment-4596136323 (매우 잘 설명되어있다.)
+- https://d2.naver.com/helloworld/5812258 (RoutingDataSource 사용 시 JTA를 이용한 트랜잭션 처리)
 
 다중 Transaction 처리 하는 방법에는 두가지 정도의 방법이 있다.
 - spring-data-commons의 `ChainedTransactionManager` 이용
