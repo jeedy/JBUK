@@ -254,6 +254,11 @@ Spring API 를 이용하여 프로그램 방식으로 Transaction 을 구현하�
 - http://blog.naver.com/tkstone/50192724315
 
 앞서 Spring AOP 를 이용한 Transaction 사용법을 설명 하였다. 특히 @Transactional 을 사용한 Transaction 선언이 편리하기는 하나 다음과 같은 경우에는 동작을 하지 않는다.
+
+> @Transactional(rollbackFor=Exception.class)<br>
+> 예외에 따른 롤백처리는 Checked 예외(Exception.class)는 롤백되지 않고, Unchecked 예외(RuntimeException.class)는 롤백됩니다.<br>
+> checked 예외일 경우에도 rollback을 할 경우 rollbackFor 속성에 Exception.class 을 등록하면 됩니다.
+
 ```java
   1 public class TransactionInvoker2 {
   2  
@@ -687,6 +692,8 @@ couponServiceImpl:
   2         int result1 = userMapper.update();
   3         int result2 = couponMapper.insert();
   4         if(result1+result2 == 2){
+                // 반드시 Unchecked Exception(예: RuntimeException)으로 던져야 rollback 된다.
+                // 참고: https://offbyone.tistory.com/405
   5             throw new RuntimeException();
   6         }
   7 }
@@ -707,6 +714,7 @@ couponServiceImpl:
 ### 적용방법
 참고 : 
 - https://supawer0728.github.io/2018/03/22/spring-multi-transaction/#comment-4596136323 (매우 잘 설명되어있다.)
+- https://d2.naver.com/helloworld/5812258 (RoutingDataSource 사용 시 JTA를 이용한 트랜잭션 처리)
 
 다중 Transaction 처리 하는 방법에는 두가지 정도의 방법이 있다.
 - spring-data-commons의 `ChainedTransactionManager` 이용
@@ -883,11 +891,65 @@ public class DatabaseConfigTravel {
 
 
 
+#### 3. DBMS 이기종 트랜잭션 JDBC 환경설정
+참고자료:  https://bigzero37.tistory.com/64
+
+##### 3.1. MS SQL 서버
+- 참고 : <https://www.ibm.com/support/knowledgecenter/ko/SSFPJS_8.5.7/com.ibm.wbpm.imuc.stbpm.doc/topics/db_xa_sa_win.html?view=embed>
+- XA 트랜잭션을 위해 MS DTC을 사용으로 설정 단계
+  - 제어판 > 관리 도구 > 컴포넌트 서비스(구성요소서비스)를 선택
+  - 분산 트랜잭션 코디네이터컴포넌트 서비스 > 컴퓨터 > 내 컴퓨터를 선택
+  - 로컬 DTC를 마우스 오른쪽 단추로 클릭한 후 특성을 선택
+  - 로컬 DTC 특성 창에서 보안 탭을 클릭
+  - XA 트랜잭션 사용 선택란을 선택한 후 확인을 클릭 - MS DTC 서비스가 다시 시작됨.  
+  - MS DTC 변경사항과 동기화되도록 SQL Server를 다시 시작
+  ![ms-sql 셋팅](./images/mssql_xa_setting1.png)
+
+- XA 트랜잭션을 위한 JDBC 분산 트랜잭션 컴포넌트 구성
+  - SQLServer JDBC 드라이버 다운로드 : https://www.microsoft.com/en-us/download/details.aspx?id=11774
+  - 다운로드 받은 파일 중 tar.gz 압축해제 하여 sqljdbc_xa.dll, sqljdbc_auth.dll, xa_install.sql 파일을 추출
+  - sqljdbc_xa.dll 파일을 SQL Server 컴퓨터의 Binn 디렉토리로 복사 ( x64 bit는 x64 폴더의 sqljdbc_xa.dll 파일을 사용)
+  - (기본 SQL Server 설치의 경우 해당 위치는 C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\Binn).
+  ![ms-sql 셋팅](./images/mssql_xa_setting2.png)
+
+- SQL Server에서 xa_install.sql 데이터베이스 스크립트를 실행
+  - 예를 들어, 명령 프롬프트에서 sqlcmd -i xa_install.sql을 실행
+  - 이 스크립트는 sqljdbc_xa.dll에서 호출하는 확장 스토어드 프로시저를 설치함.
+  - 이러한 확장 스토어드 프로시저는 Microsoft SQL Server JDBC 드라이버에 대한 XA 지원 및 분산 트랜잭션을 구현함.
+  - 이 스크립트는 SQL Server 인스턴스의 관리자로 실행. 존재하지 않는 프로시저 삭제 불가능에 대한 오류를 무시할 수 있음
+  - grant execute 부분 스크립트에서 권한을 주고자 하는 해당계정으로 변경하여 스크립트 실행
+
+- Windows 인증 구성을 위한 단계
+  - sqljdbc_auth.dll 파일을 SQL Server 컴퓨터의 Binn 디렉토리로 복사 ( x64 bit는 x64 폴더의 sqljdbc_xa.dll 파일을 사용)
+  - (기본 SQL Server 설치의 경우 해당 위치는 C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\Binn)
+
+- XA 트랜잭션 구성한 후 서버를 시작하기 전에 TCP/IP 연결 구성 및 확인
+  - 시작 메뉴에서 Microsoft SQL Server 2014 > 구성 도구 > SQL Server 구성 관리자를 클릭
+  - SQL Server 네트워크 구성 > SQL2014용 프로토콜에서 TCP/IP 선택
+  - TCP/IP를 두 번 클릭하고 프로토콜 탭 아래에서 사용으로 설정.
+  - IP 주소 탭을 클릭하여 구성된 각 IP 주소에 대해 TCP 포트를 사용으로 설정
+
+##### 3.2. Postgre 설정 - Docker
+- postgresql.conf 에 max_prepared_transactions = 0 이 아닌 다른 숫자로 변경(10으로 변경함)
+- 만일 0으로 되어 있으면 org.postgresql.xa.PGXAException: Error preparing transaction 에러가 발생함.
+
+##### 3.3. Oracle 설정
+- sys 계정으로 로그인
+- 아래 스크립트를 실행하여 각각의 오라클 패키지의 select 권한을 해당 User 에게 부여함.
+  ```
+  grant select on sys.dba_pending_transactions to <User Name>;
+  grant select on sys.pending_trans$ to <User Name>;
+  grant select on sys.dba_2pc_pending to <User Name>;
+  grant execute on sys.dbms_system to <User Name>;
+  grant execute on dbms_xa to <User Name>;
+  ```
+
+
 ## :bomb: troubleshooting
 ### 1. Srping-boot Transactional is not working
 **3가지만 명심하자**
 - Transaction 할 method 에 @transactional 달아주자 (service 또는 serviceImpl 둘중에 아무대나 걸어도 되는데 보기 쉽게 impl에 걸자)
-- **다수의 Datasource 을 셋팅(다수 TrasactionManager 를 셋팅)한 경우 @transactional(transactionManager = "travelTransactionManager") `transactionManager`은 꼭 명시하자**
+- **다수의 Datasource 을 셋팅(다수 TransactionManager 를 셋팅)한 경우 @transactional(transactionManager = "travelTransactionManager") `transactionManager`은 꼭 명시하자**
     - 직 경험담을 얘기 하자면 명시안할 경우 @primary 로 선언된 connection을 setAutoCommit하고 rollback 처리한다. 
     만약 다른 connection에서 update를 진행하는 거라면 rollback이 정상적으로 되지 않는다.   
 - @transactional은 외부에서 호출할 경우에만 걸린다. 내부에서 호출할 경우엔 안먹는다. 
@@ -905,3 +967,62 @@ public class DatabaseConfigTravel {
 ### 2. 분산 데이터베이스 환경 Datasource 간에 Transaction 해결하기
 참고:
 - https://supawer0728.github.io/2018/03/22/spring-multi-transaction/ (ChainedTransactionManager, JTA 예제)
+
+
+### 3. Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userTransactionService' defined in class path resource [org/springframework/boot/autoconfigure/transaction/jta/AtomikosJtaConfiguration.class]: Invocation of init method failed; nested exception is com.atomikos.icatch.SysException: Error in init: Log already in use? api_tmlog in D:\tomcat\transaction-logs\
+- transaction 관리 파일을 같이 사용하려 할 경우 위 같은 오류가 발생한다.
+- 각 프로젝트 마다 트랜젝션 파일명이나 관리 디렉토리를 다르게 해서 해결한다. 
+- spring boot 를 이용하고 있다면 아래 설정을 통해서 디렉토리 및 파일명을 변경가능하다.
+  application.properties:
+  ```properties
+  # Set directory of log files; make sure this directory exists!
+  #
+  # com.atomikos.icatch.log_base_dir = ./
+
+  # Set base name of log file
+  # this name will be  used as the first part of 
+  # the system-generated log file name
+  #
+  # com.atomikos.icatch.log_base_name = tmlog
+
+  spring.jta.atomikos.properties.log-base-dir= # Directory in which the log files should be stored.
+  spring.jta.atomikos.properties.log-base-name=tmlog # Transactions log file base name.
+  ```
+
+
+### 3. 20200515 17:04:36.729 [Atomikos:3] WARN c.a.r.x.XaResourceRecoveryManager - Error while retrieving xids from resource - will retry later...
+```
+20200515 17:04:36.729 [Atomikos:3] WARN c.a.r.x.XaResourceRecoveryManager - Error while retrieving xids from resource - will retry later...
+
+javax.transaction.xa.XAException: null
+        at oracle.jdbc.xa.OracleXAResource.recover(OracleXAResource.java:709)
+        at com.atomikos.datasource.xa.RecoveryScan.recoverXids(RecoveryScan.java:32)
+        at com.atomikos.recovery.xa.XaResourceRecoveryManager.retrievePreparedXidsFromXaResource(XaResourceRecoveryManager.java:158)
+        at com.atomikos.recovery.xa.XaResourceRecoveryManager.recover(XaResourceRecoveryManager.java:67)
+        at com.atomikos.datasource.xa.XATransactionalResource.recover(XATransactionalResource.java:449)
+        at com.atomikos.icatch.imp.TransactionServiceImp.performRecovery(TransactionServiceImp.java:490)
+        at com.atomikos.icatch.imp.TransactionServiceImp.access$000(TransactionServiceImp.java:56)
+        at com.atomikos.icatch.imp.TransactionServiceImp$1.alarm(TransactionServiceImp.java:471)
+        at com.atomikos.timing.PooledAlarmTimer.notifyListeners(PooledAlarmTimer.java:95)
+        at com.atomikos.timing.PooledAlarmTimer.run(PooledAlarmTimer.java:82)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+        at java.lang.Thread.run(Thread.java:745)
+20200515 17:04:36.752 [Atomikos:3] INFO c.a.d.x.XATransactionalResource - WWW.DATABASE.tsnbDataSource: refreshed XAResource\
+```
+oracle XA transaction 셋팅필요.
+
+Oracle 설정
+- sys 계정으로 로그인
+- 아래 스크립트를 실행하여 각각의 오라클 패키지의 select 권한을 해당 User 에게 부여함.
+  ```
+  grant select on sys.dba_pending_transactions to <User Name>;
+  grant select on sys.pending_trans$ to <User Name>;
+  grant select on sys.dba_2pc_pending to <User Name>;
+  grant execute on sys.dbms_system to <User Name>;
+  grant execute on dbms_xa to <User Name>;
+  ```
+  
+
+참고
+  - https://bigzero37.tistory.com/64
