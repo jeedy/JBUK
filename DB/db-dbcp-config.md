@@ -8,6 +8,11 @@ is longer than the server configured value of 'wait_timeout'.
 You should consider either expiring and/or testing connection validity before use in your application, increasing the server configured values for client timeouts, or using the Connector/J connection property 'autoReconnect=true' to avoid this problem.
 SQL : SELECT #
 
+Oracle 경우 아래와 같은 오류가 발생한다.
+> [ajp-nio-8109-exec-37] WARN mc.a.d.x.XAResourceTransaction - XA resource 'WWW.DATABASE.XXXX.DataSource': resume for XID '3137322E31362E3230312E3133312E746D313539303436383634313338363030303233:3137322E31362E3230312E3133312E746D3233' raised -7: the XA resource has become unavailable
+oracle.jdbc.xa.OracleXAException: null
+
+
 친절하게 `autoReconnect=true` 값을 넣어주라는 메시지가 있었지만 좀더 자세히 알아보고자 DBCP 설정방법에 대해서 찾게 되었다.
 
 ## 참고자료
