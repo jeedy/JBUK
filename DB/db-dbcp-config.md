@@ -83,9 +83,21 @@ Evictor 스레드가 5분에 한 번씩 실행되도록 설정했을 때 30분 �
 
 ## AtomikosDataSourceBean 사용시 설정방법
 BasicDataSource 와 다르게 AtomikosDataSource 는 위 속성을 지원하지 않는다.
-`?다른 속성값으로 지원하는 것으로 보이는데, 어떤 값을 확인해봐야 할지는 찾아보자?`
+~~`?다른 속성값으로 지원하는 것으로 보이는데, 어떤 값을 확인해봐야 할지는 찾아보자?`~~
 
 우선 TestQuery를 하나 달아 놓았더니 오류는 안났으나 좀더 확인이 필요하다.
+
+MySQL:
 ```java
 dataSource.setTestQuery("SELECT 1");
 ```
+Oracle:
+```java
+dataSource.setTestQuery("SELECT 1 FROM DUAL");
+```
+
+testQuery를 입력해 놓으면, 쿼리를 날리기전에 TestQuery를 통해 connection 확인을 한다. 
+만약, 서버에서 강제로 connection을 닫은 상태(일정 시간동안 통신을 안하면 connection을 강제로 닫는 셋팅을 하는 서버들도 있다)라면 testQuery를 통해 connection reset을 진행해 다시 재생성한다.
+하지만 testQuery가 없다면 확인없이 계속 쿼리를 날릴려고 하기 때문에 계속 Exception을 발생시킬 것이다.
+
+**결론: testQuery를 반드시 입력해놓자.**
