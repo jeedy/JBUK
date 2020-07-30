@@ -6,6 +6,33 @@ tags: cors, preflight, credential, Access-Control-, Origin, Access-Control-Reque
 - https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 
 
+## (핵심) Apache 설정 방법
+내가 실제로 테스트해보고 경험을 토대로 적는다.
+
+브라우저내에서 `www.other.com` 사이트에서 `www.test.com` 로 Ajax(API) 호출할 경우 기본적으로 cors 정책으로 호출이 불가능하다. 가능하게 하려면 `www.test.com` 서버측 설정이 필요한데
+apache 기준으로 Preflight 를 위한 header set 을 해줘야한다. 
+
+```sh
+Header set Access-Control-Allow-Origin "*"
+<IfModule mod_headers.c>
+   SetEnvIfNoCase Origin "^(https?://.+\.other\.com|https?://.+\.another\.com)$" AccessControlAllowOrigin=$0
+   Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+   Header set Access-Control-Allow-Credentials true
+   Header set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, X-Authorization"
+</IfModule>
+```
+
+위 처럼 설정하면 `.other.com, another.com` 에서 `www.test.com` 에 Ajax(API) 호출이 가능해진다.
+
+- SetEnvIfNoCase Origin : `other.com, another.com` 도메인에 대해서만 cors header 설정을 적용한다. (필수 설정)
+- Access-Control-Allow-Origin: 허용하는 도메인을 설정한다. `SetEnvIfNoCase Origin` 를 통해 `other.com, another.com` 에 대해서만 CORS 요청이 가능하도록 한다. 값이 없을경우 Access-Control-Allow-Origin 값이 "*" 로 설정된다. 일부 Ajax는 Access-Control-Allow-Origin 값이 명시 되어야 한다.
+- Access-Control-Allow-Headers: API 호출시 header 값에 `X-Authorization` 값에 accessToken 을 넣어 호출을 해야한다. 
+만약 추가로 header 값을 받고 싶다면 `Access-Control-Allow-Headers` 에 추가한다.
+- Access-Control-Allow-Credentials: true 라면 request시에 쿠키값까지 받을 수 있다. 물론 `.other.com` 에서 ajax 호출시 쿠키까지 보내는 설정 `xhr.withCredentials = true` 을 해줘야한다.
+
+
+## CORS 에 대한 설명
+
 HTTP 요청은 기본적으로 Cross-Site HTTP Requests 가 가능하다
 
 하지만 **`<script></script>`로 둘러싸여 있는 스크립트**에서 생성된 Cross-Site HTTP Requests는 **Same Origin Policy를 적용** 받기 때문에 Cross-Site HTTP Requests가 불가능하다.
