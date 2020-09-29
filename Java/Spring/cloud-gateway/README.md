@@ -1,5 +1,5 @@
 # Spring cloud gateway
-tags: spring, cloud gateway, zuul
+tags: spring, cloud gateway, zuul, API, gateway
 
  - https://velog.io/@tlatldms/%EC%84%9C%EB%B2%84%EA%B0%9C%EB%B0%9C%EC%BA%A0%ED%94%84-MSA-%EC%95%84%ED%82%A4%ED%85%8D%EC%B3%90%EC%9D%98-API-Gateway-%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC-%EA%B2%B0%EC%A0%95 (spring-cloud-gateway 내용)
 
