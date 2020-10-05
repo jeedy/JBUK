@@ -8,7 +8,6 @@
     - 자바,메이븐등 툴 자동설치 위치 ~/.jenkins/tools/
     - 프로젝트 빌드 Item 정보 ~/.jenkins/jobs/
     - 유저 정보 ~/.jenkins/users/
-1.
 
 ## Job configure 에서 패스워드 환경변수 설정
 
