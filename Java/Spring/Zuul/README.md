@@ -1,6 +1,11 @@
 # API Gateway - spring cloud zuul
 tags: API, gateway, spring, cloud, zuul, MSA, Microservice Architecture, Netflix
 
+## 개요
+https://github.com/Netflix/zuul/wiki/How-We-Use-Zuul-At-Netflix
+2013년도 zuul을 공개하며 어떻게 사용하고 있는지를 공유한다.
+
+
 ## 참고 자료
  - https://woowabros.github.io/r&d/2017/06/13/apigateway.html (배민 API GATEWAY - spring cloud zuul 기본개념 및 적용기)
  - https://supawer0728.github.io/2018/03/11/Spring-Cloud-Zuul/ (zuul 구현방법)
