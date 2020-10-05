@@ -47,7 +47,6 @@ https://konghq.com/subscriptions/
 - 감사 로그
 - 비주얼 서비스 맵
 - 고급 인증 (전체 OAuth 2.0, OpenID Connect, Vault, 상호 TLS 및 향상된 암호화 포함)
-- 클러스터 상태 모니터링 (Kong Vitals)
 - Kong Studio 통합을 통한 엔드 투 엔드 API 사양 및 디자인
 - 24x7x365 전문가 지원
 - 기타 등등...
