@@ -51,6 +51,322 @@ https://konghq.com/subscriptions/
 - 24x7x365 전문가 지원
 - 기타 등등...
 
+## 설치
+참조: https://study-develop.tistory.com/39
+
+### 1. kong installation.
+- https://konghq.com/get-started/#install 접속.
+- 운영체제 선택(CentOS)
+    ```sh 
+    #운영체제 확인
+    $ cat /etc/os-release
+    ```
+- 패키지 다운로드 및 설치
+    ```sh
+    # 운영체제 버전에 맞는 패키지 다운로드
+    $ wget -O centos7-kong-2.1.4.el7.amd64.rpm https://bintray.com/kong/kong-rpm/download_file?file_path=centos/7/kong-2.1.4.el7.amd64.rpm
+    # 다운로드된 패키지 인스톨
+    $ sudo yum install ./centos7-kong-2.1.4.el7.amd64.rpm --nogpgcheck
+    $ whereis kong
+    kong: /etc/kong /usr/local/bin/kong /usr/local/kong
+    # root 계정으로 변환 (root 권한으로 설치되기 때문에 root로 계정으로 변환한다.)
+    $ su -
+    $ cd /etc/kong
+    $ cp ./kong.conf.default ./kong.conf
+    ```
+### 2. postgreSQL 설치(konga와 같이 이용하기 위해 postgresql-11을 설치하자)
+- https://www.postgresql.org/download/ 사이트 접근 (redhat, centOS 는 여기로 https://www.postgresql.org/download/linux/redhat/)
+- yum repository를 이용한 database 설치
+    ```sh
+    # postgresql-13 버전 설치
+    $ yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    $ yum install -y postgresql13-server
+    $ /usr/pgsql-13/bin/postgresql-13-setup initdb
+    $ systemctl enable postgresql-13
+    $ systemctl start postgresql-13
+
+    # postgresql-11 버전 설치
+    $ yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    $ yum install -y postgresql11-server
+    $ /usr/pgsql-11/bin/postgresql-11-setup initdb
+    $ systemctl enable postgresql-11
+    $ systemctl start postgresql-11
+    ```
+
+### 3.postgresSQL에 kong 계정 및 Database 설정 후 kong.conf 값 수정
+- kong 계정 및 database 생성
+    ```sh
+    $ su - postgres
+    $ psql
+    postgres=# \password postgres
+    새 암호를 입력하세요 : *****
+    다시 입력해주세요 : *****
+    postgres=# CREATE USER kong; CREATE DATABASE kong OWNER kong;
+    postgres=# \password kong
+    새 암호를 입력하세요 : *****
+    다시 입력해주세요 : *****
+    postgres=# quit
+    $ exit
+    ```
+- kong.conf 에 database 정보 수정
+    /etc/kong/kong.conf
+    ```sh
+    # root 계정으로 진행
+    database = postgres
+    pg_host = 127.0.0.1
+    pg_port = 5432
+    pg_timeout = 5000
+    pg_user = kong
+    pg_password = (password) # postgresql에 입력한 kong 패스워드를 입력하자
+    pg_database = kong
+    ```
+
+### 4. kong 최초 마이크레이션 실행
+```sh
+$ kong migrations bootstrap ./kong.conf
+Bootstrapping database...
+migrating core on database 'kong'...
+core migrated up to: 000_base (executed)
+core migrated up to: 003_100_to_110 (executed)
+core migrated up to: 004_110_to_120 (executed)
+core migrated up to: 005_120_to_130 (executed)
+core migrated up to: 006_130_to_140 (executed)
+...(생략)
+
+```
+
+### 5. kong 실행 및 테스트
+```sh
+$ kong start ./kong.conf
+Kong started
+
+$ curl -i http://localhost:8001/
+HTTP/1.1 200 OK
+Date: Wed, 07 Oct 2020 07:38:24 GMT
+Content-Type: application/json; charset=utf-8
+Connection: keep-alive
+Access-Control-Allow-Origin: *
+Server: kong/2.1.4
+Content-Length: 9998
+X-Kong-Admin-Latency: 326
+...(생략)
+# kong stop (종료)
+
+```
+
+정상적으로 kong이 실행되었다면 아래 port들이 올라가 있어야한다.
+```
+ By default Kong listens on the following ports:
+
+   :8000 on which Kong listens for incoming HTTP traffic from your clients, and forwards it to your upstream services.
+   :8443 on which Kong listens for incoming HTTPS traffic. This port has a similar behavior as the :8000 port, except that it expects HTTPS traffic only. This port can be disabled via the configuration file.
+   :8001 on which the Admin API used to configure Kong listens.
+   :8444 on which the Admin API listens for HTTPS traffic.
+```
+
+### 6. konga 설치하기 (https://github.com/pantsel/konga)
+참고: https://study-develop.tistory.com/40
+
+#### 중요사항 (2020-10-14일자 기준)
+- node 12.16.0 버전에서 빌드하면 node 12.16.0 버전으로 실행해야한다.
+- postgresql-11 버전은 추천
+- postgresql-13 버전은 지원하지 않는다.(postgresql-12도 지원하지 않은 것으로 보인다.)
+
+```sh
+# root
+$ su -
+
+# git 설치 
+# yum install git
+
+# nvm 설치
+# yum install wget
+$ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
+$ source ~/.bashrc
+
+# node, npm 설치
+$ nvm install 12.16.0
+$ nvm list
+$ nvm alias default 12.16.0
+
+# kong 설치된 곳에 같이 설치하자
+$ cd /usr/local
+$ git clone https://github.com/pantsel/konga.git
+$ cd konga
+$ npm i
+$ cp .env_example .env
+
+$ vim .env
+# .env: database 정보 수정
+PORT=1337
+NODE_ENV=production
+KONGA_HOOK_TIMEOUT=120000
+DB_ADAPTER=postgres
+DB_URI=postgresql://konga:password@localhost:5432/konga
+KONGA_LOG_LEVEL=warn
+TOKEN_SECRET=some_secret_token
+
+# Database 마이그레이션
+$ node ./bin/konga.js prepare --adapter postgres --uri postgresql://konga:password@localhost:5432/konga
+
+# konga 실행
+$ npm start
+
+# konga 접속 테스트
+$ curl -i http://localhost:1337/
+HTTP/1.1 302 Found
+X-Powered-By: Sails <sailsjs.org>
+Location: /register
+Vary: Accept, Accept-Encoding
+Content-Type: text/plain; charset=UTF-8
+Content-Length: 31
+Date: Wed, 14 Oct 2020 05:35:26 GMT
+Connection: keep-alive
+
+```
+
+## postgresql cli 
+```sh
+root$ su - postgres
+postgres$ psql -d kong
+psql (13.0)
+도움말을 보려면 "help"를 입력하십시오.
+
+kong=# select version();
+                                                 version
+---------------------------------------------------------------------------------------------------------
+ PostgreSQL 13.0 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39), 64-bit
+(1개 행)
+
+kong=# \dt
+                 릴레이션(relation) 목록
+ 스키마 |             이름              |  종류  | 소유주
+--------+-------------------------------+--------+--------
+ public | acls                          | 테이블 | kong
+ public | acme_storage                  | 테이블 | kong
+ public | basicauth_credentials         | 테이블 | kong
+ public | ca_certificates               | 테이블 | kong
+ public | certificates                  | 테이블 | kong
+ public | cluster_events                | 테이블 | kong
+ public | consumers                     | 테이블 | kong
+ public | hmacauth_credentials          | 테이블 | kong
+ public | jwt_secrets                   | 테이블 | kong
+ public | keyauth_credentials           | 테이블 | kong
+ public | locks                         | 테이블 | kong
+ public | oauth2_authorization_codes    | 테이블 | kong
+ public | oauth2_credentials            | 테이블 | kong
+ public | oauth2_tokens                 | 테이블 | kong
+ public | plugins                       | 테이블 | kong
+ public | ratelimiting_metrics          | 테이블 | kong
+ public | response_ratelimiting_metrics | 테이블 | kong
+ public | routes                        | 테이블 | kong
+ public | schema_meta                   | 테이블 | kong
+ public | services                      | 테이블 | kong
+ public | sessions                      | 테이블 | kong
+ public | snis                          | 테이블 | kong
+ public | tags                          | 테이블 | kong
+ public | targets                       | 테이블 | kong
+ public | ttls                          | 테이블 | kong
+ public | upstreams                     | 테이블 | kong
+ public | workspaces                    | 테이블 | kong
+(27개 행)
+
+kong=# select * from plugins;
+ id | created_at | name | consumer_id | service_id | route_id | config | enabled | cache_key | protocols | tags | ws_id
+----+------------+------+-------------+------------+----------+--------+---------+-----------+-----------+------+-------
+(0개 행)
+```
+
+
+### :bomb: troubleshooting
+1. **#중요#** centos7에 postgresql 설치후 kong 실행시 아래와 같은 오류 발생
+
+    ```sh
+    # postgresql-11 경우
+    $ kong start
+    Error: [PostgreSQL error] failed to retrieve PostgreSQL server_version_num: 치명적오류: 사용자 "kong"의 Ident 인증을 실패했습니다.
+
+    # postgresql-13 경우
+    $ kong start --v
+    2020/10/07 14:20:29 [verbose] Kong: 2.1.4
+    2020/10/07 14:20:29 [verbose] reading config file at /etc/kong/kong.conf
+    2020/10/07 14:20:29 [verbose] prefix in use: /usr/local/kong
+    Error:
+    /usr/local/share/lua/5.1/pgmoon/init.lua:211: don't know how to auth: 10
+    stack traceback:
+            [C]: in function 'auth'
+            /usr/local/share/lua/5.1/pgmoon/init.lua:211: in function 'connect'
+            .../share/lua/5.1/kong/db/strategies/postgres/connector.lua:211: in function 'connect'
+            .../share/lua/5.1/kong/db/strategies/postgres/connector.lua:527: in function 'query'
+            .../share/lua/5.1/kong/db/strategies/postgres/connector.lua:279: in function 'init'
+            /usr/local/share/lua/5.1/kong/db/init.lua:139: in function 'init_connector'
+            /usr/local/share/lua/5.1/kong/cmd/start.lua:31: in function 'cmd_exec'
+            /usr/local/share/lua/5.1/kong/cmd/init.lua:88: in function </usr/local/share/lua/5.1/kong/cmd/init.lua:88>
+            [C]: in function 'xpcall'
+            /usr/local/share/lua/5.1/kong/cmd/init.lua:88: in function </usr/local/share/lua/5.1/kong/cmd/init.lua:45>
+            /usr/local/bin/kong:9: in function 'file_gen'
+            init_worker_by_lua:47: in function <init_worker_by_lua:45>
+            [C]: in function 'xpcall'
+            init_worker_by_lua:54: in function <init_worker_by_lua:52>
+
+    ```
+    원인 postgresql 의 기본 설정된 인증방식 때문이다. 이를 수정해주면 해결된다. (참고: https://sysops.tistory.com/8, 인증방식 document: https://www.postgresql.org/docs/10/auth-pg-hba-conf.html)
+
+    /var/lib/pgsql/11/data/pg_hba.conf:
+    ```sh
+    # $ cd /var/lib/pgsql/11/data/
+    # $ cp ./pg_hba.conf ./pg_hba.conf.default
+    # $ vim /var/lib/pgsql/11/data/pg_hba.conf
+    
+    # postgresql-11 버전의 경우
+    # TYPE  DATABASE        USER            ADDRESS                 METHOD
+    # "local" is for Unix domain socket connections only
+    local   all             all                                     peer
+    # IPv4 local connections:
+    host    all             all             127.0.0.1/32            md5
+    # IPv6 local connections:
+    host    all             all             ::1/128                 md5
+    # Allow replication connections from localhost, by a user with the
+    # replication privilege.
+    local   replication     all                                     peer
+    host    replication     all             127.0.0.1/32            scram-sha-256
+    host    replication     all             ::1/128                 scram-sha-256
+
+    ```
+
+    /var/lib/pgsql/13/data/pg_hba.conf:
+    ```sh
+    # $ cd /var/lib/pgsql/13/data/
+    # $ cp ./pg_hba.conf ./pg_hba.conf.default
+    # $ vim /var/lib/pgsql/13/data/pg_hba.conf
+    
+    # postgresql-13 버전의 경우
+    # TYPE  DATABASE        USER            ADDRESS                 METHOD
+    # "local" is for Unix domain socket connections only
+    local   all             all                                     peer
+    # IPv4 local connections:
+    host    all             all             127.0.0.1/32            password
+    # IPv6 local connections:
+    host    all             all             ::1/128                 password
+    # Allow replication connections from localhost, by a user with the
+    # replication privilege.
+    local   replication     all                                     peer
+    host    replication     all             127.0.0.1/32            scram-sha-256
+    host    replication     all             ::1/128                 scram-sha-256
+
+    ```
+
+    postgresql 재기동한다. 
+    ```sh 
+    $ systemctl restart postgresql-11
+
+    # postgresql-13 경우
+    # $ systemctl restart postgresql-13
+    ```
+
+
+
+
 
 #### postgresql URIs
 ```
