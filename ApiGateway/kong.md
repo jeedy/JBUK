@@ -74,7 +74,7 @@ https://konghq.com/subscriptions/
     $ cd /etc/kong
     $ cp ./kong.conf.default ./kong.conf
     ```
-### 2. postgreSQL 설치
+### 2. postgreSQL 설치(konga와 같이 이용하기 위해 postgresql-11을 설치하자)
 - https://www.postgresql.org/download/ 사이트 접근 (redhat, centOS 는 여기로 https://www.postgresql.org/download/linux/redhat/)
 - yum repository를 이용한 database 설치
     ```sh
@@ -84,12 +84,19 @@ https://konghq.com/subscriptions/
     $ /usr/pgsql-13/bin/postgresql-13-setup initdb
     $ systemctl enable postgresql-13
     $ systemctl start postgresql-13
+
+    # postgresql-11 버전 설치
+    $ yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    $ yum install -y postgresql11-server
+    $ /usr/pgsql-11/bin/postgresql-11-setup initdb
+    $ systemctl enable postgresql-11
+    $ systemctl start postgresql-11
     ```
 
 ### 3.postgresSQL에 kong 계정 및 Database 설정 후 kong.conf 값 수정
 - kong 계정 및 database 생성
     ```sh
-    $ su postgres
+    $ su - postgres
     $ psql
     postgres=# \password postgres
     새 암호를 입력하세요 : *****
@@ -143,6 +150,78 @@ Server: kong/2.1.4
 Content-Length: 9998
 X-Kong-Admin-Latency: 326
 ...(생략)
+# kong stop (종료)
+
+```
+
+정상적으로 kong이 실행되었다면 아래 port들이 올라가 있어야한다.
+```
+ By default Kong listens on the following ports:
+
+   :8000 on which Kong listens for incoming HTTP traffic from your clients, and forwards it to your upstream services.
+   :8443 on which Kong listens for incoming HTTPS traffic. This port has a similar behavior as the :8000 port, except that it expects HTTPS traffic only. This port can be disabled via the configuration file.
+   :8001 on which the Admin API used to configure Kong listens.
+   :8444 on which the Admin API listens for HTTPS traffic.
+```
+
+### 6. konga 설치하기 (https://github.com/pantsel/konga)
+참고: https://study-develop.tistory.com/40
+
+#### 중요사항 (2020-10-14일자 기준)
+- node 12.16.0 버전에서 빌드하면 node 12.16.0 버전으로 실행해야한다.
+- postgresql-11 버전은 추천
+- postgresql-13 버전은 지원하지 않는다.(postgresql-12도 지원하지 않은 것으로 보인다.)
+
+```sh
+# root
+$ su -
+
+# git 설치 
+# yum install git
+
+# nvm 설치
+# yum install wget
+$ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
+$ source ~/.bashrc
+
+# node, npm 설치
+$ nvm install 12.16.0
+$ nvm list
+$ nvm alias default 12.16.0
+
+# kong 설치된 곳에 같이 설치하자
+$ cd /usr/local
+$ git clone https://github.com/pantsel/konga.git
+$ cd konga
+$ npm i
+$ cp .env_example .env
+
+$ vim .env
+# .env: database 정보 수정
+PORT=1337
+NODE_ENV=production
+KONGA_HOOK_TIMEOUT=120000
+DB_ADAPTER=postgres
+DB_URI=postgresql://konga:password@localhost:5432/konga
+KONGA_LOG_LEVEL=warn
+TOKEN_SECRET=some_secret_token
+
+# Database 마이그레이션
+$ node ./bin/konga.js prepare --adapter postgres --uri postgresql://konga:password@localhost:5432/konga
+
+# konga 실행
+$ npm start
+
+# konga 접속 테스트
+$ curl -i http://localhost:1337/
+HTTP/1.1 302 Found
+X-Powered-By: Sails <sailsjs.org>
+Location: /register
+Vary: Accept, Accept-Encoding
+Content-Type: text/plain; charset=UTF-8
+Content-Length: 31
+Date: Wed, 14 Oct 2020 05:35:26 GMT
+Connection: keep-alive
 
 ```
 
@@ -152,6 +231,12 @@ root$ su - postgres
 postgres$ psql -d kong
 psql (13.0)
 도움말을 보려면 "help"를 입력하십시오.
+
+kong=# select version();
+                                                 version
+---------------------------------------------------------------------------------------------------------
+ PostgreSQL 13.0 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39), 64-bit
+(1개 행)
 
 kong=# \dt
                  릴레이션(relation) 목록
@@ -190,7 +275,6 @@ kong=# select * from plugins;
  id | created_at | name | consumer_id | service_id | route_id | config | enabled | cache_key | protocols | tags | ws_id
 ----+------------+------+-------------+------------+----------+--------+---------+-----------+-----------+------+-------
 (0개 행)
-
 ```
 
 
@@ -274,7 +358,10 @@ kong=# select * from plugins;
 
     postgresql 재기동한다. 
     ```sh 
-    $ systemctl restart postgresql-13
+    $ systemctl restart postgresql-11
+
+    # postgresql-13 경우
+    # $ systemctl restart postgresql-13
     ```
 
 
