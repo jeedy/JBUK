@@ -47,8 +47,9 @@ jdbc.minIdle=2
 ```
 위 설정으로 connection 생성 timeline을 기록해보면
 
-1. 최초 **4 conn** 생성됨, (initialSize + **minIdle**)
+1. 최초 **2 conn** 생성됨, (initialSize)
 2. (start stress test, 20 connection 초과) 부하시 **20 conn** 생성됨 (maxActive + **minIdle**)
+    - 실제론 18개만 통신중이고 2개는 sleep 상태
 3. (after maxWait with stress test ) **8 conn** 남음 (maxIdle + **minIdle**)
 
 모든 connection이 생성될 때 **minIdle** 값이 영향을 준다. 이는 직접 테스트 하면서 processlist 를 통해 connection을 맺은 갯수를 보고 알아낸 것이기 때문에 확실하다.
