@@ -24,6 +24,38 @@ oracle.jdbc.xa.OracleXAException: null
 - https://d2.naver.com/helloworld/1321 (JDBC Internal - 타임아웃의 이해, timeout이 어디서 문제인지 판단해볼때 한번은 읽어볼만하다.)
 
 
+## JDBC connection pool 설정 정리
+- initialSize : maxActive 보다 생성된 connection 갯수가 적을 경우 connection pool에 한번에 채워 넣을 connection 개수
+- maxActive(OR maxTotal) : 동시에 사용할 수 있는 최대 커넥션 개수
+- maxWait(OR maxWaitMillis) : sleep 상태의 connection 유지시간
+- maxIdle : 모든 connection이 sleep 상태일때 최소로 남겨 놓을 connection 수
+- minIdle : 이건 그냥 유휴한 connection을 생성해 놓는다.
+
+```properties
+...
+jdbc.driverClassName=com.mysql.cj.jdbc.Driver
+jdbc.url=jdbc:mysql://(..생략..)?useUnicode=true&serverTimezone=Asia/Seoul&useSSL=false
+jdbc.username=(..생략..)
+jdbc.password=(..생략..)
+jdbc.encpassword=(..생략..)
+jdbc.initialSize=2
+jdbc.maxActive=18
+jdbc.maxWait=10000
+jdbc.maxIdle=6
+jdbc.minIdle=2
+...
+```
+위 설정으로 connection 생성 timeline을 기록해보면
+
+1. 최초 **4 conn** 생성됨, (initialSize + **minIdle**)
+2. (start stress test, 20 connection 초과) 부하시 **20 conn** 생성됨 (maxActive + **minIdle**)
+3. (after maxWait with stress test ) **8 conn** 남음 (maxIdle + **minIdle**)
+
+모든 connection이 생성될 때 **minIdle** 값이 영향을 준다. 이는 직접 테스트 하면서 processlist 를 통해 connection을 맺은 갯수를 보고 알아낸 것이기 때문에 확실하다.
+
+어떤 블로그에서 "initialSize와 maxActive, maxIdle, minIdle 항목을 동일한 값으로 통일해도 무방하다." 라고 써있는데 사실 **initialSize와 maxActive, maxIdle** 값을 같은 값으로 한다면 minIdle 값은 0으로 설정하는게 바람직하다.
+
+
 ## 커넥션의 검사와 정리
 유효성 검사 쿼리(validation query)와 Evictor 스레드 관련 설정으로도 애플리케이션의 안정성을 높일 수 있다.
 

@@ -165,7 +165,9 @@ X-Kong-Admin-Latency: 326
 ```
 
 ### 6. konga 설치하기 (https://github.com/pantsel/konga)
-참고: https://study-develop.tistory.com/40
+참고: 
+- https://study-develop.tistory.com/40
+- https://dev.to/vousmeevoyez/setup-kong-konga-part-2-dan
 
 #### 중요사항 (2020-10-14일자 기준)
 - node 12.16.0 버전에서 빌드하면 node 12.16.0 버전으로 실행해야한다.
@@ -323,8 +325,10 @@ kong=# select * from plugins;
     # "local" is for Unix domain socket connections only
     local   all             all                                     peer
     # IPv4 local connections:
+    # 여기 METHOD 부분을 md5로 수정
     host    all             all             127.0.0.1/32            md5
     # IPv6 local connections:
+    # 여기 METHOD 부분을 md5로 수정
     host    all             all             ::1/128                 md5
     # Allow replication connections from localhost, by a user with the
     # replication privilege.
@@ -345,8 +349,10 @@ kong=# select * from plugins;
     # "local" is for Unix domain socket connections only
     local   all             all                                     peer
     # IPv4 local connections:
+    # 여기 METHOD 부분을 password로 수정
     host    all             all             127.0.0.1/32            password
     # IPv6 local connections:
+    # 여기 METHOD 부분을 password로 수정
     host    all             all             ::1/128                 password
     # Allow replication connections from localhost, by a user with the
     # replication privilege.
@@ -364,6 +370,13 @@ kong=# select * from plugins;
     # $ systemctl restart postgresql-13
     ```
 
+## 라이센스
+
+### 리셀러
+https://konghq.com/partners/?itm_source=website&itm_medium=nav
+
+#### 한국
+http://bmtsys.com/kr/bbs/content.php?co_id=micro02
 
 
 
