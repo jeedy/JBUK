@@ -27,7 +27,7 @@ oracle.jdbc.xa.OracleXAException: null
 ## JDBC connection pool 설정 정리
 - initialSize : maxActive 보다 생성된 connection 갯수가 적을 경우 connection pool에 한번에 채워 넣을 connection 개수
 - maxActive(OR maxTotal) : 동시에 사용할 수 있는 최대 커넥션 개수
-- maxWait(OR maxWaitMillis) : sleep 상태의 connection 유지시간
+- maxWait(OR maxWaitMillis) : 60000(DB Connection이 부족할 경우 대기하는 시간:ms, 원문: The maximum number of milliseconds that the pool will wait (when there are no available connections) for a connection to be returned before throwing an exception, or -1 to wait indefinitely.)
 - maxIdle : 모든 connection이 sleep 상태일때 최소로 남겨 놓을 connection 수
 - minIdle : 이건 그냥 유휴한 connection을 생성해 놓는다.
 
