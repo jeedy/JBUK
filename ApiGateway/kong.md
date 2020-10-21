@@ -137,6 +137,7 @@ core migrated up to: 006_130_to_140 (executed)
 
 ### 5. kong 실행 및 테스트
 ```sh
+$ cd /etc/kong
 $ kong start ./kong.conf
 Kong started
 
@@ -169,10 +170,15 @@ X-Kong-Admin-Latency: 326
 - https://study-develop.tistory.com/40
 - https://dev.to/vousmeevoyez/setup-kong-konga-part-2-dan
 
+
+#### Konga service 등록 및 route 등록방법
+
+
 #### 중요사항 (2020-10-14일자 기준)
 - node 12.16.0 버전에서 빌드하면 node 12.16.0 버전으로 실행해야한다.
 - postgresql-11 버전은 추천
 - postgresql-13 버전은 지원하지 않는다.(postgresql-12도 지원하지 않은 것으로 보인다.)
+- konga 0.14.9 버전 기준 kong 2.1.3 까지 지원한다.
 
 ```sh
 # root
@@ -225,6 +231,22 @@ Content-Length: 31
 Date: Wed, 14 Oct 2020 05:35:26 GMT
 Connection: keep-alive
 
+```
+## Kong Admin API
+```
+
+$ curl -i -X POST http://localhost:8001/services/2f9d8cee-8098-4968-ad71-6729c6b8a5ef/routes \
+  --data 'paths[]=/acc' \
+  --data name=tacc
+
+
+$ curl -i -X PUT http://localhost:8001/routes/394345fb-2e86-4172-b6eb-17bfcc065c26 \
+  --data 'paths[]=/acc' \
+  --data 'hosts[]=tacc..com'
+
+
+$ curl -i -X DELETE http://localhost:8001/routes/574be0a3-d2ff-464a-80f0-e2ee8c9e1eac
+$ curl -i -X DELETE http://localhost:8001/routes/394345fb-2e86-4172-b6eb-17bfcc065c26
 ```
 
 ## postgresql cli 
