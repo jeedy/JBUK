@@ -169,10 +169,7 @@ X-Kong-Admin-Latency: 326
 참고: 
 - https://study-develop.tistory.com/40
 - https://dev.to/vousmeevoyez/setup-kong-konga-part-2-dan
-
-
-#### Konga service 등록 및 route 등록방법
-
+- [Konga service 등록 및 route 등록방법](./konga.md)
 
 #### 중요사항 (2020-10-14일자 기준)
 - node 12.16.0 버전에서 빌드하면 node 12.16.0 버전으로 실행해야한다.
@@ -180,6 +177,7 @@ X-Kong-Admin-Latency: 326
 - postgresql-13 버전은 지원하지 않는다.(postgresql-12도 지원하지 않은 것으로 보인다.)
 - konga 0.14.9 버전 기준 kong 2.1.3 까지 지원한다.
 
+#### kong 설치
 ```sh
 # root
 $ su -
@@ -232,6 +230,44 @@ Date: Wed, 14 Oct 2020 05:35:26 GMT
 Connection: keep-alive
 
 ```
+
+#### PM2(production process manager for Node.js) 설치 및 konga 구동
+참고자료: 
+- https://github.com/Unitech/pm2
+- https://medium.com/idomongodb/how-to-npm-run-start-at-the-background-%EF%B8%8F-64ddda7c1f1
+
+```sh
+# su -
+$ npm install pm2 -g
+# 설치 완료후
+
+$ cd /usr/local/konga
+# 시작
+$ pm2 start ./app.js --name konga
+
+# 재시작
+$ pm2 restart konga
+
+# 중지
+$ pm2 stop konga
+
+# 삭제
+$ pm2 delete konga
+
+
+# 등록된 리스트 확인
+$ pm2 list
+
+# 모니터링(Terminal Based Monitoring)
+$ pm2 monit
+
+# 로그 tail
+$ pm2 logs
+
+# 무중단 재기동(Zero Downtime Reload)
+$ pm2 reload all
+```
+
 ## Kong Admin API
 ```
 
