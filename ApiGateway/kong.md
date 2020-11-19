@@ -137,6 +137,7 @@ core migrated up to: 006_130_to_140 (executed)
 
 ### 5. kong 실행 및 테스트
 ```sh
+$ cd /etc/kong
 $ kong start ./kong.conf
 Kong started
 
@@ -165,13 +166,18 @@ X-Kong-Admin-Latency: 326
 ```
 
 ### 6. konga 설치하기 (https://github.com/pantsel/konga)
-참고: https://study-develop.tistory.com/40
+참고: 
+- https://study-develop.tistory.com/40
+- https://dev.to/vousmeevoyez/setup-kong-konga-part-2-dan
+- [Konga service 등록 및 route 등록방법](./konga.md)
 
 #### 중요사항 (2020-10-14일자 기준)
 - node 12.16.0 버전에서 빌드하면 node 12.16.0 버전으로 실행해야한다.
 - postgresql-11 버전은 추천
 - postgresql-13 버전은 지원하지 않는다.(postgresql-12도 지원하지 않은 것으로 보인다.)
+- konga 0.14.9 버전 기준 kong 2.1.3 까지 지원한다.
 
+#### kong 설치
 ```sh
 # root
 $ su -
@@ -223,6 +229,60 @@ Content-Length: 31
 Date: Wed, 14 Oct 2020 05:35:26 GMT
 Connection: keep-alive
 
+```
+
+#### PM2(production process manager for Node.js) 설치 및 konga 구동
+참고자료: 
+- https://github.com/Unitech/pm2
+- https://medium.com/idomongodb/how-to-npm-run-start-at-the-background-%EF%B8%8F-64ddda7c1f1
+
+```sh
+# su -
+$ npm install pm2 -g
+# 설치 완료후
+
+$ cd /usr/local/konga
+# 시작
+$ pm2 start ./app.js --name konga
+
+# 재시작
+$ pm2 restart konga
+
+# 중지
+$ pm2 stop konga
+
+# 삭제
+$ pm2 delete konga
+
+
+# 등록된 리스트 확인
+$ pm2 list
+
+# 모니터링(Terminal Based Monitoring)
+$ pm2 monit
+
+# 로그 tail
+$ pm2 logs
+
+# 무중단 재기동(Zero Downtime Reload)
+$ pm2 reload all
+```
+
+## Kong Admin API
+```
+
+$ curl -i -X POST http://localhost:8001/services/2f9d8cee-8098-4968-ad71-6729c6b8a5ef/routes \
+  --data 'paths[]=/acc' \
+  --data name=tacc
+
+
+$ curl -i -X PUT http://localhost:8001/routes/394345fb-2e86-4172-b6eb-17bfcc065c26 \
+  --data 'paths[]=/acc' \
+  --data 'hosts[]=tacc..com'
+
+
+$ curl -i -X DELETE http://localhost:8001/routes/574be0a3-d2ff-464a-80f0-e2ee8c9e1eac
+$ curl -i -X DELETE http://localhost:8001/routes/394345fb-2e86-4172-b6eb-17bfcc065c26
 ```
 
 ## postgresql cli 
@@ -323,8 +383,10 @@ kong=# select * from plugins;
     # "local" is for Unix domain socket connections only
     local   all             all                                     peer
     # IPv4 local connections:
+    # 여기 METHOD 부분을 md5로 수정
     host    all             all             127.0.0.1/32            md5
     # IPv6 local connections:
+    # 여기 METHOD 부분을 md5로 수정
     host    all             all             ::1/128                 md5
     # Allow replication connections from localhost, by a user with the
     # replication privilege.
@@ -345,8 +407,10 @@ kong=# select * from plugins;
     # "local" is for Unix domain socket connections only
     local   all             all                                     peer
     # IPv4 local connections:
+    # 여기 METHOD 부분을 password로 수정
     host    all             all             127.0.0.1/32            password
     # IPv6 local connections:
+    # 여기 METHOD 부분을 password로 수정
     host    all             all             ::1/128                 password
     # Allow replication connections from localhost, by a user with the
     # replication privilege.
@@ -364,6 +428,13 @@ kong=# select * from plugins;
     # $ systemctl restart postgresql-13
     ```
 
+## 라이센스
+
+### 리셀러
+https://konghq.com/partners/?itm_source=website&itm_medium=nav
+
+#### 한국
+http://bmtsys.com/kr/bbs/content.php?co_id=micro02
 
 
 
