@@ -165,6 +165,8 @@ X-Kong-Admin-Latency: 326
    :8444 on which the Admin API listens for HTTPS traffic.
 ```
 
+> ssl 인증서를 설치하기 위해선 kong.conf 파일안에 엔진용(`ssl_cert`, `ssl_cert_key`), 어드민용(`admin_ssl_cert`, `admin_ssl_cert_key`) 속성에 인증서 absolute path 값이 들어가야한다. 
+
 ### 6. konga 설치하기 (https://github.com/pantsel/konga)
 참고: 
 - https://study-develop.tistory.com/40
