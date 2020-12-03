@@ -65,6 +65,8 @@ logfile redis-server_5000.log
 
 실행: 
 ```bash
+$ cd /usr/local/redis-5.0.5/
+$ ./src/redis-cli -h 127.0.0.1 -p 5000 shutdown
 $ ./src/redis-server ./redis-master.conf
 ```
 
