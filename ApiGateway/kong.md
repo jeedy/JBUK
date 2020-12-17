@@ -297,7 +297,7 @@ psql (13.0)
 kong=# select version();
                                                  version
 ---------------------------------------------------------------------------------------------------------
- PostgreSQL 13.0 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39), 64-bit
+PostgreSQL 11.9 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11), 64-bit
 (1개 행)
 
 kong=# \dt
