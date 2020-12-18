@@ -37,8 +37,12 @@ $ cd /usr/local/redis-5.0.5/
 # ./src/redis-server ./redis.conf --daemonize yes 데몬으로 background 로 띄울경우
 $ ./src/redis-server ./redis.conf
 
+# 레디스 shutdown
+$ ./src/redis-cli -h 127.0.0.1 -p 5000 shutdown
+
 # 프로세스확인
 $ ps aux | grep redis-server
+
 ```
 
 ## 3. 포트 확인

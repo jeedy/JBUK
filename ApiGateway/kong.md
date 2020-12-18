@@ -165,6 +165,8 @@ X-Kong-Admin-Latency: 326
    :8444 on which the Admin API listens for HTTPS traffic.
 ```
 
+> ssl 인증서를 설치하기 위해선 kong.conf 파일안에 엔진용(`ssl_cert`, `ssl_cert_key`), 어드민용(`admin_ssl_cert`, `admin_ssl_cert_key`) 속성에 인증서 absolute path 값이 들어가야한다. 
+
 ### 6. konga 설치하기 (https://github.com/pantsel/konga)
 참고: 
 - https://study-develop.tistory.com/40
@@ -267,6 +269,8 @@ $ pm2 logs
 # 무중단 재기동(Zero Downtime Reload)
 $ pm2 reload all
 ```
+> 브라우저를 통해 Konga(http://localhost:1337/) 접속후 최초 어드민 생성하는 절차가 진행된다.
+
 
 ## Kong Admin API
 ```
@@ -295,7 +299,7 @@ psql (13.0)
 kong=# select version();
                                                  version
 ---------------------------------------------------------------------------------------------------------
- PostgreSQL 13.0 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39), 64-bit
+PostgreSQL 11.9 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11), 64-bit
 (1개 행)
 
 kong=# \dt
