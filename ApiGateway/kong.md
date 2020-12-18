@@ -109,7 +109,8 @@ https://konghq.com/subscriptions/
     $ exit
     ```
 - kong.conf 에 database 정보 수정
-    /etc/kong/kong.conf
+
+    /etc/kong/kong.conf:
     ```sh
     # root 계정으로 진행
     database = postgres
@@ -343,6 +344,24 @@ kong=# select * from plugins;
 
 
 ### :bomb: troubleshooting
+1. **#중요#** Clustering 구성시 kong engine health check 방법
+
+    > 부제: localhost:8443(또는 localhost:8000) 으로 health chech를 할 수 있는 방법.
+
+    1. service 에 self-localhost 등록
+        1. name: localhost-status
+        1. protocol: http
+        1. **host: localhost** (이게중요)
+        1. port: 8001
+        1. Path: /status
+    1. Routes 에 /health Path 등록
+        1. name: health
+        1. Paths: /health
+        1. Methods: GET
+        1. Protocals: https
+    
+    이렇게 등록 후 `$ curl -X GET 'http://kong-engine-x:8000/health/status'` 호출하면 정상적으로 동작중인지 확인 가능하다.
+
 1. **#중요#** centos7에 postgresql 설치후 kong 실행시 아래와 같은 오류 발생
 
     ```sh
