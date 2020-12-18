@@ -269,6 +269,8 @@ $ pm2 logs
 # 무중단 재기동(Zero Downtime Reload)
 $ pm2 reload all
 ```
+> 브라우저를 통해 Konga(http://localhost:1337/) 접속후 최초 어드민 생성하는 절차가 진행된다.
+
 
 ## Kong Admin API
 ```
