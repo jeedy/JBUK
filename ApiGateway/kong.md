@@ -168,11 +168,18 @@ X-Kong-Admin-Latency: 326
 
 > ssl 인증서를 설치하기 위해선 kong.conf 파일안에 엔진용(`ssl_cert`, `ssl_cert_key`), 어드민용(`admin_ssl_cert`, `admin_ssl_cert_key`) 속성에 인증서 absolute path 값이 들어가야한다. 
 
+#### kong 로그 확인방법
+```sh
+$ su - kong
+$ tail -f /usr/local/kong/longs/access.log
+```
+
 ### 6. konga 설치하기 (https://github.com/pantsel/konga)
 참고: 
 - https://study-develop.tistory.com/40
 - https://dev.to/vousmeevoyez/setup-kong-konga-part-2-dan
 - [Konga service 등록 및 route 등록방법](./konga.md)
+
 
 #### 중요사항 (2020-10-14일자 기준)
 - node 12.16.0 버전에서 빌드하면 node 12.16.0 버전으로 실행해야한다.
@@ -344,6 +351,11 @@ kong=# select * from plugins;
 
 
 ### :bomb: troubleshooting
+1. **#중요#** Cors error 발생시
+- router > method 항목에 `OPTIONS` 등록되어있는지 확인
+- router(또는 service) plugin에 `cors` plugin이 설치되어있는지 확인
+
+
 1. **#중요#** Clustering 구성시 kong engine health check 방법
 
     > 부제: localhost:8443(또는 localhost:8000) 으로 health chech를 할 수 있는 방법.
