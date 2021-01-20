@@ -109,7 +109,8 @@ https://konghq.com/subscriptions/
     $ exit
     ```
 - kong.conf 에 database 정보 수정
-    /etc/kong/kong.conf
+
+    /etc/kong/kong.conf:
     ```sh
     # root 계정으로 진행
     database = postgres
@@ -167,11 +168,18 @@ X-Kong-Admin-Latency: 326
 
 > ssl 인증서를 설치하기 위해선 kong.conf 파일안에 엔진용(`ssl_cert`, `ssl_cert_key`), 어드민용(`admin_ssl_cert`, `admin_ssl_cert_key`) 속성에 인증서 absolute path 값이 들어가야한다. 
 
+#### kong 로그 확인방법
+```sh
+$ su - kong
+$ tail -f /usr/local/kong/longs/access.log
+```
+
 ### 6. konga 설치하기 (https://github.com/pantsel/konga)
 참고: 
 - https://study-develop.tistory.com/40
 - https://dev.to/vousmeevoyez/setup-kong-konga-part-2-dan
 - [Konga service 등록 및 route 등록방법](./konga.md)
+
 
 #### 중요사항 (2020-10-14일자 기준)
 - node 12.16.0 버전에서 빌드하면 node 12.16.0 버전으로 실행해야한다.
@@ -343,6 +351,29 @@ kong=# select * from plugins;
 
 
 ### :bomb: troubleshooting
+1. **#중요#** Cors error 발생시
+- router > method 항목에 `OPTIONS` 등록되어있는지 확인
+- router(또는 service) plugin에 `cors` plugin이 설치되어있는지 확인
+
+
+1. **#중요#** Clustering 구성시 kong engine health check 방법
+
+    > 부제: localhost:8443(또는 localhost:8000) 으로 health chech를 할 수 있는 방법.
+
+    1. service 에 self-localhost 등록
+        1. name: localhost-status
+        1. protocol: http
+        1. **host: localhost** (이게중요)
+        1. port: 8001
+        1. Path: /status
+    1. Routes 에 /health Path 등록
+        1. name: health
+        1. Paths: /health
+        1. Methods: GET
+        1. Protocals: https
+    
+    이렇게 등록 후 `$ curl -X GET 'http://kong-engine-x:8000/health/status'` 호출하면 정상적으로 동작중인지 확인 가능하다.
+
 1. **#중요#** centos7에 postgresql 설치후 kong 실행시 아래와 같은 오류 발생
 
     ```sh

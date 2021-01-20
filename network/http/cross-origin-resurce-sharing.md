@@ -326,9 +326,14 @@ Access-Control-Request-Headers: <field-name>[, <field-name>]*
 
 ## 5. 결론
 - CORS를 쓰면 AJAX로도 Same Origin Policy의 제약을 넘어 다른 도메인의 자원을 사용할 수 있다.
+- CORS에서 `Preflight` 는 브라우저가 임의로 날리는 request이다. 그렇기 때문에 `server to server` 에서 이런 이슈가 없는 것이고 `Postman` 또는 `curl` 을 통한 호출시에도 CORS error가 발생하지 않는 것이다. 
+- cors 테스트를 위해 `postman` 또는 `curl` 에서 `OPTIONS` Method로 호출하면 정상 Status 200 이 떨어지나 실제 브라우저에서는 status 401 error 가 발생하는 경우가 있어 `postman`, `curl`만으로 cors 를 테스트 하긴 역부족이다. 
 - CORS를 사용하려면
-  - 클라이언트에서 `Access-Control-**` 류의 HTTP Header를 서버에 보내야 하고,
-  - 서버도 `Access-Control-**` 류의 HTTP Header를 클라이언트에 회신하게 되어 있어야 한다.
+  - ~~클라이언트에서 `Access-Control-**` 류의 HTTP Header를 서버에 보내야 하고,~~
+  - 서버도 `Access-Control-**` 류의 HTTP response Header를 클라이언트에 회신하게 되어 있어야 한다.
+  - 클라이언트에서 Ajax 호출시 쿠키값을 보내고 싶을땐 `withCredentials: true` 을 추가해야하고 서버에서도 `Access-Control-Allow-Credentials: ture` 값을 http response Header를 통해 회신해줘야한다.
+  - 클라이언트가 `Origin`, `Authorization`, `X-PINGPONG` 과 같은 임의의 Header값들을 제공하려면 서버측 `Access-Control-Allow-Headers`(또는 `Access-Control-Expose-Headers`) 값에 해당 해더들을 등록해놔야한다.
+  - `Authorization`, `X-Authorization` 또는 `숨기고 싶은 사용가능한 Header` 들은 `Access-Control-Expose-Headers`에 등록하면 Preflight response에 노출되지 않는다.
 
 
 
