@@ -61,3 +61,4 @@ D:\instantclient_19_9\odbc_install.exe
 3. TNS Service Name: D:\instantclient_19_9\ 경로에 `tnsnames.ora`을 넣었다면 접속 정보를 선택 할 수 있는 셀렉트 박스가 뜬다.
 4. User ID: 접속할 계정정보
 
+> tnsnames.ora 의 내용이 정상적으로 되어 있지 않으면 `ORA-12154: TNS: 지정된 접속식별자를 분석할 수 없다` 는 오류 가 나타남.
