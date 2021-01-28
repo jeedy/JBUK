@@ -976,7 +976,7 @@ public class DatabaseConfigTravel {
   application.properties:
   ```properties
   # Set directory of log files; make sure this directory exists!
-  #
+  # tomcat 으로 서버를 띄울경우 /usr/local/tomcat/bin 디렉토리 밑에 transaction-logs 디렉토리가 생긴다.
   # com.atomikos.icatch.log_base_dir = ./
 
   # Set base name of log file
