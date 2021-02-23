@@ -42,7 +42,7 @@ $ /usr/local/nifi-1.9.2/bin/nifi.sh restart
 ## 3. 테스트 oracle table to output file
 1. Process > PutFile 드래그
 1. `PutFile` 더블클릭 > PROPERTIES 탭 클릭
-1. `Directory` /home/ec2-user/infi_temp/
+1. `Directory` /home/ec2-user/nifi_temp/
 1. 맵에 만들어놨던 `QueryDatabaseTable` 와 `PutFile` 연결
 ![테이블 데이터 파일로 떨어뜨리기](./images/nifi-relation-querytoputfile.png)
 1. `QueryDatabaseTable` , `PutFile` start 버튼 클릭
