@@ -33,7 +33,7 @@ $ /usr/local/nifi-1.9.2/bin/nifi.sh restart
 3. `Database Type` > Oracle 버전에 맞게 선택
 4. `Table Name` , `Additioal WHERE clause` 입력
 5. Database Connection Pooling Service  > DBCPConnectionPool 선택 > 화살표 클릭해 DBCP 셋팅
-![오라클 DBCP 셋팅](./images/infi-oracle-dbcpconnectionpool-properties.png)
+![오라클 DBCP 셋팅](./images/nifi-oracle-dbcpconnectionpool-properties.png)
 6. `Database Connection URL` > jdbc:oracle:thin:@//IP:PORT/SID
 7. `Database Driver Class Name` > oracle.jdbc.driver.OracleDriver
 8. `Database User` / `Password` 입력
