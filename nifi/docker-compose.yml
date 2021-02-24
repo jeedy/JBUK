@@ -1,0 +1,42 @@
+version: "3"
+services:
+  nifi:
+    restart: always
+    image: apache/nifi:latest
+    container_name: nifi
+    ports:
+      - "9090:8080"
+    volumes:
+      - type: volume
+        source: conf
+        target: /opt/nifi/nifi-current/conf
+      - type: volume
+        source: content_repository
+        target: /opt/nifi/nifi-current/content_repository
+      - type: volume
+        source: database_repository
+        target: /opt/nifi/nifi-current/database_repository
+      - type: volume
+        source: flowfile_repository
+        target: /opt/nifi/nifi-current/flowfile_repository
+      - type: volume
+        source: provenance_repository
+        target: /opt/nifi/nifi-current/provenance_repository
+      - type: volume
+        source: logs
+        target: /opt/nifi/nifi-current/logs
+      - type: volume
+        source: state
+        target: /opt/nifi/nifi-current/state
+  nifi-registry:
+    image: apache/nifi-registry:latest
+    ports:
+      - 19090:18080
+volumes:
+  conf:
+  content_repository:
+  database_repository:
+  flowfile_repository:
+  provenance_repository:
+  logs:
+  state:
