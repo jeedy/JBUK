@@ -2,6 +2,8 @@
 이번 예제는 Nifi Proccessor API도 같이 활용, processor 사용방법 뿐만 아니라 Nifi rest-api 사용 방법까지 같이 설명한다.
 
 이 예제를 참고로 해서 Processor 들을 자동으로 컨트롤 하고 싶을때 참고하면 좋다.
+## 참고
+- https://gist.github.com/cheerupdi/d6c82626b0b93cc3ae06c35cb1851002
 
 ## index
 1. [Overview](#index-overview)

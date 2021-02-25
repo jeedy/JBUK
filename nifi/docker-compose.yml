@@ -32,6 +32,8 @@ services:
     image: apache/nifi-registry:latest
     ports:
       - 19090:18080
+    volumes:
+      - ~/nifi-registry/database:/opt/nifi-registry/nifi-registry-current/database
 volumes:
   conf:
   content_repository:
