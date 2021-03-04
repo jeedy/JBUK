@@ -1,5 +1,20 @@
 # 3. 데이터 모델링
 
+- [3. 데이터 모델링](#3--------)
+  * [3.1. 매핑 api 이해하기](#31----api-----)
+    + [매핑 정보를  생성할 때 고려사항](#------------------)
+    + [3.1.1. 매핑 인덱스 만들기](#311-----------)
+    + [3.1.2. 매핑 확인](#312------)
+    + [3.1.3. 매핑 파라미터](#313--------)
+      - [analyzer](#analyzer)
+      - [normalizer](#normalizer)
+      - [boost](#boost)
+      - [coerce](#coerce)
+      - [copy_to](#copy-to)
+      - [fielddata](#fielddata)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 ## 3.1. 매핑 api 이해하기
 
 ### 매핑 정보를  생성할 때 고려사항
