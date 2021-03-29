@@ -116,6 +116,7 @@ $ docker ps -a
 $ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 $ yum install unzip -y
 $ unzip awscliv2.zip
+$ ./aws/install
 $ aws --version
 $ aws configure
 AWS Access Key ID [None]: [엑세스 키 ID]
