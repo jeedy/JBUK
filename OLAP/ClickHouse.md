@@ -90,7 +90,7 @@ $ clickhouse-client
 
 #### 4-2. Reqlication(복제) clustering
 - 비동기 멀티마스터 복제방식
-- Replica-1 node(Initiator Node) 가 사용자에게 입력을 받으면 바로 사용자에게 응받을 보내고 Background로 Replica-x node 로 copy가 진행된다. (그렇기 때문에 데이터를 저장한 직후 Replica-x node로 데이터를 요청하면 데이터가 없는 case가 생긴다.)
+- Replica-1 node(Initiator Node) 가 사용자에게 입력을 받으면 바로 사용자에게 응답을 보내고 Background로 Replica-x node 로 copy가 진행된다. (그렇기 때문에 데이터를 저장한 직후 Replica-x node로 데이터를 요청하면 데이터가 없는 case가 생긴다.)
 - 모든 Replica node들은 master가 될 수 있다. 즉 모든 서버가 insert가 가능하다.
 
 #### 셋팅방법
