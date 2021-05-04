@@ -3,6 +3,11 @@ tags: ansible, elasticsearch, docker, kibana, ssh, amazon linux, aws
 
 결국 ssh 연결을 통해 셀 명령어를 사용하는 것이기 때문에 node 운영체제의 선택은 중요한 요소, 운영체제에 따라 필요할 경우 버전에 따른 playbook 작성을 해야한다.
 
+## 목차
+1. [Ansible controller and Docker 셋팅 on AWS with centos7](./aws-ansible-docker.md)
+
+1. [Ansible & Jenkins 연동](https://jojoldu.tistory.com/443)
+
 ## 용어
 1. controller: ansible이 인스톨된 서버를 controller 서버라고 한다.
 2. node or 호스트(host): controller 서버에서 컨트롤하는 서버를 node라고 한다.
