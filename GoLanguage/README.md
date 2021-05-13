@@ -10,3 +10,5 @@
 1. [Goland 개발환경 셋팅하기 on windows WSL](./Setting-goland-on-windows-WSL.md)
 
 1. [Go 프라이빗 모듈 가져오기](./go-modules-private-repo.md)
+
+1. [Go 젠킨스 배포 Job 생성](./go-deploy-with-jenkins.md)
