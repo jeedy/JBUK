@@ -171,4 +171,22 @@ GET my_index/_search
 #### fielddata
 fielddata는 엘라스틱서치가 힙 공간에 생성하는 메모리 캐시다. 과거에는 fielddata를 많이 사용했지만 반복적인 메모리 부족 현상과 잦은 GC로 현재는 거의 사용되지 않는다. 최신 버전의 엘라스틱서치는  `doc_values` 라는 새로운 형태의 캐시를 제공하고 있으며, test 타입의 필드를 제외한 모든 필드는 기본적으로 `doc_values` 캐시를 사용한다.
 
-fielddata를 사용해야만 하는 경우도 있다. text 타입의 필드는 
+> fielddata를 사용해야만 하는 경우도 있다. text 타입의 필드는 기본적으로 분석기에 의해 형태소 분석이 되기 때문에 집계나 정렬 등의 기능을 수행할 수 없다. 하지만 부득이하게 text 타입의 필드에서 집계나 정렬을 수행하는 경우도 있을 것이다. 이렇한 경우에 한해 fielddata를 사용할 수 있다. 하지만 fielddata는 메모리에 생성되는 캐시이기 때문에 최소한으로만 사용해야 한다는 사실에 주의해야 한다. 기본적으로 비활성화돼 있다.
+
+```json
+PUT movie_search_mapping/_mapping/_doc
+{
+  "properties": {
+    "nationAltEn": {
+      "type": "text",
+      "fielddata": true
+    }
+  }
+}
+```
+
+#### doc_values
+엘라스틱서치에서 기본으로 사용하는 캐시, text 타입을 제외한 모든 타입은 doc_values 캐시를 사용한다. 루씬을 기반으로 하는 캐시 방식이다. 과거 `fielddata`를 사용했으나 현재는 모두 doc_values를 사용한다. 
+
+필드를 정렬, 집계할 필요가 없고 스크립트에서 필드 값에 액세스할 필요가 없다면 디스크 공간 절약을 위해 doc_values 를 비활성화할 수도 있다. 한 번 비활성화된 필드는 인덱스를 재색인하지 않는 한 변경이 불가능하다.
+
