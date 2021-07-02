@@ -203,23 +203,7 @@ curl --location --request POST 'http://172.17.0.2:9200/hotel_auto_complete/_sear
                         {
                             "match": {
                                 "search_string.ngram": {
-                                    "query": "그랜드",
-                                    "analyzer": "my_ngram_analyzer"
-                                }
-                            }
-                        },
-                        {
-                            "match": {
-                                "search_string.ngram": {
-                                    "query": "하얏트",
-                                    "analyzer": "my_ngram_analyzer"
-                                }
-                            }
-                        },
-                        {
-                            "match": {
-                                "search_string.ngram": {
-                                    "query": "리젠시",
+                                    "query": "그랜드 하얏트 리젠시",
                                     "analyzer": "my_ngram_analyzer"
                                 }
                             }

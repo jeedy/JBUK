@@ -97,12 +97,16 @@ curl --location --request POST 'http://172.17.0.2:9200/spell-check/_search?prett
             "text": "쟈전거",
             "term": {
                 "field": "title.spell",
-                "string_distance": "jaro_winkler"
+                "string_distance": "jaro_winkler",
+                "suggest_mode":"popular",
+                "sort":"frequency"
             }
         }
     }
 }
 ```
+> Suggest 속성 https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#search-suggesters
+
 
 
 
