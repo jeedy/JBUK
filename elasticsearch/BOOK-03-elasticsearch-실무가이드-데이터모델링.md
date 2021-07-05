@@ -1,0 +1,421 @@
+# 3. 데이터 모델링
+
+- [3.1. 매핑 api 이해하기](#31----api-----)
+  * [매핑 정보를  생성할 때 고려사항](#------------------)
+  * [3.1.1. 매핑 인덱스 만들기](#311-----------)
+  * [3.1.2. 매핑 확인](#312------)
+  * [3.1.3. 매핑 파라미터](#313--------)
+    + [analyzer :star::star:](#analyzer--star--star-)
+    + [search_analyzer :star::star:](#search-analyzer--star--star-)
+    + [normalizer :star::star:](#normalizer--star--star-)
+    + [boost](#boost)
+    + [coerce](#coerce)
+    + [properties :star::star::star:](#properties--star--star--star-)
+    + [fields :star::star::star:](#fields--star--star--star-)
+    + [copy_to :star::star:](#copy-to--star--star-)
+    + [index :star:](#index--star-)
+    + [fielddata](#fielddata)
+    + [doc_values](#doc-values)
+    + [dynamic](#dynamic)
+    + [enabled](#enabled)
+    + [format](#format)
+    + [ignore_above :star:](#ignore-above--star-)
+    + [ignore_malformed](#ignore-malformed)
+    + [norms](#norms)
+    + [null_value](#null-value)
+    + [position_increment_gap](#position-increment-gap)
+    + [similarity](#similarity)
+    + [store](#store)
+    + [term_vector](#term-vector)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+## 3.1. 매핑 api 이해하기
+
+### 매핑 정보를  생성할 때 고려사항
+- 문자열을 분석할 것인가?
+- _source에 어떤 필드를 정의할 것인가?
+- 날짜 필드를 가지는 필드는 무엇인가?
+- 매핑에 정의되지 않고 유입되는 필드는 어떻게 처리할 것인가?
+
+> 실무에서는 다양한 이유로 `동적 매핑`을  거의 사용하지 않는다.
+
+
+### 3.1.1. 매핑 인덱스 만들기
+아래는 movie를 입력하기 위한 매핑정보, 검색 대상은 "영화제목" 필드이므로 분석 가능하도록 `text` 타입으로 정의한다. 나머지 필드는 보여주기만 할 것이기 때문에 특성에 따라 integer 타입, keyword 타입으로 설정한다. 
+
+> 검색이라는 `text` 타입, 보여주기만 하면 되는 필드는 integer, keyword 같은 타입으로 선언하면 된다.
+
+Create index mapping:
+```
+PUT movie_search
+{
+    "settings":{
+        "number_of_shards":5
+        ...
+    }
+}
+
+
+response:
+{
+    "acknowledged": true,
+    "shards_acknowledged": true,
+    "index": "movie_search"
+}
+```
+
+### 3.1.2. 매핑 확인
+Get index mapping:
+```
+GET movie_search/_mapping
+
+response:
+{
+  "movie_search" : {
+    "mappings" : {
+      "properties" : {
+        "audiCnt" : {
+          "type" : "integer",
+          "null_value" : 0
+        },
+        "companies" : {
+          "properties" : {
+            "companyCd" : {
+              "type" : "keyword"
+            },
+            "companyNm" : {
+              "type" : "keyword"
+            }
+          }
+        },
+        "directors" : {
+          "properties" : {
+            "peopleNm" : {
+              "type" : "keyword"
+            }
+          }
+        },
+        "genreAlt" : {
+          "type" : "keyword"
+        },
+        "movieCd" : {
+          "type" : "keyword"
+        },
+        "movieNm" : {
+          "type" : "text",
+          "analyzer" : "standard"
+        },
+        "movieNmEn" : {
+          "type" : "text",
+          "analyzer" : "standard"
+        },
+        ...( 생략)
+      }
+    }
+  }
+}
+
+```
+
+
+### 3.1.3. 매핑 파라미터
+매핑 파라미터는 색인할 필드의 데이터를 어떻게 저장할지에 대한 다양한 옵션을 제공한다.
+
+#### analyzer :star::star:
+해당 필드의 데이터를 형태소 분석하겠다는 의미의 파라미터다. 색인과 검색 시 지정한 분석기로 형태소 분석을 수행한다. `text 데이터 타입의 필드는 analyzer 매핑 파라미터를 기본적으로 사용해야 한다.` 별도의 분석기를 지정하지 않으면 `Standard Analyzer`로 형태소 분석을 수행한다. 
+
+#### search_analyzer :star::star:
+일반적으로는 색인과 검색 시 같은 분석기를 사용한다. 만약 다른 분석기를 사용하고 싶은 경우 search_analyzer를 설정해서 검색 시 사용할 분석기를 별도로 지정할 수 있다.
+
+#### normalizer :star::star:
+`normalizer` 매핑 파라미터는 `term query`에 분석기를 사용하기 위해 사용된다. 
+> 예를 들어 keyword 데이터 타입의 경우 원문을 기준으로 문서가 색인되기 때문에 cafe, Cafe, Café 는 서로 다른 문자로 인식된다. 
+하지만 해당 유형을 분석기에 `asciifolding`과 같은 필터를 사용하면 같은 데이터로 인식되게 할 수 있다.
+
+#### boost
+필드에 가중치를 부여한다.
+> 해당기능은 루씬 7.0버전부터 색인 시 boost 설정 기능이 제거됐다.
+
+#### coerce
+색인 시 자동 변환을 허용할지 여부를 설정하는 파라미터다. 예를 들어 `"10"`과 같은 숫자 형태의 문자열이 integer 타입의 필드에 들어온다면 엘라스틱서치는 자동으로 형변환을 수행해서 정상적으로 처리한다. 하지만 coerce 설정을 미사용으로 변경한다면 색인에 실패할 것이다.
+
+#### properties :star::star::star:
+오브젝트(Object) 타입이나 중첩(Nested) 타입의 스키마를 정의할 때 사용되는 옵션으로 필드의 타입을 매핑한다. 오브젝트 필드 및 중첩 필드에는 `properties`라는 서브 필드가 있다. 이 `properties`는 `object` 나 `nested`를 포함한 모든 데이터 타입이 될 수 있다.
+
+#### fields :star::star::star:
+다중 필드(multi_field) 를 설정할 수 있는 옵션이다. 필드 안에 또 다른 필드의 정보를 추가할 수 있어 같은 string 값을 각각 다른 분석기로 처리하도록 설정할 수 있다.
+
+```sh
+PUT movie_search_mapping
+{
+  "settings": {
+    "number_of_shards": 6,
+    "number_of_replicas": 1,
+    "index": {
+      "max_ngram_diff": 50,
+      "analysis": {
+        "filter": {
+          "suggest_filter": {
+            "type": "ngram",
+            "min_gram": 1,
+            "max_gram": 50
+          }
+        },
+        "tokenizer": {
+          "jaso_search_tokenizer": {
+            "type": "jaso_tokenizer",
+            "mistype": true,
+            "chosung": false
+          },
+          "jaso_index_tokenizer": {
+            "type": "jaso_tokenizer",
+            "mistype": true,
+            "chosung": true
+          },
+          "my_ngram_tokenizer": {
+            "type": "ngram",
+            "min_gram": "1",
+            "max_gram": "10"
+          }
+        },
+        "analyzer": {
+          "my_ngram_analyzer": {
+            "tokenizer": "my_ngram_tokenizer"
+          },
+          "suggest_search_analyzer": {
+            "type": "custom",
+            "tokenizer": "jaso_search_tokenizer"
+          },
+          "suggest_index_analyzer": {
+            "type": "custom",
+            "tokenizer": "jaso_index_tokenizer",
+            "filter": [
+              "suggest_filter"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "search_string": {
+        "type": "text",
+        "fields": {
+          "ngram": {
+            "type": "text",
+            "analyzer": "my_ngram_analyzer"
+          },
+          "jaso": {
+            "type": "text",
+            "analyzer": "suggest_index_analyzer"
+          }
+        }
+      },
+      "id": {
+        "type": "long"
+      }
+    },
+    "name": {
+      "type": "text",
+      "analyzer": "standard",
+      "search_analyzer": "standard",
+      "index": true,
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      },
+      "copy_to": "search_string"
+    },
+    "name_en": {
+      "type": "text",
+      "analyzer": "standard",
+      "search_analyzer": "standard",
+      "index": true,
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      },
+      "copy_to": "search_string"
+    }
+  }
+}
+```
+
+#### copy_to :star::star:
+매핑 파라미터를 추가한 필드의 값을 지정한 필드로 복사한다. 예컨대 `keyword 타입의 필드에 copy_to 매핑 파라미터를 사용해 다른 필드로 값을 복사하면 복사된 필드에서는 text 타입을 지정해 형태소 분석을 할 수도 있다.`
+
+또한 여러 개의 필드 데이터를 하나의 필드에  모아서 전체 검색 용도로 사용하기도 한다. 이를 통해 과거에 존재하던 `_all` 컬럼과 동일한 기능을 제공할 수 있다.
+
+참고: https://www.elastic.co/guide/en/elasticsearch/reference/current/copy-to.html
+```
+PUT my_index
+{
+  "mappings": {
+    "properties": {
+      "first_name": {
+        "type": "text",
+        "copy_to": "full_name" 
+      },
+      "last_name": {
+        "type": "text",
+        "copy_to": "full_name" 
+      },
+      "full_name": {
+        "type": "text"
+      }
+    }
+  }
+}
+
+PUT my_index/_doc/1
+{
+  "first_name": "John",
+  "last_name": "Smith"
+}
+
+GET my_index/_search
+{
+  "query": {
+    "match": {
+      "full_name": { 
+        "query": "John Smith",
+        "operator": "and"
+      }
+    }
+  }
+}
+```
+#### index :star:
+해당 필드값을 색인할지 결정한다. 기본값은 `true` 이며, `false`로 변경하면 해당 필드는 색인하지 않는다.
+```sh
+PUT test
+{
+  "mappings": {
+    "doc": {
+      "properties": {
+        "name": {
+          "type": "text",
+          "index": false
+        }
+      }
+    }
+  }
+}
+```
+
+#### fielddata
+fielddata는 엘라스틱서치가 힙 공간에 생성하는 메모리 캐시다. 과거에는 fielddata를 많이 사용했지만 반복적인 메모리 부족 현상과 잦은 GC로 현재는 거의 사용되지 않는다. 최신 버전의 엘라스틱서치는  `doc_values` 라는 새로운 형태의 캐시를 제공하고 있으며, test 타입의 필드를 제외한 모든 필드는 기본적으로 `doc_values` 캐시를 사용한다.
+
+> fielddata를 사용해야만 하는 경우도 있다. text 타입의 필드는 기본적으로 분석기에 의해 형태소 분석이 되기 때문에 집계나 정렬 등의 기능을 수행할 수 없다. 하지만 부득이하게 text 타입의 필드에서 집계나 정렬을 수행하는 경우도 있을 것이다. 이렇한 경우에 한해 fielddata를 사용할 수 있다. 하지만 fielddata는 메모리에 생성되는 캐시이기 때문에 최소한으로만 사용해야 한다는 사실에 주의해야 한다. 기본적으로 비활성화돼 있다.
+
+```json
+PUT movie_search_mapping/_mapping/_doc
+{
+  "properties": {
+    "nationAltEn": {
+      "type": "text",
+      "fielddata": true
+    }
+  }
+}
+```
+
+#### doc_values
+엘라스틱서치에서 기본으로 사용하는 캐시, text 타입을 제외한 모든 타입은 doc_values 캐시를 사용한다. 루씬을 기반으로 하는 캐시 방식이다. 과거 `fielddata`를 사용했으나 현재는 모두 doc_values를 사용한다. 
+
+필드를 정렬, 집계할 필요가 없고 스크립트에서 필드 값에 액세스할 필요가 없다면 디스크 공간 절약을 위해 doc_values 를 비활성화할 수도 있다. 한 번 비활성화된 필드는 인덱스를 재색인하지 않는 한 변경이 불가능하다.
+
+
+#### dynamic
+매핑 필드를 추가할 때 동적으로 생성할지, 말지 결정한다.
+
+> https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic.html
+
+```sh
+curl -X PUT "localhost:9200/my-index-000001?pretty" -H 'Content-Type: application/json' -d'
+{
+  "mappings": {
+    "dynamic": false, 
+    "properties": {
+      "user": { 
+        "properties": {
+          "name": {
+            "type": "text"
+          },
+          "social_networks": {
+            "dynamic": true, 
+            "properties": {}
+          }
+        }
+      }
+    }
+  }
+}
+'
+```
+
+*동적생성 필드 처리 옵션*
+  - true : 새로 추가되는 필드를 매핑에 추가한다.
+  - false : 새로 추가되는 필드를 무시한다. 해당 필드는 색인되지 않아 검색할 수 없지만 _source에는 표시된다.
+  - strict : 새로운 필드가 감지되면 예외가 발생하고 문서 자체가 색인되지 않는다.
+
+#### enabled
+검색 결과에는 포함하지만 색인은 하고 싶지 않은 경우 사용
+
+
+#### format
+날짜 포멧 설정한다.
+
+```sh
+PUT my-index-000001
+{
+  "mappings": {
+    "properties": {
+      "date": {
+        "type":   "date",
+        "format": "yyyy-MM-dd"
+      }
+    }
+  }
+}
+```
+
+> *빌트인 formats*   
+https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html#built-in-date-formats
+
+
+#### ignore_above :star:
+필드에 저장되는 문자열이 지정한 크기를 넘어서민 `빈 값`으로  색인된다.
+
+#### ignore_malformed
+해당 필드에 잘못된 데이터 타입이 들어와 예외가 발생해도 해당 문서를 색인 한다.
+
+#### norms
+문서의 _score 값 계산에 필요한 정규화 인수를 사용할지 여부 설정. 기본값 `true`.     _score 계산이 필요없거나 단순 필터링 용도로 사용하는 필드는 비활성화해서 디스크 공간을 절약할 수 있다.
+
+#### null_value
+null_value를 설정하면 문서의 값이 null 일 경우 `null_value`에 셋팅된 값으로 저장한다.
+
+#### position_increment_gap
+배열(Array) 형태의 데이터를 색인할 때 검색의 정확도를 높이기 위해 제공하는 옵션이다.
+필드 데이터 중 단어와 단어 사이의 간격(slop) 을 허용할지를 설정한다. 기본값은 `100` 이다. 검색시 단어와 단어 사이의 간격을 기준으로 일치하는 문서를 찾는 데 필요하다.
+
+#### similarity
+유사도 측정 알고리즘을 지정한다.
+
+*유사도 측정 알고리증 종류*
+- BM25 : Okapi BM25 알고리즘이다. 엘라스틱서치의 기본 유사도 측정 알고리즘이다.
+- classic : TF/IDF 알고리즘, 문서 내 용의의 개수와 전체 용어의 개수를 이용해 유사도 계산
+- boolean : 복잡한 수학적 모델을 사용하지 않고 단순히 boolean 연산으로 유사도를 측정한다. score는 검색어 일치 여부에 따라 결정되며, 검색 결과의 일치 여부에 따라 쿼리의 가중치(boost)에 사용된 점수로만 유사도를 계산한다.
+
+#### store
+필드의 값을 저장해 결색 결과에 값을 포함하기 위한 매핑 parameter.
+
+#### term_vector
+루씬에서 분석된 용어의 정보를 포함할지 여부를 결정하는 매핑 parameter.
