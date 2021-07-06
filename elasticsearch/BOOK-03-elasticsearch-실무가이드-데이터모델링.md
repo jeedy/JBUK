@@ -419,3 +419,103 @@ null_value를 설정하면 문서의 값이 null 일 경우 `null_value`에 셋�
 
 #### term_vector
 루씬에서 분석된 용어의 정보를 포함할지 여부를 결정하는 매핑 parameter.
+
+
+## 3.2. 메타 필드
+
+### 3.2.1. _index
+인덱스 명
+
+### 3.2.2. _type
+ES 최신버전부터는 `_doc` 으로 통일, 컨트롤할 일이 없다 신경쓰지말자. 
+
+### 3.2.3. _id
+문서 식별하는 유일한 키
+
+### 3.2.4. _uid
+특수한 식별자키 `#`태그를 사용해 `_type`과 `_id` 조합으로 사용한다. 시스템에서 사용하기 때문에 알고만 있자.
+
+### 3.2.5. _source
+문서 원본데이터, _reindex API나 스크립트 사용시에 해당 메타필드를 활용할 수 있다.
+```sh
+POST /_reindex
+{
+  "source": {
+    "index":"movie_search",
+    "query": {
+      "match":{
+        "movieCd": "20173282"
+      }
+    }
+  },
+  "dest":{
+    "index":"reindex_movie"
+  },
+  "script":{
+    "source":"ctx._source.prdYear++"
+  }
+}
+```
+> `script` 필드안에 스크립트 작성 시 `ctx._source.prdYear`를 이용해 데이터에 접근하고 있다.
+
+
+## 3.3. 필드 데이터 타입
+- Keyword, text: 문자열 타입
+- date, long, double, integer, boolean, ip: 일반 타입
+- 객체 또는 중첩문과 같은 JSON 계층의 특성 타입
+- geo_point, geo_shape: 특수한 타입
+
+### 3.3.1. Keyword 데이터 타입
+Keyword 데이터 타입은 말 그대로 키워드 형태로 사용할 데이터에 작합한 데이터 타입이다. 별도의 분석기를 거치지 않고 원문 그대로 색인하기 때문에 `특정 코드`나 `키워드` 등 정형화된 콘텐츠에 주로 사용한다.    
+ES 의 일부기능은 형태소 분석을 하지 않아야만 사용이 가능한데 이 경우에도 Keyword 타입이 사용된다.
+
+*keyword 타입으로 선언되어야할 항목*
+- 검색 시 필터링되는 항목
+- 정렬이 필요한 항목
+- 집계(Aggregation) 해야 하는 항목
+
+> 만약 `elastic search` 라는 문자열을 keyaword 타입으로 설정되면 `elastic` 이나 `search` 라는 질의로는 절대 검색되지 않는다. 정확히 `elastic search`라고 질의해야만 검색된다.
+
+*keyword 데이터 타입의 주요 파라미터*
+- boost: 필드의 가중치로, 검색 결과 정렬에 영향을 준다. 기본값은 `1.0`으로 1보다 크면 `socore`가 높게 오르고, 적으면 낮게 오른다. 이를 이용해 검색에 사용된 키워드와 문서 간의 유사도 스코어 값을 계산할 때 필드의 가중치 값을 얼마나 더 줄 것인지를 판단한다.
+**(5.0 버전 이후 부터 index 시 boost 값을 주는 것은 Deprecate 되었다.)**
+- doc_values: 필드를 메모리에 로드해 캐시로 사용한다. 기본값은 `true` 다.
+- index: 해당 필드를 검색에 사용할지를 설정한다. 기본값은 `true` 다.
+- null_value: 기본적으로 엘라스틱서치는 데이터의 값이 없으면 필드를 생성하지 않는다. 데이터의 값이 없는 경우 `null_value` 필드에 넣은 값으로 대체할지를 설정한다.
+- store: 필드 값을 필드와 별도로 _source에 저장하고 검색 가능하게 할지를 설정한다. 기본값은 `false` 다.
+
+### 3.3.2. Text 데이터 타입
+Text 데이터 타입을 이용하면 색인 시 지정된 분석기가 데이터를 문자열 데이터로 인식하고 이를 분석한다. 기본 분석기는 `Standard Analyzer`를 사용한다. 영화 제목이나 영화의 설명글과 같이 문장의 형태의 데이터에 사용하기 적합한 타입이다.
+
+> 실무에서는 keyword, text 타입 둘다 지정해서 사용한다.
+
+*사용예제*
+```json
+...
+"name": {
+    "type": "text",
+    "analyzer": "standard",
+    "search_analyzer": "standard",
+    "index": true,
+    "fields": {
+      "keyword": {
+        "type": "keyword",
+        "ignore_above": 256
+      }
+    },
+    "copy_to": "search_string"
+  },
+
+...
+```
+
+*Text 데이터 타입의 주요 파라미터*
+- analyzer:  인덱스와 검색에 사용할 형태소 분석기를 선택한다. 기본값은 `Standard Analyzer` 다.
+- boost: 필드의 가중치로, 검색 결과 정렬에 영향을 준다. **(5.0 버전 이후 부터 index 시 boost 값을 주는 것은 Deprecate 되었다.)**
+- fielddata: 정렬, 집계, 스크립트 등에서 메모리에 저장된 필드 데이터를 사용할지 설정한다. 기본값은 `false` 다
+- index: 해당 필드를 검색에 사용할지 설정한다. 기본값은 `true` 다
+> https://www.elastic.co/guide/en/elasticsearch/reference/7.13/text.html 참고
+
+### 3.3.3. Array 데이터 타입
+데이터는 대부분 1차원으로 표현되지안 2차원으로 존재하는 경우도 있을 것이다. 예를 들어, 영화 데이터에 `subtitleLang` 필드가 있고 해당 필드에는 개봉 영화의 언어 코드 데이터가 들어있다고 가정해 보자. 언어의 값으로 영어(en)와 한국(ko)라는 두 개의 데이터를 입력하고 싶을 경우 Array 데이터 타입을 사용해야 한다.    
+Array 타입은 문자열이나 숫자처럼 일반적인 값을 지정할 수 있지만 객체 형태로도 정의 할 수 있다. 한가지 주의할 점은 Array 타입에 저장되는 값은 모두 같은 타입으로만 구성해야 한다는 점이다.
