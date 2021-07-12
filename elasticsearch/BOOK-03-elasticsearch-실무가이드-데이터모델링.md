@@ -519,3 +519,231 @@ Text 데이터 타입을 이용하면 색인 시 지정된 분석기가 데이�
 ### 3.3.3. Array 데이터 타입
 데이터는 대부분 1차원으로 표현되지안 2차원으로 존재하는 경우도 있을 것이다. 예를 들어, 영화 데이터에 `subtitleLang` 필드가 있고 해당 필드에는 개봉 영화의 언어 코드 데이터가 들어있다고 가정해 보자. 언어의 값으로 영어(en)와 한국(ko)라는 두 개의 데이터를 입력하고 싶을 경우 Array 데이터 타입을 사용해야 한다.    
 Array 타입은 문자열이나 숫자처럼 일반적인 값을 지정할 수 있지만 객체 형태로도 정의 할 수 있다. 한가지 주의할 점은 Array 타입에 저장되는 값은 모두 같은 타입으로만 구성해야 한다는 점이다.
+
+> 주의! Array는 data type 이 아니다. mapping에서 따로 type을 선언하는 것이 아니고 어떤 data type이든 Array 형태로 저장이 가능하다. 한가지 예로 tags 필드는 `text` 데이터 타입 으로 선언했지만 Array 형태로 저장 가능하다.
+(lists 필드도 json 객체 타입으로 선언했지만 Array 형태로 저장된다.)
+
+document 및 index 생성:
+```json
+PUT my-index-01/_doc/1
+{
+  "message": "some arrays in this document...",
+  "tags":  [ "elasticsearch", "wow" ], 
+  "lists": [ 
+    {
+      "name": "prog_list",
+      "description": "programming list"
+    },
+    {
+      "name": "cool_list",
+      "description": "cool stuff list"
+    }
+  ]
+}
+```
+
+매핑정보 확인:
+```json
+GET my-index-01/_mapping
+{
+  "my-index-01" : {
+    "mappings" : {
+      "properties" : {
+        "lists" : {
+          "properties" : {
+            "description" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "name" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            }
+          }
+        },
+        "message" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        },
+        "tags" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### 3.3.4. Numeric 데이터 타입
+- long
+- integer
+- short
+- byte
+- double
+- float
+- half_float
+
+### 3.3.5. Date 데이터 타입
+기본 포멧 `yyyy-MM-ddTHH:mm:ssZ`, Data  타입은 다음과 같이 크게 세가지 형태를 제공한다. 세 가지 중 어느 것을 사용해도 내부적으로 `UTC의 밀리초` 단위로 변환해 저장한다.
+
+- 문자열이 포함된 형식: "2018-04-20", "2018/04.20", "2018-04-20 10:50:00", "2018/04/20 10:50:00"
+- ISO_INSTANT 포멧: "2018-04-20T10:50:00Z"
+- 밀리초: 1524449145579
+
+### 3.3.6. Range 데이터 타입
+- integer_range
+- float_range
+- long_range
+- double_range
+- date_range
+- ip_range
+
+### 3.3.7. Boolean 데이터 타입
+- true, "true"
+- false, "false"
+
+### 3.3.8. Geo-Point 데이터 타입
+
+맵핑 선언: 
+```json
+PUT movie_text/_mapping/_doc
+{
+  "properties": {
+    "check": {
+      "type": "boolean"
+    }
+  }
+}
+```
+
+데이터 입력:
+```json
+PUT movie_search_datatype/_doc/3
+{
+  "title": "해리포터와 마법사의 돌",
+  "filmLocation":{
+    "lat": 55.4155828,
+    "lon": -1.7081091
+  }
+}
+```
+
+### 3.3.9. IP 데이터 타입
+IP 주소를 저장하는데 사용, IPv4나 IPv6 모두 지정할 수 있다.
+
+### 3.3.10. Object 데이터 타입
+Array 데이터 형태로 저장된 리스트(이하 "Object 형태의 입력 참조")는 검색시(이하 "Object 형태의 입력 및 검색") `OR` 조건을 통해서 검색된다.
+
+Object 형태의 입력 및 검색: 
+```json
+PUT movie_search_datatype/_doc/7
+{
+  "title": "해리포터와 마법사의 돌",
+  "companies": [
+    {
+      "companyCd": "1",
+      "companyName":"워너브라더스"
+    },{
+      "companyCd": "2",
+      "companyName":"Heyday Films"
+    }
+  ]
+}
+
+GET movie_search_datatype/_search
+{
+  "query":{
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "companies.companyName": "워너브라더스"
+          }
+        }
+        ,{
+          "match": {
+            "companies.companyCd": "2"
+          }
+        }
+      ]
+    } 
+  }
+}
+```
+
+### 3.3.11. Nested 데이터 타입
+Object 안에 Array 형태로 기록된 정보를 `AND` 조건으로 검색이 가능하게 함
+
+데이터 입력 및 검색:
+```json
+PUT movie_search_datatype2
+{
+  "mappings": {
+    "properties": {
+      "companies_nested": {
+        "type": "nested"
+      }
+    }
+  }
+}
+
+PUT movie_search_datatype2/_doc/8
+{
+  "title": "해리포터와 마법사의 돌",
+  "companies_nested": [
+    {
+      "companyCd": "1",
+      "companyName":"워너브라더스"
+    },{
+      "companyCd": "2",
+      "companyName":"Heyday Films"
+    }
+  ]
+}
+
+GET movie_search_datatype2/_search
+{
+  "query":{
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "companies.companyName": "워너브라더스"
+          }
+        }
+        ,{
+          "match": {
+            "companies.companyCd": "2"
+          }
+        }
+      ]
+    } 
+  }
+}
+```
+
+
+## 3.4. 엘라스틱서치 분석기
+
+### 3.4.1. 텍스트 분석 개요
