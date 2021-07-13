@@ -745,5 +745,4 @@ GET movie_search_datatype2/_search
 
 
 ## 3.4. 엘라스틱서치 분석기
-
-### 3.4.1. 텍스트 분석 개요
+(pass..)
