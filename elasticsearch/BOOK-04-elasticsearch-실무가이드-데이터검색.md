@@ -237,7 +237,7 @@ Match Query의 경우에는 텍스트에 대한 형태소 분석을 통해 검�
 첫글자에 와일드카드를 사용하지 말자, 전체 문서를 검색해서 부하가 심하게 발생한다.
 
 와일드카드 사용예시
-```sh
+```json
 POST movie_search/_search
 {
     "query": {
@@ -253,6 +253,97 @@ POST movie_search/_search
 join 이라는 말로 혼동이 되는데, DB join 과는 다른 개념이다. Object 필드안에 검색을 이용할때 사용한다. 자세한건 내용은 `3.3.11. Nested 데이터 타입` 편 에서 다루고 있다.
 
 
+## 4.4. 부가적인 검색 API
 
+### 4.4.1. 효율적인 검색을 위한 환경설정
 
+### 동적 분배 방식의 샤드 선택
+```json
+PUT _cluster/settings
+{
+    "transient": {
+        "cluster.routing.use_adaptive_replica_selection": true
+    }
+}
+```
 
+### 글로벌 타임아웃 설정
+기본 글로벌 타임아웃 정책은 무제한(-1) 이다.
+```json
+PUT _cluster/settings
+{
+    "transient": {
+        "search.default_search_timeout": "1s"
+    }
+}
+```
+
+### 4.4.2. Search Shards API
+검색이 수행되는 노드 및 샤드에 대한 정보를 확인
+```
+POST movie_search/_search_shards
+```
+
+### 4.4.3. Multi Search API
+_bulk 처럼 한번에 여러 search 를 요청
+```json
+POST _msearch
+{"index": "movie_auto"}
+{"query": {"match_all":{}}, "from": 0, "size": 10}
+{"index": "movie_search"}
+{"query": {"match_all":{}}, "from": 0, "size": 10}
+```
+
+### 4.4.4. Count API
+```json
+POST movie_search/_count
+{
+    "query": {
+        "query_string": {
+            "default_field":"prdYear",
+            "query":"2017"
+        }
+    }
+}
+```
+
+### 4.4.5. Validate API
+쿼리 유효성 체크, `rewrite=true` 값을 주면 오류 정보를 제공한다.
+
+```json
+POST movie_search/_validate/query?rewrite=true
+{
+    "query": {
+        "match": {
+            "prdtYear": 2017
+        }
+    }
+}
+```
+
+### 4.4.6. Explain API
+`_score` 값이 어떻게 계산된 것인지 자세한 정보를 제공한다.     
+
+`_id`가 8인 document 가 검색 되었다면
+```json
+POST movie_search/_doc/8/_explain
+{
+    "query": {
+        "term": {
+            "prdtYear":2017
+        }
+    }
+}
+```
+
+### 4.4.7. Profile API
+수행 계획과 각 수행 계획별 수행시간 정보를 제공, 성능 튜닝 또는 디버깅할 때 사용한다.
+```json
+POST movie_search/_search
+{
+    "profile": true,
+    "query": {
+        "match_all": {}
+    }
+}
+```
