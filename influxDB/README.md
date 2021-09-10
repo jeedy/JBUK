@@ -11,7 +11,10 @@ select time, server_timestamp, korean_time, * from "webtracking-V10-dev" where t
 https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_reference/
 
 ## Retention Policy(만료, expire) 방법 
-https://jhleeeme.github.io/influxdb-retention-policy/
+- https://jhleeeme.github.io/influxdb-retention-policy/
+
+> 만료시점은 맘대로 정해도 되겠지만 추천하는 비율은 아래를 참고하자    
+https://docs.influxdata.com/influxdb/v2.0/reference/internals/shards/#shards
 
 ```sh
 $ influx
