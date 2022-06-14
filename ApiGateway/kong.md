@@ -122,6 +122,19 @@ https://konghq.com/subscriptions/
     pg_database = kong
     ```
 
+> 만약 앞에 `Apache` 를 두고 `reverve proxy`를 통해 kong으로 들어올 경우 client_ip(Remote ip, 실제 호출한  client의 IP)는 Apache 서버 ip 를 가져온다. 그래서 kong plugin 중 하나인 `ip-restriction`로 IP 접근 제어를 하려고 해도 해결 할수가 없다.   
+이를 해결하려면 아래 설정을 추가해줘야 한다.
+
+/etc/kong/kong.conf:
+```sh
+# kong은 nginx에 대한 설정을 따라간다.(kong 웹서버가 nginx 다.)
+# http://nginx.org/en/docs/http/ngx_http_realip_module.html#real_ip_heade
+
+trusted_ips = 0.0.0.0/0,::/0 # 필수 여기 적힌 IP 대해서만 x-forwarded-for 값을 사용한다는 의미다. (nginx: set_real_ip_from)
+real_ip_header = X-Forwarded-For  #(nginx: real_ip_header )
+```
+
+
 ### 4. kong 최초 마이크레이션 실행
 ```sh
 $ kong migrations bootstrap ./kong.conf
@@ -139,6 +152,8 @@ core migrated up to: 006_130_to_140 (executed)
 ### 5. kong 실행 및 테스트
 ```sh
 $ cd /etc/kong
+
+# $ kong stop 
 $ kong start ./kong.conf
 Kong started
 
@@ -171,7 +186,7 @@ X-Kong-Admin-Latency: 326
 #### kong 로그 확인방법
 ```sh
 $ su - kong
-$ tail -f /usr/local/kong/longs/access.log
+$ tail -f /usr/local/kong/logs/access.log
 ```
 
 ### 6. konga 설치하기 (https://github.com/pantsel/konga)
