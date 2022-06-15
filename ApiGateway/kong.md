@@ -130,7 +130,7 @@ https://konghq.com/subscriptions/
 # kong은 nginx에 대한 설정을 따라간다.(kong 웹서버가 nginx 다.)
 # http://nginx.org/en/docs/http/ngx_http_realip_module.html#real_ip_heade
 
-trusted_ips = 0.0.0.0/0,::/0 # 필수 여기 적힌 IP 대해서만 x-forwarded-for 값을 사용한다는 의미다. (nginx: set_real_ip_from)
+trusted_ips = 0.0.0.0/0,::/0 # 필수값 여기 적힌 IP 대해서만 x-forwarded-for 값을 사용한다는 의미다. (nginx: set_real_ip_from)
 real_ip_header = X-Forwarded-For  #(nginx: real_ip_header )
 ```
 
