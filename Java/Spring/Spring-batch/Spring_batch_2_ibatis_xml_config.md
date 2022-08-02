@@ -1,4 +1,4 @@
-# Spring Batch IBATIS XML 설정 방법
+# Spring Batch ver. 1 ~ 2.0 IBATIS XML 설정 방법
 
 ## Quarts(스케줄러) 셋팅방법
 
