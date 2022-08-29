@@ -1,13 +1,28 @@
 # Kafka Source Connector on Docker
 
 ## 1. About
-kafka Source Connector 설치하고 Mysql 에 특정 Table CDC 정보를 가져오는 것까지 실습한다. (silk connector 구현은 source connector를 참고.)
+Kafka Source Connector 설치하고 Mysql 에 특정 Table CDC 정보를 가져오는 것까지 실습한다. (silk connector 구현은 source connector를 참고.)
 
 > kafka source connector plugin 을 제공하는 그룹은 크게 두 가지로 나뉜다.    
 > - Debezium
 > - Confluent (Atlassian 사 confluence 과 연관 없음)
 >
 > 둘 중에 `Debezium` 을 사용해 구현한 예제이다.
+
+Kafka Source Connector 는 Mysql의 binlog를 통해 table 변경내역을 tracking 한다. 그렇기 때문에 connector 생성시 사용할 계정이 binlog에 접근 가능해야한다. https://debezium.io/documentation/reference/0.9/connectors/mysql.html
+
+만약 사용할 계정이 아래 쿼리를 호출하지 못한다면 어드민 권한이 없는 것이니 이것부터 해결하자. [Create a MySQL user for the connector](https://debezium.io/documentation/reference/0.9/connectors/mysql.html#create-a-mysql-user-for-the-connector)
+
+
+```sql
+show binary logs; 
+-- SHOW MASTER LOGS;
+
+show binlog events in 'binlog 파일이름';
+```
+> Mysql server binlog 는 반드시 `row-level binary log` 이여야 한다. https://debezium.io/documentation/reference/stable/connectors/mysql.html#enable-mysql-binlog
+
+
 
 ### reference:
 - [Debezium Connector for MySQL :: Debezium Documentation](https://debezium.io/documentation/reference/1.3/connectors/mysql.html)
