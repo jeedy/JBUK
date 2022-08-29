@@ -1,7 +1,7 @@
 # Kafka Source Connector on Docker
 
 ## 1. About
-kafka Source Connector 설치하고 Mysql(DW database) 에 특정 Table(htl_v_city_mast_temp_20220825) 를 가져오는 것까지 실습한다. (silk connector 구현은 source connector를 참고.)
+kafka Source Connector 설치하고 Mysql 에 특정 Table CDC 정보를 가져오는 것까지 실습한다. (silk connector 구현은 source connector를 참고.)
 
 > kafka source connector plugin 을 제공하는 그룹은 크게 두 가지로 나뉜다.    
 > - Debezium
@@ -83,4 +83,215 @@ e6e357dcd0f9   wurstmeister/zookeeper                                 "/bin/sh -
 
 
 ## 3. Kafka connect 설치
+Kafka container(`etl-kafka-kimjy`) 안에 Kafka connector plugin 파일을 설치하고 config 설정도 수정해주자
+> [Debezium Connectors for Mysql plugin Download: Debezium Release Series 1.9](https://debezium.io/releases/1.9/)
+
+local bash:
+```sh
+# kafka container bash 접속
+tide@tide-OptiPlex-7071:~/project/kafka$ docker exec -it etl-kafka-kimjy bash
+# kafka bash 접속
+root@22bdd6b9d320:/#
+
+# connectors 관리를 편하게 하기 위해 카프카가 설치된 폴더에 connectors 용 폴더 생성
+root@22bdd6b9d320:/# cd /opt/kafka
+root@22bdd6b9d320:/opt/kafka# mkdir connectors
+root@22bdd6b9d320:/opt/kafka# exit
+
+# 미리 다운받아둔 connetors plugin 파일을 container안에 복사한다.
+tide@tide-OptiPlex-7071:~/project/kafka$ docker cp debezium-connector-mysql-1.9.5.Final-plugin.tar.gz etl-kafka-kimjy:/opt/kafka/connectors/
+
+# connector plugin 압축 해제
+tide@tide-OptiPlex-7071:~/project/kafka$ docker exec -it etl-kafka-kimjy bash
+root@22bdd6b9d320:/# cd /opt/kafka/connectors/
+root@22bdd6b9d320:/opt/kafka/connectors# tar -zxvf debezium-connector-mysql-1.9.5.Final-plugin.tar.gz
+
+# kafka config 수정
+root@22bdd6b9d320:/opt/kafka/config# vim connect-distributed.properties
+# vim 설치가 안되어 있다면 설치하자
+# apt-get update && apt-get install -y vim
+
+```
+> 예제에서 사용하는 Kafka docker image(`wurstmeister/kafka`) 는 kafka 운영시 필요한 최소한의 명령어들로만 구성된 상태로 구동된다. 추가로 필요한 툴이 있다면 설치해가며 진행하자.
+
+connect-distributed.properties 파일에 connector 디렉토리 위치를 알려주자
+
+/opt/kafka/config/connect-distributed.propertie:
+```sh
+# 원래 경로
+#plugin.path=
+
+# 수정 경로
+plugin.path=/opt/kafka/connectors
+```
+
+
+### 3.1. kafka connect 실행
+분산모드(distributed) 카프카 커넥트를 실행한다. 분산모드는 2개 이상의 커넥트를 한 개의 클러스터를 묶어서 운영한다.
+
+kafka container bash:
+```sh
+root@22bdd6b9d320:/# cd /opt/kafka/bin
+root@22bdd6b9d320:/opt/kafka/bin# nohup connect-distributed.sh /opt/kafka/config/connect-distributed.properties &
+[1] 1747
+root@22bdd6b9d320:/opt/kafka/bin# nohup: ignoring input and appending output to 'nohup.out'
+
+# 로그 확인
+root@22bdd6b9d320:/opt/kafka/bin# tail -f nohup.out
+... 
+[2022-08-25 06:13:45,045] INFO [Worker clientId=connect-1, groupId=connect-cluster] Starting connectors and tasks using config offset -1 (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1244)
+[2022-08-25 06:13:45,045] INFO [Worker clientId=connect-1, groupId=connect-cluster] Finished starting connectors and tasks (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1272)
+[2022-08-25 06:13:45,084] INFO [Worker clientId=connect-1, groupId=connect-cluster] Session key updated (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1587)
+
+# Kafka Connect 8083 port 열려 있는지 확인
+root@22bdd6b9d320:/opt/kafka/bin# netstat -lnp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.11:37749        0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:44911           0.0.0.0:*               LISTEN      1747/java
+tcp        0      0 0.0.0.0:44549           0.0.0.0:*               LISTEN      1/java
+tcp        0      0 0.0.0.0:9092            0.0.0.0:*               LISTEN      1/java
+tcp        0      0 0.0.0.0:8083            0.0.0.0:*               LISTEN      1747/java
+udp        0      0 127.0.0.11:44552        0.0.0.0:*                           -
+Active UNIX domain sockets (only servers)
+Proto RefCnt Flags       Type       State         I-Node   PID/Program name     Path
+
+# Kafka  Connect 클러스터 정보 확인
+root@22bdd6b9d320:/opt/kafka/bin# curl http://localhost:8083/
+{"version":"2.8.1","commit":"839b886f9b732b15","kafka_cluster_id":"diV7-D8nS0CyeNgV0SWHcw"}
+
+```
+
+> `nohup` 명령어로 background 에서 connect가 구동 되도록 한다. nohup.out 로그에 `Finished starting connectors and tasks (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1272)` 라고 나오면 정상 구동이다.
+
+
+### 3.2. MySQL connector plugin 확인
+Kafka Connect가 올라갈 때 앞에서 설치한 플러그인(`io.debezium.connector.mysql.MySqlConnector`)을 물고 올라 갔는지 확인해보자
+
+kafka container bash:
+```sh
+root@22bdd6b9d320:/opt/kafka/bin# curl --location --request GET 'localhost:8083/connector-plugins'
+[
+   {
+      "class":"io.debezium.connector.mysql.MySqlConnector",
+      "type":"source",
+      "version":"1.9.5.Final"
+   },
+   {
+      "class":"org.apache.kafka.connect.file.FileStreamSinkConnector",
+      "type":"sink",
+      "version":"2.8.1"
+   },
+   {
+      "class":"org.apache.kafka.connect.file.FileStreamSourceConnector",
+      "type":"source",
+      "version":"2.8.1"
+   },
+   {
+      "class":"org.apache.kafka.connect.mirror.MirrorCheckpointConnector",
+      "type":"source",
+      "version":"1"
+   },
+   {
+      "class":"org.apache.kafka.connect.mirror.MirrorHeartbeatConnector",
+      "type":"source",
+      "version":"1"
+   },
+   {
+      "class":"org.apache.kafka.connect.mirror.MirrorSourceConnector",
+      "type":"source",
+      "version":"1"
+   }
+]
+```
+
+
+## 4. Rest API 로 Source Connector 생성
+source database 에서 데이터를 끌어올 Source Connector 를 생성해 줘야 한다. 
+
+> Connector plugin은 크게 두 가지로 나뉜다. Open source 공개된 플러그인 debezium connector plugin (이 예제에서 사용 중이다.) 그리고 Confluent 에서 개발한 Confluent connector plugin, 플러그인 마다 생성하는 `Configuration Properties` 가 서로 다르다. 이 예제에선 debezium 방식으로 생성한다. confluent 방식이 궁금한 분들은 [JDBC Source Connector Configuration Properties | Confluent Documentation](https://docs.confluent.io/kafka-connectors/jdbc/current/source-connector/source_config_options.html#) 참조.
+
+kafka container bash:
+```sh
+# source debezium connector 생성
+$ curl --location --request POST 'http://localhost:8083/connectors' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "name": "dz-mysql-source-connector_01",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+    "database.hostname": "localhost",
+    "database.port": "3306",
+    "database.user": "mysql",
+    "database.password": "mysql1234",
+    "database.server.id": "8405",
+    "database.server.name": "dwserver",
+    "database.allowPublicKeyRetrieval": "true",
+    "table.include.list": "dwdata.htl_v_city_mast_temp_20220825",
+    "database.history.kafka.bootstrap.servers": "kafka:9092",
+    "database.history.kafka.topic": "dbhistory.dwdata",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "true",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true",
+    "transforms": "unwrap,addTopicPrefix",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.add.fields": "op,table",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.addTopicPrefix.type":"org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.addTopicPrefix.regex":"(.*)",
+    "transforms.addTopicPrefix.replacement":"$1",
+    "database.serverTimezone": "Asia/Seoul"
+  }
+}'
+
+# Connector 삭제
+curl --location --request DELETE 'http://localhost:8083/connectors/dz-mysql-source-connector_01'
+
+# 생성된 connectors 목록 
+curl --location --request GET 'http://localhost:8083/connectors'
+
+# connector 상세 정보
+curl --location --request GET 'http://localhost:8083/connectors/dz-mysql-source-connector_0/config ' \
+--header 'Content-Type: application/json'
+```
+
+- **connector.class** 는 위에서 설치한 connector plugin 중에 사용할 커넥터의 java class 를 입력해준다.
+- **tasks.max** 는 이 커넥터에 대해 생성되어야 할 태스크의 최대 수 
+- **database.hostname** 은 DB IP주소
+- **database.server.id** 은 Mysql 인스턴스를 고유하게 식별하는데 사용하는  ID 값인데, 값이 없으면 알아서 랜덤한 숫자형태로 들어지만 가능하면 입력해서 관리를 하는 것을 추천한다
+- **database.server.name** 은 Mysql 인스턴스를 고유하게 식별하는데 사용하는 문자열인데, 값이 없으면 알아서 들어가지만 중복되지 않도록 그리고 확인 가능하도록 정의해주자
+- **table.include.list** 는 source 대상이 될 Table을 입력한다. 콤마(,) 로 여러개의 table 을 입력 할 수도 있고 `database.include.list` 를 이용하면 database 등록 가능하다. 
+- **database.history.kafka.bootstrap.servers** 는 kafka 부트스트랩 주소 포트 입력
+- **database.serverTimezone** 은 DW database Datasource 연결시 timezone 관련 에러로 접속이 안되는 상황에서는 이 프로퍼티 설정이 ***필수*** 다.
+
+### 4.1. 생성된 Topic 목록
+Connector로 연결되면 connector내부에서 사용하기 위한 topic과 source table을 트래킹 할 수 있는 topic이 자동으로 생기고 초기 데이터도 들어간다.
+
+Kafka container bash:
+```sh
+root@22bdd6b9d320:/opt/kafka/bin# kafka-topics.sh --list --bootstrap-server localhost:9092
+__consumer_offsets
+connect-configs
+connect-offsets
+connect-status
+dbhistory.dwdata
+dwserver
+dwserver.dwdata.htl_v_city_mast_temp_20220825
+```
+
+## 5. 콘솔 컨슈머 확인
+실제로 Database에 데이터를 수정해보고 콘솔 컨슈머를 통해 message가 어떻게 오는지 확인해보자
+
+Kafka container bash:
+```sh
+root@22bdd6b9d320:/opt/kafka/bin# kafka-console-consumer.sh --topic dwserver.dwdata.htl_v_city_mast_temp_20220825 --bootstrap-server localhost:9092 --from-beginning
+
+```
+
+> `--from-beginning` 옵션을 사용해야 기존에 입력되어있던 데이터가 수정(Update) 되었을 경우에도 메시지를 받을 수 있다.
+>
+> 그러나 `--from-beginning` 옵션을 붙일 경우 모든 메시지를 한번 다 끌어오기 때문에 braze에 연동할 때는 반드시 `--from-beginning` 을 빼고 연동 시켜 컨슈머가 구동 된 이후 들어오는 예약 건에 대해서 만 API push  할 수 있도록 하자.
 
