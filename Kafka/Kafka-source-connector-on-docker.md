@@ -266,6 +266,14 @@ curl --location --request GET 'http://localhost:8083/connectors/dz-mysql-source-
 - **table.include.list** 는 source 대상이 될 Table을 입력한다. 콤마(,) 로 여러개의 table 을 입력 할 수도 있고 `database.include.list` 를 이용하면 database 등록 가능하다. 
 - **database.history.kafka.bootstrap.servers** 는 kafka 부트스트랩 주소 포트 입력
 - **database.serverTimezone** 은 DW database Datasource 연결시 timezone 관련 에러로 접속이 안되는 상황에서는 이 프로퍼티 설정이 ***필수*** 다.
+- **transforms.unwrap.type** 는 RDB(MySQL)에 connect를 하기 때문에 `io.debezium.transforms.ExtractNewRecordState` 가 픽스다.
+- **transforms.unwrap.add.fields** 은 topic 메시지에 추가할 metatag field 값으로 "op,table" 값을 넣으면 CUD 코드 값과 테이블 이름을 알 수 있다.
+- **transforms.unwrap.add.fields** 은 topic 메시지에 추가할 metatag field 값으로 "op,table" 값을 넣으면 CUD 코드 값과 테이블 이름을 알 수 있다.
+- **transforms.unwrap.drop.tombstones** 은 delete 된 데이터를 전달 여부이다. `ture` 면 delete 는 전달하지 않는다. `false`일 경우 delete event를 전달하지만 topic 메시지는 null 값으로 오기 때문에 `transforms.unwrap.delete.handling.mode` 와 함께 사용되어야 한다.
+- **transforms.unwrap.delete.handling.mode** 은 `transforms.unwrap.drop.tombstones` 값을 false 로 할 경우 null 대신 delete 된 데이터의 삭제 직전 데이터를 넘겨준다.
+
+
+> Mysql(RDB) 는 `io.debezium.transforms.ExtractNewRecordState`(https://debezium.io/documentation/reference/0.9/configuration/event-flattening.html) 를 이용해서 데이터를 가져온다. 가져올 때 다양한 처리가 가능하지만 지금 프로젝트에서 가장 중요한 요소는 delete 시에도 메시지를 받아 처리를 해야할 경우 이다 이때 중요한  propertie 옵션이 `transforms.unwrap.add.fields`, `transforms.unwrap.drop.tombstones`, `transforms.unwrap.delete.handling.mode` 이다.
 
 ### 4.1. 생성된 Topic 목록
 Connector로 연결되면 connector내부에서 사용하기 위한 topic과 source table을 트래킹 할 수 있는 topic이 자동으로 생기고 초기 데이터도 들어간다.
