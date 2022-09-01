@@ -269,7 +269,7 @@ curl --location --request DELETE 'http://localhost:8083/connectors/dz-mysql-sour
 curl --location --request GET 'http://localhost:8083/connectors'
 
 # connector 상세 정보
-curl --location --request GET 'http://localhost:8083/connectors/dz-mysql-source-connector_0/config ' \
+curl --location --request GET 'http://localhost:8083/connectors/dz-mysql-source-connector_01/config ' \
 --header 'Content-Type: application/json'
 ```
 
