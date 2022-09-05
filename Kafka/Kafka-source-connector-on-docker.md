@@ -1,7 +1,7 @@
 # Kafka Source Connector on Docker
 
 ## 1. About
-Kafka Source Connector 설치하고 Mysql 에 특정 Table CDC 정보를 가져오는 것까지 실습한다. (silk connector 구현은 source connector를 참고.)
+Kafka Source Connector 설치하고 Mysql 에 특정 Table CDC 정보를 가져오는 것까지 실습한다. (sink connector와 같이 사용하기에는 적합하지 않은 형태로 silk connector 는 [Kafka Sink Connector for Mysql](./Kafka-sink-connector-for-mysql.md)  문서를 보고 구현하자)
 
 > kafka source connector plugin 을 제공하는 그룹은 크게 두 가지로 나뉜다.    
 > - Debezium
