@@ -314,7 +314,4 @@ root@22bdd6b9d320:/opt/kafka/bin# kafka-console-consumer.sh --topic dwserver.dwd
 
 ```
 
-> `--from-beginning` 옵션을 사용해야 기존에 입력되어있던 데이터가 수정(Update) 되었을 경우에도 메시지를 받을 수 있다.
->
-> 그러나 `--from-beginning` 옵션을 붙일 경우 모든 메시지를 한번 다 끌어오기 때문에 braze에 연동할 때는 반드시 `--from-beginning` 을 빼고 연동 시켜 컨슈머가 구동 된 이후 들어오는 예약 건에 대해서 만 API push  할 수 있도록 하자.
-
+> 처음부터 다 가져오려면 `--from-beginning` 옵션을 넣자
