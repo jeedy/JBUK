@@ -213,7 +213,7 @@ root@22bdd6b9d320:/#  curl --location --request POST 'http://localhost:8083/conn
 수동생성(false) 인 경우에는 PK 또는 Unique key가 없기 때문에 update 하지않고 insert만 수행한다. (Target table에 unique key를 설정한다면 정상적으로 update 동작한다.)
 
 1. 처음 kafka connect에 대한 이해가 부족했을 때, Source connector 가 생성될 때 Source table 에 rows를 모두 가져가는 줄 알았으나 이는 잘못 알고 있었던 것이다.(이 부분 때문에 topic 에 쌓이는 방법에 대해 오해가 생겼다.)     
-Source Connect는 단순히 binlong(archivelog) 에 기록 되어 있는 수정이력에 대해서만 가져간다.      
+Source Connector 는 단순히 binlong(archivelog) 에 기록 되어 있는 수정이력에 대해서만 가져간다.      
 즉, 테스트 당시 table를 새로 생성하고 insert도 했기 때문에 bin log에 그 이력이 남아있어 이를 topic이 가져갔을 뿐, 오래된 테이블(binlog에 이력이 expired)를 대상으로 했다면 source table의 rows 를 모두 가져가지 않고 binlog에 남아있는 수정 이력이 있는 rows 만 가져가서 등록 되었을 것이다.
 
 
