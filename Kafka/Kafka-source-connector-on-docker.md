@@ -31,6 +31,7 @@ show binlog events in 'binlog 파일이름';
 - [[Kafka] Kafka Connect 개념/예제](https://cjw-awdsd.tistory.com/53)
 - [[Kafka] Source Connector 생성](https://presentlee.tistory.com/5?category=915333)
 - https://aws.amazon.com/ko/blogs/korea/introducing-amazon-msk-connect-stream-data-to-and-from-your-apache-kafka-clusters-using-managed-connectors/
+- [[kafka] 클러스터(cluster) 구성방법](https://soojong.tistory.com/entry/Confluent%EC%9D%98-Kafka-Connect-Concept)
 
 
 ## 2. Kafka 설치 on Docker
