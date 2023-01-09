@@ -21,6 +21,15 @@ $ tcpdump -D
 $ tcpdump -nn -i eth1 port 4000
 ```
 
+# 실시간 TCP DUMP 예시
+```sh
+# redis ()
+#$ sudo tcpdump -nnnNxX -s 0 'src net 192.168.0.41 and dst port 6379 or src port 6379 and dst net 192.168.0.41'
+[Redis:~$]$ sudo tcpdump -nnnNxX -s 0 -i any 'net 192.168.0.41'
+
+# was (가정: 192.168.0.41)
+[tomcat:WAS:~$]sudo tcpdump -nnnNxX -s 0 port 6379
+```
 
 
 ### 번외
@@ -30,3 +39,7 @@ $ tcpdump -nn -i eth1 port 4000
 ```
 $ watch -n 1 "netstat -ntu | awk '{print \$5}' | cut -d: -f1 | sort | uniq -c | sort -n"
 ```
+
+
+
+#
