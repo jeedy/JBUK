@@ -235,3 +235,26 @@
     <p align="center">7<br>r + w + x</p></td>
     <td width="553">
     <p> <font color="#003098">제3자도 쓰기 권한이 주어진다.</font></p></td></tr></tbody></table>
+
+- hostnamectl ```서버 호스트명 변경```
+```sh
+$ sudo hostnamectl set-hostname {변경할 호스트명}
+
+#예시
+$ sudo hostnamectl set-hostname apache-01
+$ hostname
+apache-01
+```
+
+- kill -HUP ```프로세스 종료가 아닌 refresh, 환경설정을 반영하고 싶을때```
+    ### 그 밖에 옵션들
+    - kill -KILL(9) <pid> : 하드웨어적 종료 (가장강력)
+    - kill -TERM(15) <pid> : 소프트웨어적 종료 (소프트웨어에 따라 실행유무결정)
+    - kill -HUP(1) <pid> : 데몬의 경우 종료 후, 다시시작 (프로세스 종료가 아닌 코드 및 데이터 refresh 역할)
+    - kill -2 <pid> : 포그라운드에서 `ctrl + c` (작업취소)를 누르는 것과 동일
+    - kill -3 <pid> : 포그라운드에서 `ctrl + w` (더 강력한 작업취소)를 누르는 것과 동일
+
+    ```sh
+    $ sudo kill -HUP $(ps -ef | grep 'openresty\/nginx' | awk '{ print $2; }')
+
+    ```
