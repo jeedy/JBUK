@@ -247,6 +247,7 @@ apache-01
 ```
 
 - kill -HUP ```프로세스 종료가 아닌 refresh, 환경설정을 반영하고 싶을때```
+    > 참고: https://ktdsoss.tistory.com/312
     ### 그 밖에 옵션들
     - kill -KILL(9) <pid> : 하드웨어적 종료 (가장강력)
     - kill -TERM(15) <pid> : 소프트웨어적 종료 (소프트웨어에 따라 실행유무결정)
