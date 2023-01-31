@@ -67,3 +67,7 @@ Curl Time Format과 Chrome Timing의 대응 속성값
 |time_starttransfer	|TTFB(Time To First Byte). response 의 첫 byte를 read한 시간	   |Waiting(TTFB)|
 |time_total	        |response가 완료되어 목적지와 finish connect 한 시간. 총 시간   	|Content Download|
 |time_redirect	    |namelookup부터 time_total 내 모든 과정중 redirect가 발생한 총 시간	| |
+
+
+### 출발지 여러지역에서 지정하는 목적지로 icmp ping을 사용하여 응답시간, 손실율을 측정
+https://dig.ping.pe/www.tourvis.com:A:8.8.8.8
