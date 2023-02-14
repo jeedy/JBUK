@@ -36,7 +36,7 @@ FLUSH PRIVILEGES;
 > Source Connector plugin (debezium) 는 [Kafka Source Connector on Docker](./Kafka-source-connector-on-docker.md) 를 참고하자 아래 코드는 sink connector plugin 설치만 다룬다.
 
 ```sh
-tide@tide-OptiPlex-7071:~/project/kafka$ docker cp confluentinc-kafka-connect-jdbc-10.5.2.zip  centos-kafka-connector:/opt/kafka/connectors/
+tide@tide-OptiPlex-7071:~/project/kafka$ docker cp confluentinc-kafka-connect-jdbc-10.5.2.zip etl-kafka-kimjy:/opt/kafka/connectors/
 tide@tide-OptiPlex-7071:~/project/kafka$ docker exec -it etl-kafka-kimjy bash
 
 root@22bdd6b9d320:/# cd /opt/kafka/connectors/
