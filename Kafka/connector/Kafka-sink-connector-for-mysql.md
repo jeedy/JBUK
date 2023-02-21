@@ -1,9 +1,9 @@
 # Kafka sink connector for Mysql
 
 ## 1. About
-앞서 설명한 [Kafka Source Connector on Docker](./Kafka-source-connector-on-docker.md) 를 참고해 다수의 Source table 를 CDC 하는 Source Connector를 생성하고 이를 Target table에 CDC sink connector 를 생성하는 방법과 사용법을 다룬다.
+앞서 설명한 [Kafka Source Connector on Docker](./Kafka-source-connector-for-mysql.md) 를 참고해 다수의 Source table 를 CDC 하는 Source Connector를 생성하고 이를 Target table에 CDC sink connector 를 생성하는 방법과 사용법을 다룬다.
 
-Docker내에 Kafka 설치 Connector plugin 설치는 이전 글을 참고하자. [Kafka Source Connector on Docker](./Kafka-source-connector-on-docker.md)
+Docker내에 Kafka 설치 Connector plugin 설치는 이전 글을 참고하자. [Kafka Source Connector on Docker](./Kafka-source-connector-for-mysql.md)
 
 ### reference:
 - [[Kafka] Kafka Connect - JDBC Connector 예제](https://wecandev.tistory.com/110)
@@ -33,7 +33,7 @@ FLUSH PRIVILEGES;
 ```
 
 ## 3. Sink Connector plugin  설치 
-> Source Connector plugin (debezium) 는 [Kafka Source Connector on Docker](./Kafka-source-connector-on-docker.md) 를 참고하자 아래 코드는 sink connector plugin 설치만 다룬다.
+> Source Connector plugin (debezium) 는 [Kafka Source Connector on Docker](./Kafka-source-connector-for-mysql.md) 를 참고하자 아래 코드는 sink connector plugin 설치만 다룬다.
 
 ```sh
 tide@tide-OptiPlex-7071:~/project/kafka$ docker cp confluentinc-kafka-connect-jdbc-10.5.2.zip etl-kafka-kimjy:/opt/kafka/connectors/

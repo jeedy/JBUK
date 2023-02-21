@@ -1,38 +1,22 @@
-# Kafka Source Connector on Docker
+# Kafka Source Connector for Oracle 11g
+
+reference:
+- https://rmoff.net/2018/12/12/streaming-data-from-oracle-into-kafka/
+- https://github.com/debezium/debezium-examples/blob/main/tutorial/README.md#using-oracle
+- https://muirandy.wordpress.com/2019/11/06/debezium-with-oracle-11g/ 
+- https://app.gitter.im/#/room/#debezium_dev:gitter.im (debezium 개발자 커뮤니티)
 
 ## 1. About
-Kafka Source Connector 설치하고 Mysql 에 특정 Table CDC 정보를 가져오는 것까지 실습한다. (sink connector와 같이 사용하기에는 적합하지 않은 형태로 silk connector 는 [Kafka Sink Connector for Mysql](./Kafka-sink-connector-for-mysql.md)  문서를 보고 구현하자)
+Kafka Source Connector 설치하고 Oracle 에 특정 Table CDC 정보를 가져오는 것까지 실습한다. (silk connector 는 [Kafka Sink Connector for Mysql](./Kafka-sink-connector-for-mysql.md) 문서를 보고 구현하자)
+
+`Debezium` 에서 오라클 11g 버전을 지원하는 버전은 공식적으로 1.3.x 버전이다. 그러나 실제로 테스트해본 결과 oracle 11g에서 정상 동작 못한다.    
+그래서 찾은 버전은 1.5.x 버전이다. 본 예제는 `debezium 1.5.4.Final` 버전을 기준으로 작업 되었다.
 
 > kafka source connector plugin 을 제공하는 그룹은 크게 두 가지로 나뉜다.    
 > - Debezium
-> - Confluent (Atlassian 사 confluence 과 연관 없음)
+> - Confluent (유료, JDBC를 이용한 cdc는 무료이나 bulk 방식 또는 message queue 구성이 필요하다.)
 >
 > 둘 중에 `Debezium` 을 사용해 구현한 예제이다.
-
-Kafka Source Connector 는 Mysql의 binlog를 통해 table 변경내역을 tracking 한다. 그렇기 때문에 connector 생성시 사용할 계정이 binlog에 접근 가능해야한다. https://debezium.io/documentation/reference/0.9/connectors/mysql.html
-
-만약 사용할 계정이 아래 쿼리를 호출하지 못한다면 어드민 권한이 없는 것이니 이것부터 해결하자. [Create a MySQL user for the connector](https://debezium.io/documentation/reference/0.9/connectors/mysql.html#create-a-mysql-user-for-the-connector)
-
-
-```sql
-show binary logs; 
--- SHOW MASTER LOGS;
-
-show binlog events in 'binlog 파일이름';
-```
-> Mysql server binlog 는 반드시 `row-level binary log` 이여야 한다. https://debezium.io/documentation/reference/stable/connectors/mysql.html#enable-mysql-binlog
-
-
-
-### reference:
-- [Debezium Connector for MySQL :: Debezium Documentation](https://debezium.io/documentation/reference/1.3/connectors/mysql.html)
-- [JDBC Source Connector Configuration Properties | Confluent Documentation](https://docs.confluent.io/kafka-connectors/jdbc/current/source-connector/source_config_options.html)
-- [[Kafka] Kafka Connect - Debezium Connector 예제](https://wecandev.tistory.com/109)
-- [[Kafka] Kafka Connect 개념/예제](https://cjw-awdsd.tistory.com/53)
-- [[Kafka] Source Connector 생성](https://presentlee.tistory.com/5?category=915333)
-- https://aws.amazon.com/ko/blogs/korea/introducing-amazon-msk-connect-stream-data-to-and-from-your-apache-kafka-clusters-using-managed-connectors/
-- [[kafka] 클러스터(cluster) 구성방법](https://soojong.tistory.com/entry/Confluent%EC%9D%98-Kafka-Connect-Concept)
-
 
 ## 2. Kafka 설치 on Docker
 도커 위에 카프라 (with zookeeper) 를 띄우는 것부터 시작한다. connector는 kafka container 안에 접속해 설치한다.
@@ -67,8 +51,7 @@ services:
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
+      - /home/tide/project/kafka/docker-volume/docker.sock:/var/run/docker.sock
 ```
 
 
@@ -98,9 +81,9 @@ e6e357dcd0f9   wurstmeister/zookeeper                                 "/bin/sh -
 > docker-compose 명령에  -d 옵션을 붙여 background 에서 실행되도록 하자 
 
 
-## 3. Kafka connect 설치
+## 3. Kafka connector 설치
 Kafka container(`etl-kafka-kimjy`) 안에 Kafka connector plugin 파일을 설치하고 config 설정도 수정해주자
-> [Debezium Connectors for Mysql plugin Download: Debezium Release Series 1.9](https://debezium.io/releases/1.9/)
+> [Debezium Documentation 1.5](https://debezium.io/documentation/reference/1.5/)
 
 local bash:
 ```sh
@@ -115,12 +98,28 @@ root@22bdd6b9d320:/opt/kafka# mkdir connectors
 root@22bdd6b9d320:/opt/kafka# exit
 
 # 미리 다운받아둔 connetors plugin 파일을 container안에 복사한다.
-tide@tide-OptiPlex-7071:~/project/kafka$ docker cp debezium-connector-mysql-1.9.5.Final-plugin.tar.gz etl-kafka-kimjy:/opt/kafka/connectors/
+tide@tide-OptiPlex-7071:~/project/kafka$ wget https://repo1.maven.org/maven2/io/debezium/debezium-connector-oracle/1.5.4.Final/debezium-connector-oracle-1.5.4.Final-plugin.tar.gz
+tide@tide-OptiPlex-7071:~/project/kafka$ docker cp debezium-connector-oracle-1.5.4.Final-plugin.tar.gz etl-kafka-kimjy:/opt/kafka/connectors/
 
 # connector plugin 압축 해제
 tide@tide-OptiPlex-7071:~/project/kafka$ docker exec -it etl-kafka-kimjy bash
 root@22bdd6b9d320:/# cd /opt/kafka/connectors/
-root@22bdd6b9d320:/opt/kafka/connectors# tar -zxvf debezium-connector-mysql-1.9.5.Final-plugin.tar.gz
+root@66880a74b37f:/opt/kafka/connectors# tar -zxvf debezium-connector-oracle-1.5.4.Final-plugin.tar.gz
+debezium-connector-oracle/CHANGELOG.md
+debezium-connector-oracle/CONTRIBUTE.md
+debezium-connector-oracle/COPYRIGHT.txt
+debezium-connector-oracle/LICENSE-3rd-PARTIES.txt
+debezium-connector-oracle/LICENSE.txt
+debezium-connector-oracle/README.md
+debezium-connector-oracle/README_ZH.md
+debezium-connector-oracle/debezium-core-1.5.4.Final.jar
+debezium-connector-oracle/debezium-api-1.5.4.Final.jar
+debezium-connector-oracle/guava-30.0-jre.jar
+debezium-connector-oracle/failureaccess-1.0.1.jar
+debezium-connector-oracle/debezium-ddl-parser-1.5.4.Final.jar
+debezium-connector-oracle/antlr4-runtime-4.7.2.jar
+debezium-connector-oracle/jsqlparser-2.1.jar
+debezium-connector-oracle/debezium-connector-oracle-1.5.4.Final.jar
 
 # kafka config 수정
 root@22bdd6b9d320:/opt/kafka/config# vim connect-distributed.properties
@@ -172,53 +171,54 @@ udp        0      0 127.0.0.11:44552        0.0.0.0:*                           
 Active UNIX domain sockets (only servers)
 Proto RefCnt Flags       Type       State         I-Node   PID/Program name     Path
 
-# Kafka  Connect 클러스터 정보 확인
+# Kafka Connector 클러스터 정보 확인
 root@22bdd6b9d320:/opt/kafka/bin# curl http://localhost:8083/
-{"version":"2.8.1","commit":"839b886f9b732b15","kafka_cluster_id":"diV7-D8nS0CyeNgV0SWHcw"}
+{"version":"2.8.1","commit":"839b886f9b732b15","kafka_cluster_id":"XoOMaweJQaSV2mxGoG-TeA"}
 
 ```
 
 > `nohup` 명령어로 background 에서 connect가 구동 되도록 한다. nohup.out 로그에 `Finished starting connectors and tasks (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1272)` 라고 나오면 정상 구동이다.
 
 
-### 3.2. MySQL connector plugin 확인
-Kafka Connect가 올라갈 때 앞에서 설치한 플러그인(`io.debezium.connector.mysql.MySqlConnector`)을 물고 올라 갔는지 확인해보자
+### 3.2. Oracle connector plugin 확인
+Kafka Connector가 올라갈 때 앞에서 설치한 플러그인(`io.debezium.connector.oracle.OracleConnector`)을 물고 올라 갔는지 확인해보자
 
 kafka container bash:
 ```sh
 root@22bdd6b9d320:/opt/kafka/bin# curl --location --request GET 'localhost:8083/connector-plugins'
 [
-   {
-      "class":"io.debezium.connector.mysql.MySqlConnector",
-      "type":"source",
-      "version":"1.9.5.Final"
-   },
-   {
-      "class":"org.apache.kafka.connect.file.FileStreamSinkConnector",
-      "type":"sink",
-      "version":"2.8.1"
-   },
-   {
-      "class":"org.apache.kafka.connect.file.FileStreamSourceConnector",
-      "type":"source",
-      "version":"2.8.1"
-   },
-   {
-      "class":"org.apache.kafka.connect.mirror.MirrorCheckpointConnector",
-      "type":"source",
-      "version":"1"
-   },
-   {
-      "class":"org.apache.kafka.connect.mirror.MirrorHeartbeatConnector",
-      "type":"source",
-      "version":"1"
-   },
-   {
-      "class":"org.apache.kafka.connect.mirror.MirrorSourceConnector",
-      "type":"source",
-      "version":"1"
-   }
+  {
+    "class": "io.debezium.connector.oracle.OracleConnector",
+    "type": "source",
+    "version": "1.5.4.Final"
+  },
+  {
+    "class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+    "type": "sink",
+    "version": "2.8.1"
+  },
+  {
+    "class": "org.apache.kafka.connect.file.FileStreamSourceConnector",
+    "type": "source",
+    "version": "2.8.1"
+  },
+  {
+    "class": "org.apache.kafka.connect.mirror.MirrorCheckpointConnector",
+    "type": "source",
+    "version": "1"
+  },
+  {
+    "class": "org.apache.kafka.connect.mirror.MirrorHeartbeatConnector",
+    "type": "source",
+    "version": "1"
+  },
+  {
+    "class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
+    "type": "source",
+    "version": "1"
+  }
 ]
+
 ```
 
 
@@ -233,51 +233,63 @@ kafka container bash:
 $ curl --location --request POST 'http://localhost:8083/connectors' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-  "name": "dz-mysql-source-connector_01",
-  "config": {
-    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-    "tasks.max": "1",
-    "database.hostname": "localhost",
-    "database.port": "3306",
-    "database.user": "mysql",
-    "database.password": "mysql1234",
-    "database.server.id": "8405",
-    "database.server.name": "dwserver",
-    "database.allowPublicKeyRetrieval": "true",
-    "table.include.list": "dwdata.htl_v_city_mast_temp_20220825",
-    "database.history.kafka.bootstrap.servers": "kafka:9092",
-    "database.history.kafka.topic": "dbhistory.dwdata",
-    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "key.converter.schemas.enable": "true",
-    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter.schemas.enable": "true",
-    "transforms": "unwrap,addTopicPrefix",
-    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
-    "transforms.unwrap.add.fields": "op,table",
-    "transforms.unwrap.drop.tombstones": "false",
-    "transforms.unwrap.delete.handling.mode": "rewrite",
-    "transforms.addTopicPrefix.type":"org.apache.kafka.connect.transforms.RegexRouter",
-    "transforms.addTopicPrefix.regex":"(.*)",
-    "transforms.addTopicPrefix.replacement":"$1",
-    "database.serverTimezone": "Asia/Seoul"
-  }
+    "name": "dz-oracle-source-connector_01",
+    "config": {
+        "connector.class" : "io.debezium.connector.oracle.OracleConnector",
+        "tasks.max" : "1",
+        "database.oracle.version":"11",
+        "database.connection.adapter": "logminer",
+		    "database.tablename.case.insensitive": "false",
+        "database.hostname": "localhost",
+        "database.port": "1521",
+        "database.dbname" : "oradb",
+        "database.schema" : "COMMON",
+        "database.user" : "DMS",
+        "database.password" : "dms1234",
+        "database.server.name" : "oraserver1",
+        "database.out.server.name" : "oraserverdbzxout1",
+        "database.history.kafka.topic": "dbhistory.oradb1",
+        "database.history.kafka.bootstrap.servers" : "kafka:9092",
+        "table.include.list": "COMMON.TEST_DMS",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "true",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter.schemas.enable": "true",
+        "transforms": "unwrap,addTopicPrefix",
+        "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+        "transforms.unwrap.drop.tombstones": "false",
+        "transforms.addTopicPrefix.type":"org.apache.kafka.connect.transforms.RegexRouter",
+        "transforms.addTopicPrefix.regex":"(.*)",
+        "transforms.addTopicPrefix.replacement":"$1"
+    }
 }'
 
+
 # Connector 삭제
-curl --location --request DELETE 'http://localhost:8083/connectors/dz-mysql-source-connector_01'
+curl --location --request DELETE 'http://localhost:8083/connectors/dz-oracle-source-connector_01'
 
 # 생성된 connectors 목록 
 curl --location --request GET 'http://localhost:8083/connectors'
 
 # connector 상세 정보
-curl --location --request GET 'http://localhost:8083/connectors/dz-mysql-source-connector_01/config ' \
+curl --location --request GET 'http://localhost:8083/connectors/dz-oracle-source-connector_01/config ' \
 --header 'Content-Type: application/json'
 ```
 
+#### properties hierarchy 참조: 
+- https://github.com/debezium/debezium/blob/1.5/debezium-testing/debezium-testing-testcontainers/src/main/java/io/debezium/testing/testcontainers/ConnectorConfiguration.java
+  - https://github.com/debezium/debezium/blob/1.5/debezium-core/src/main/java/io/debezium/relational/RelationalDatabaseConnectorConfig.java
+    - https://github.com/debezium/debezium/blob/1.5/debezium-core/src/main/java/io/debezium/relational/HistorizedRelationalDatabaseConnectorConfig.java
+      - https://github.com/debezium/debezium/blob/1.5/debezium-connector-oracle/src/main/java/io/debezium/connector/oracle/OracleConnectorConfig.java
+
+
+#### 주요 properties
 - **connector.class** 는 위에서 설치한 connector plugin 중에 사용할 커넥터의 java class 를 입력해준다.
 - **tasks.max** 는 이 커넥터에 대해 생성되어야 할 태스크의 최대 수 
+- **database.oracle.version** Oracle 11g 에서는 `11` 값 픽스
+- **database.connection.adapter** 는 `logminer` or `xstream` 여기선 `logminer` 를 사용한다.
+- **database.tablename.case.insensitive** 대소문자 구분을 하겠냐는 옵션, DB 설정에 따라`true` or `false` 로 설정한다.
 - **database.hostname** 은 DB IP주소
-- **database.server.id** 은 Mysql 인스턴스를 고유하게 식별하는데 사용하는  ID 값인데, 값이 없으면 알아서 랜덤한 숫자형태로 들어지만 가능하면 입력해서 관리를 하는 것을 추천한다
 - **database.server.name** 은 Mysql 인스턴스를 고유하게 식별하는데 사용하는 문자열인데, 값이 없으면 알아서 들어가지만 중복되지 않도록 그리고 확인 가능하도록 정의해주자
 - **table.include.list** 는 source 대상이 될 Table을 입력한다. 콤마(,) 로 여러개의 table 을 입력 할 수도 있고 `database.include.list` 를 이용하면 database 등록 가능하다. 
 - **database.history.kafka.bootstrap.servers** 는 kafka 부트스트랩 주소 포트 입력
@@ -301,9 +313,10 @@ __consumer_offsets
 connect-configs
 connect-offsets
 connect-status
-dbhistory.dwdata
-dwserver
-dwserver.dwdata.htl_v_city_mast_temp_20220825
+dbhistory.oradb1
+oraserver1
+oraserver1.COMMON.TEST_DMS
+
 ```
 
 ## 5. 콘솔 컨슈머 확인
@@ -311,8 +324,7 @@ dwserver.dwdata.htl_v_city_mast_temp_20220825
 
 Kafka container bash:
 ```sh
-root@22bdd6b9d320:/opt/kafka/bin# kafka-console-consumer.sh --topic dwserver.dwdata.htl_v_city_mast_temp_20220825 --bootstrap-server localhost:9092 --from-beginning
-
+root@22bdd6b9d320:/opt/kafka/bin# kafka-console-consumer.sh --topic oraserver1.COMMON.TEST_DMS --bootstrap-server localhost:9092 --formatter kafka.tools.DefaultMessageFormatter --property print.timestamp=true --property print.key=true --property print.value=true --from-beginning
 ```
 
 > 처음부터 다 가져오려면 `--from-beginning` 옵션을 넣자
