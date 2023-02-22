@@ -333,6 +333,10 @@ root@22bdd6b9d320:/opt/kafka/bin# kafka-console-consumer.sh --topic oraserver1.C
 
 Confluent사(https://www.confluent.io/) 에서 제공하는 sink connector를 사용한다.
 
+> sink connector 기본 설정에서 timestamp나 date 값이 들어간 컬럼의 data_type 은 int8 으로 기록된다.   
+> Datetime 로 사용하기 위해서는 `transforms.convertTS` 을 이용해야 한다.   
+> 그 밖에 다양한 transform 기능들은 https://github.com/jcustenborder/kafka-connect-transform-common 을 참조하자
+
 ### 6.1. Mysql Sink Connector
 ```sh
 $ curl --location --request POST 'http://localhost:8083/connectors' \
@@ -356,7 +360,11 @@ $ curl --location --request POST 'http://localhost:8083/connectors' \
     "key.converter.schemas.enable": "true",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": "true",
-    "transforms": "unwrap, route",
+    "transforms": "unwrap, route, convertTS",
+    "transforms.convertTS.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.convertTS.field": "MSG_CREATE_DATE",
+    "transforms.convertTS.format": "EEE MMM dd HH:mm:ss zzz yyyy",
+    "transforms.convertTS.target.type": "Timestamp",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.drop.tombstones": "false",
     "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
@@ -392,7 +400,11 @@ $ curl --location --request POST 'http://localhost:8083/connectors' \
     "key.converter.schemas.enable": "true",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": "true",
-    "transforms": "unwrap, route",
+    "transforms": "unwrap, route, convertTS",
+    "transforms.convertTS.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.convertTS.field": "MSG_CREATE_DATE",
+    "transforms.convertTS.format": "EEE MMM dd HH:mm:ss zzz yyyy",
+    "transforms.convertTS.target.type": "Timestamp",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.drop.tombstones": "false",
     "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
