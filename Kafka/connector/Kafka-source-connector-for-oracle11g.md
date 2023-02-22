@@ -239,7 +239,7 @@ $ curl --location --request POST 'http://localhost:8083/connectors' \
         "tasks.max" : "1",
         "database.oracle.version":"11",
         "database.connection.adapter": "logminer",
-		    "database.tablename.case.insensitive": "false",
+        "database.tablename.case.insensitive": "false",
         "database.hostname": "localhost",
         "database.port": "1521",
         "database.dbname" : "oradb",
@@ -247,7 +247,6 @@ $ curl --location --request POST 'http://localhost:8083/connectors' \
         "database.user" : "DMS",
         "database.password" : "dms1234",
         "database.server.name" : "oraserver1",
-        "database.out.server.name" : "oraserverdbzxout1",
         "database.history.kafka.topic": "dbhistory.oradb1",
         "database.history.kafka.bootstrap.servers" : "kafka:9092",
         "table.include.list": "COMMON.TEST_DMS",
@@ -328,3 +327,116 @@ root@22bdd6b9d320:/opt/kafka/bin# kafka-console-consumer.sh --topic oraserver1.C
 ```
 
 > 처음부터 다 가져오려면 `--from-beginning` 옵션을 넣자
+
+
+## 6. Sink Connector 생성
+
+Confluent사(https://www.confluent.io/) 에서 제공하는 sink connector를 사용한다.
+
+### 6.1. Mysql Sink Connector
+```sh
+$ curl --location --request POST 'http://localhost:8083/connectors' \
+--header 'Content-Type: application/json' \
+--data '{
+  "name": "oracle-oraserver-mysql-sink-connector_01",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "connection.url": "jdbc:mysql://xxx.xxx.xxx.xx:3306/common_dev?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&useSSL=false",
+    "connection.user": "DMS",
+    "connection.password": "dms4321",
+    "auto.create": "true",
+    "auto.evolve": "true",
+    "delete.enabled": "true",
+    "insert.mode": "upsert",
+    "pk.mode": "record_key",
+    "table.name.format":"${topic}",
+    "topics.regex": "oraserver1.COMMON.(.*)",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "true",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true",
+    "transforms": "unwrap, route",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+    "transforms.route.replacement": "$3"
+  }
+}'
+
+# connector 삭제
+$ curl --location --request DELETE 'http://localhost:8083/connectors/oracle-oraserver-mysql-sink-connector_01'
+```
+
+### 6.2. Postgresql Sink Connector
+```sh
+$ curl --location --request POST 'http://localhost:8083/connectors' \
+--header 'Content-Type: application/json' \
+--data '{
+  "name": "oracle-oraserver-postgresql-sink-connector_01",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "connection.url": "jdbc:postgresql://xxx.xxxx.xxx.xxx:5432/postgres?currentSchema=myschema",
+    "connection.user": "postgres",
+    "connection.password": "postgres1234",
+    "auto.create": "true",
+    "auto.evolve": "true",
+    "delete.enabled": "true",
+    "insert.mode": "upsert",
+    "pk.mode": "record_key",
+    "table.name.format":"${topic}",
+    "topics.regex": "oraserver1.COMMON.(.*)",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "true",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true",
+    "transforms": "unwrap, route",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+    "transforms.route.replacement": "$3"
+  }
+}'
+
+# connector 삭제
+$ curl --location --request DELETE 'http://localhost:8083/connectors/oracle-oraserver-postgresql-sink-connector_01'
+```
+
+
+
+## :bomb: troubleshooting
+1. ora-01882: TimeZone Region not found. with Kafka Connect JdbcSource connector.
+
+`oracle.jdbc.timezoneAsRegion=false` 옵션 추가
+
+1. source connector 생성시 아래와 같은 에러가 발생한다면
+```sh
+[2023-02-21 06:30:48,360] ERROR WorkerSourceTask{id=dz-oracle-source-connector_04-0} Task threw an uncaught and unrecoverable exception. Task is being killed and will not recover until manually restarted (org.apache.kafka.connect.runtime.WorkerTask:190)
+org.apache.kafka.connect.errors.ConnectException: An exception occurred in the change event producer. This connector will be stopped.
+        at io.debezium.pipeline.ErrorHandler.setProducerThrowable(ErrorHandler.java:42)
+        at io.debezium.connector.oracle.logminer.LogMinerStreamingChangeEventSource.execute(LogMinerStreamingChangeEventSource.java:208)
+        at io.debezium.pipeline.ChangeEventSourceCoordinator.streamEvents(ChangeEventSourceCoordinator.java:152)
+        at io.debezium.pipeline.ChangeEventSourceCoordinator.lambda$start$0(ChangeEventSourceCoordinator.java:119)
+        at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+        at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+        at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: io.debezium.DebeziumException: Supplemental logging not configured for table DMS.test_dms.  Use command: ALTER TABLE DMS.test_dms ADD SUPPLEMENTAL LOG DATA (ALL) COLUMNS
+        at io.debezium.connector.oracle.logminer.LogMinerHelper.checkSupplementalLogging(LogMinerHelper.java:407)
+        at io.debezium.connector.oracle.logminer.LogMinerStreamingChangeEventSource.execute(LogMinerStreamingChangeEventSource.java:132)
+        ... 7 more
+
+```
+
+아래 쿼리를 실행해주자 
+
+```sql
+ALTER TABLE DMS.TEST_DMS ADD SUPPLEMENTAL LOG DATA (ALL) COLUMNS;
+```
+
+> Kafka connector 를 이용하는 테이블은 Supplemental Logging Data를 생성해야 한다.  
+> Supplemental Logging Data 란? https://bestugi.tistory.com/21
