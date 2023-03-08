@@ -30,7 +30,7 @@ curl -X GET "http://localhost:8083/connectors?expand=status&expand=info"
 ### connector config 조회
 > GET 으로도 동일하게 동작함
 ```sh
-curl -X PUT "http://localhost:8083/connectors/{connector_name}/config
+curl -X GET "http://localhost:8083/connectors/{connector_name}/config
 ```
 
 ### 특정 connector 상태 조회
