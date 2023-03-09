@@ -268,4 +268,8 @@ root@66880a74b37f:/opt/kafka/bin# kill %1
 [1]+  Exit 143                nohup connect-distributed.sh /opt/kafka/config/connect-distributed.properties
 
 root@66880a74b37f:/opt/kafka/bin# nohup connect-distributed.sh /opt/kafka/config/connect-distributed.properties &
+
+
+# daemon 으로 재기동
+# root@66880a74b37f:/opt/kafka/bin# connect-distributed.sh /opt/kafka/config/connect-distributed.properties
 ```

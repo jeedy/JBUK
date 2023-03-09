@@ -147,6 +147,8 @@ plugin.path=/opt/kafka/connectors
 kafka container bash:
 ```sh
 root@22bdd6b9d320:/# cd /opt/kafka/bin
+
+# root@66880a74b37f:/opt/kafka/bin# connect-distributed.sh /opt/kafka/config/connect-distributed.properties
 root@22bdd6b9d320:/opt/kafka/bin# nohup connect-distributed.sh /opt/kafka/config/connect-distributed.properties &
 [1] 1747
 root@22bdd6b9d320:/opt/kafka/bin# nohup: ignoring input and appending output to 'nohup.out'
