@@ -54,3 +54,22 @@ bin/zookeeper-server-stop.sh config/zookeeper.properties
 ## server log check
 cat /usr/local/bin/kafka/logs/server.log 
 ```
+
+
+## 번외. Kafkacat
+카프카 producer/consumer cli를 좀 쉽게 사용하기 위해 만든 tool. https://github.com/edenhill/kcat
+
+ref
+- https://devocean.sk.com/blog/techBoardDetail.do?ID=163970
+
+install:
+```sh
+root@66880a74b37f:/# apt install kafkacat
+
+```
+
+
+command:
+```sh
+root@66880a74b37f:/# kafkacat -b localhost:9092 -t DMS.TEST_KAFKA_CONNECTOR -f '{"Topic":"%t", "partition":%p, "atOffset":%o, "key":%k, "message":%s}\n' |jq .
+```
