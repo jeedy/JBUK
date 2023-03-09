@@ -7,13 +7,6 @@
 1. [7장 카프카를 활용한 데이터 파이프라인 구축](/Kafka/7%EC%9E%A5-%EC%B9%B4%ED%94%84%EC%B9%B4%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8-%EA%B5%AC%EC%B6%95.md)
 
 
-## Kafka connect 
-
-### 목차
-1. [카프카 connect source 구성](/Kafka/Kafka-source-connector-on-docker.md)
-1. [카프카 connect sink 구성](/Kafka/Kafka-sink-connector-for-mysql.md)
-1. [카프카 connect cluster 구성](/Kafka/Kafka-connector-cluster.md)
-
 ## kafka console commands
 ```sh
 # 토픽 목록
@@ -60,4 +53,23 @@ bin/zookeeper-server-stop.sh config/zookeeper.properties
 
 ## server log check
 cat /usr/local/bin/kafka/logs/server.log 
+```
+
+
+## 번외. Kafkacat
+카프카 producer/consumer cli를 좀 쉽게 사용하기 위해 만든 tool. https://github.com/edenhill/kcat
+
+ref
+- https://devocean.sk.com/blog/techBoardDetail.do?ID=163970
+
+install:
+```sh
+root@66880a74b37f:/# apt install kafkacat
+
+```
+
+
+command:
+```sh
+root@66880a74b37f:/# kafkacat -b localhost:9092 -t DMS.TEST_KAFKA_CONNECTOR -f '{"Topic":"%t", "partition":%p, "atOffset":%o, "key":%k, "message":%s}\n' |jq .
 ```

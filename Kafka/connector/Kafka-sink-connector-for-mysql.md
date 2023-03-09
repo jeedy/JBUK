@@ -1,9 +1,9 @@
 # Kafka sink connector for Mysql
 
 ## 1. About
-앞서 설명한 [Kafka Source Connector on Docker](./Kafka-source-connector-on-docker.md) 를 참고해 다수의 Source table 를 CDC 하는 Source Connector를 생성하고 이를 Target table에 CDC sink connector 를 생성하는 방법과 사용법을 다룬다.
+앞서 설명한 [Kafka Source Connector on Docker](./Kafka-source-connector-for-mysql.md) 를 참고해 다수의 Source table 를 CDC 하는 Source Connector를 생성하고 이를 Target table에 CDC sink connector 를 생성하는 방법과 사용법을 다룬다.
 
-Docker내에 Kafka 설치 Connector plugin 설치는 이전 글을 참고하자. [Kafka Source Connector on Docker](./Kafka-source-connector-on-docker.md)
+Docker내에 Kafka 설치 Connector plugin 설치는 이전 글을 참고하자. [Kafka Source Connector on Docker](./Kafka-source-connector-for-mysql.md)
 
 ### reference:
 - [[Kafka] Kafka Connect - JDBC Connector 예제](https://wecandev.tistory.com/110)
@@ -33,10 +33,10 @@ FLUSH PRIVILEGES;
 ```
 
 ## 3. Sink Connector plugin  설치 
-> Source Connector plugin (debezium) 는 [Kafka Source Connector on Docker](./Kafka-source-connector-on-docker.md) 를 참고하자 아래 코드는 sink connector plugin 설치만 다룬다.
+> Source Connector plugin (debezium) 는 [Kafka Source Connector on Docker](./Kafka-source-connector-for-mysql.md) 를 참고하자 아래 코드는 sink connector plugin 설치만 다룬다.
 
 ```sh
-tide@tide-OptiPlex-7071:~/project/kafka$ docker cp confluentinc-kafka-connect-jdbc-10.5.2.zip  centos-kafka-connector:/opt/kafka/connectors/
+tide@tide-OptiPlex-7071:~/project/kafka$ docker cp confluentinc-kafka-connect-jdbc-10.5.2.zip etl-kafka-kimjy:/opt/kafka/connectors/
 tide@tide-OptiPlex-7071:~/project/kafka$ docker exec -it etl-kafka-kimjy bash
 
 root@22bdd6b9d320:/# cd /opt/kafka/connectors/
@@ -211,10 +211,4 @@ root@22bdd6b9d320:/#  curl --location --request POST 'http://localhost:8083/conn
 1. `auto.create` 값이 true인 경우와 false인 경우 조금씩 차이가 있다.    
 자동생성(true) 될 경우에는 PK, Unique key 가 없는 테이블이라도 `pk.fields` 값으로 PK를 알아서 구성한다.     
 수동생성(false) 인 경우에는 PK 또는 Unique key가 없기 때문에 update 하지않고 insert만 수행한다. (Target table에 unique key를 설정한다면 정상적으로 update 동작한다.)
-
-1. 처음 kafka connect에 대한 이해가 부족했을 때, Source connector 가 생성될 때 Source table 에 rows를 모두 가져가는 줄 알았으나 이는 잘못 알고 있었던 것이다.(이 부분 때문에 topic 에 쌓이는 방법에 대해 오해가 생겼다.)     
-Source Connector 는 단순히 binlong(archivelog) 에 기록 되어 있는 수정이력에 대해서만 가져간다.      
-즉, 테스트 당시 table를 새로 생성하고 insert도 했기 때문에 bin log에 그 이력이 남아있어 이를 topic이 가져갔을 뿐, 오래된 테이블(binlog에 이력이 expired)를 대상으로 했다면 source table의 rows 를 모두 가져가지 않고 binlog에 남아있는 수정 이력이 있는 rows 만 가져가서 등록 되었을 것이다.
-
-
 

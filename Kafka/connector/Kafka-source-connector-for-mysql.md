@@ -1,4 +1,4 @@
-# Kafka Source Connector on Docker
+# Kafka Source Connector for mysql
 
 ## 1. About
 Kafka Source Connector 설치하고 Mysql 에 특정 Table CDC 정보를 가져오는 것까지 실습한다. (sink connector와 같이 사용하기에는 적합하지 않은 형태로 silk connector 는 [Kafka Sink Connector for Mysql](./Kafka-sink-connector-for-mysql.md)  문서를 보고 구현하자)
@@ -9,10 +9,9 @@ Kafka Source Connector 설치하고 Mysql 에 특정 Table CDC 정보를 가져�
 >
 > 둘 중에 `Debezium` 을 사용해 구현한 예제이다.
 
-Kafka Source Connector 는 Mysql의 binlog를 통해 table 변경내역을 tracking 한다. 그렇기 때문에 connector 생성시 사용할 계정이 binlog에 접근 가능해야한다. https://debezium.io/documentation/reference/0.9/connectors/mysql.html
+Kafka Source Connector for mysql 은 Mysql의 binlog를 통해 table 변경내역을 tracking 한다. 그렇기 때문에 connector 생성시 사용할 계정이 binlog에 접근 가능해야한다. https://debezium.io/documentation/reference/0.9/connectors/mysql.html
 
 만약 사용할 계정이 아래 쿼리를 호출하지 못한다면 어드민 권한이 없는 것이니 이것부터 해결하자. [Create a MySQL user for the connector](https://debezium.io/documentation/reference/0.9/connectors/mysql.html#create-a-mysql-user-for-the-connector)
-
 
 ```sql
 show binary logs; 
@@ -148,6 +147,8 @@ plugin.path=/opt/kafka/connectors
 kafka container bash:
 ```sh
 root@22bdd6b9d320:/# cd /opt/kafka/bin
+
+# root@66880a74b37f:/opt/kafka/bin# connect-distributed.sh /opt/kafka/config/connect-distributed.properties
 root@22bdd6b9d320:/opt/kafka/bin# nohup connect-distributed.sh /opt/kafka/config/connect-distributed.properties &
 [1] 1747
 root@22bdd6b9d320:/opt/kafka/bin# nohup: ignoring input and appending output to 'nohup.out'
