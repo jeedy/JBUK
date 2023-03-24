@@ -13,7 +13,7 @@
 reference:
 - https://velog.io/@anjinwoong/Kafka-Connect-%EC%9E%90%EC%A3%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94-%EB%AA%85%EB%A0%B9%EC%96%B4API-%EC%A0%95%EB%A6%AC
 - https://docs.confluent.io/platform/current/connect/references/restapi.html#kconnect-rest-interface
-
+- https://hyperconnect.github.io/2021/01/11/cdc-platform.html
 
 ## Connector 
 
