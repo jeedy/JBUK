@@ -56,6 +56,9 @@ https://redis.io/commands/memory-usage
  
 
 ## Redis 복제를 이용한 실시간 마이그레이션
+- 기존 마스트 IP(127.0.0.1:6379)
+- 신규 마스트 IP(127.0.0.2:6379)
+
 1. 데이터 이전을 위한 새로운 Redis 인스턴스 실행
 
 2. 새로운 Redis 인스턴스를 기존 마스터의 슬레이브로 설정한다.
@@ -79,7 +82,7 @@ redis redis-slave:6379> slaveof 127.0.0.2 6379
 이 작업을 하기 전에, 기존 마스터 장비에 더는 요청이 없다는 것을 확인해야 한다. 
 ```bash
 redis new-redis-ip:6379> slaveof no one
-```
+ ```
 
 6. 기존 마스터 장비를 제거한다.
 
