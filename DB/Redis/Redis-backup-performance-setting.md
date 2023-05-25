@@ -218,7 +218,7 @@ timeout 설정을 바꿔서 테스트 해볼것.
 
 참고: 
 - http://redisgate.kr/redis/configuration/param_timeout.php
-- ttp://redisgate.kr/redis/configuration/param_tcp-keepalive.php
+- http://redisgate.kr/redis/configuration/param_tcp-keepalive.php
 - http://download.redis.io/redis-stable/redis.conf
 
 ##### redis config 상태 보는 법
