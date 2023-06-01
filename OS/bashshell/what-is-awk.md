@@ -3,8 +3,10 @@
 데이터를 조작하고 리포트를 생성하기 위해 사용하는 언어
 
 ### 참고자료
+- https://www.tutorialspoint.com/awk/awk_basic_syntax.htm
 - https://zzsza.github.io/development/2017/12/20/linux-6/
-- https://ra2kstar.tistory.com/153
+- https://ra2kstar.tistory.com/153 (중지됨)
+- https://recipes4dev.tistory.com/171
 
 awk 형식:
 ```bash
