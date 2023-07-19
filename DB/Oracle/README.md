@@ -134,7 +134,7 @@ IF O_RESULT != '1' THEN
 	-- RAISE_APPLICATION_ERROR( [에러코드], [에러메시지] )
 	-- 에러코드 : -20000 ~ -20999 사이의 코드
 	RAISE_APPLICATION_ERROR(-20000, '정상적으로 실행되지 않음')
-ELSEIF O_RESULT =='2' THEN
+ELSEIF O_RESULT =='-1' THEN
 	GOTO EXCEPTION_GOTO;
 END IF;
 
@@ -144,6 +144,10 @@ DBMS_OUTPUT.PUT_LINE('[END] database.프로시져_명.O_MSG =' || O_MSG);
 <<EXCEPTION_GOTO>>
 NULL;
 EXCEPTION
+	WHEN ZERO_DIVIDE THEN
+    	O_RESULT := 0;
+		O_MSG :='0으로 나눌 수 없습니다. 기본앖 0으로 치환 합니다.'
+    	DBMS_OUTPUT.PUT_LINE('[EXCEPTION] ZERO_DIVIDE : ' || O_MSG);
 	WHEN OTHERS THEN
 		ROLLBACK;
 		DBMS_OUTPUT.PUT_LINE('[EXCEPTION] database.프로시져_명.O_RESULT =' || O_RESULT);
@@ -151,4 +155,6 @@ EXCEPTION
 
 END;
 ```
-
+> ORACLE Exception 참고 :
+> - https://docs.oracle.com/database/timesten-18.1/TTPLS/exceptions.htm#TTPLS195
+> - http://ojc.asia/bbs/board.php?bo_table=LecSQLnPlSql&wr_id=580
