@@ -122,3 +122,5 @@ export JAVA_HOME_16=$(/usr/libexec/java_home -v16)
 # 14버전을 사용하고자 하는 경우 아래 주석(#)을 해제하고 위에 11버전을 주석처리 하면된다.
 export JAVA_HOME=$JAVA_HOME_16
 
+# brew path 연결
+export PATH="/opt/homebrew/bin:$PATH"

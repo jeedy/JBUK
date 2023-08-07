@@ -58,7 +58,19 @@ $ brew install zsh
 $ brew install zsh-autosuggestions
 $ brew install zsh-syntax-highlighting
 ```
-
 ### 4.1. 테마 셋팅
 1. [.zshrc 파일 복붙](./asset/.zshrc)
+	- alias, path 등 환경 설정
+1. [agnoster.zsh-theme 파일 복붙](./asset/agnoster.zsh-theme)
+	- 프롬프트 포멧변경
 
+## 5. D2Coding 폰트 설치 
+https://github.com/naver/d2codingfont
+
+1. 파일 다운로드 https://github.com/naver/d2codingfont/releases/download/VER1.3.2/D2Coding-Ver1.3.2-20180524.zip 
+1. 압축해제
+1. D2CodingAll > D2Coding-ver1.xx-20xxx-all.ttc 실행 후 설치
+1. iterm2 > Perferences > Profiles > Text > Font > D2Coding 서체 선택
+1. vscode, intellij 등 Font도 수정해주자.
+
+> brew를 통해 설치도 가능 `brew install homebrew/cask-fonts/font-d2coding`
