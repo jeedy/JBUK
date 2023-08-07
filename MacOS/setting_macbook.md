@@ -48,13 +48,17 @@ Setting > 키보드 > 키보드 단축키... 클릭 > 입력 소스 > "이전 �
 1. 61 > value > parameters > Item 0 = 32, Item 1 = 49, Item 2 = 131072 
 1. (반드시)재부팅 필수
 
-
 ## 4. Oh my zsh 설치
 ref. https://ohmyz.sh/
 
 ```sh
 # omz 설치
 $ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# 테마 셋팅
+$ brew install zsh
+$ brew install zsh-autosuggestions
+$ brew install zsh-syntax-highlighting
 ```
+
+### 4.1. 테마 셋팅
+1. [.zshrc 파일 복붙](./asset/.zshrc)
+
