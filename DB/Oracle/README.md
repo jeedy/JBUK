@@ -118,3 +118,43 @@ A.sampleFunction()
 -- A계정
 sampleFunction()
 ```
+
+## 프로시져 ( Procedures ) DBMS_OUTPUT 로그 확인 방법
+```sql
+-- SET 시스템 변수(SET System Variable)적용하기, 먼저 실행한다.
+SET SERVEROUTPUT ON
+-- 결과값을 출력하려면 변수 선언을 미리해준다.
+DECLARE
+  O_RESULT VARCHAR2(128);	-- return 결과값 (database.프로시져_명 결과값이 있다면)
+  O_MSG VARCHAR2(128);		-- return 결과메시지 (database.프로시져_명 결과메시지가 있다면)
+BEGIN
+database.프로시져_명('param1', 'param2', O_RESULT, O_MSG);
+
+IF O_RESULT != '1' THEN
+	-- RAISE_APPLICATION_ERROR( [에러코드], [에러메시지] )
+	-- 에러코드 : -20000 ~ -20999 사이의 코드
+	RAISE_APPLICATION_ERROR(-20000, '정상적으로 실행되지 않음')
+ELSEIF O_RESULT =='-1' THEN
+	GOTO EXCEPTION_GOTO;
+END IF;
+
+DBMS_OUTPUT.PUT_LINE('[END] database.프로시져_명.O_RESULT =' || O_RESULT);
+DBMS_OUTPUT.PUT_LINE('[END] database.프로시져_명.O_MSG =' || O_MSG);
+
+<<EXCEPTION_GOTO>>
+NULL;
+EXCEPTION
+	WHEN ZERO_DIVIDE THEN
+    	O_RESULT := 0;
+		O_MSG :='0으로 나눌 수 없습니다. 기본앖 0으로 치환 합니다.'
+    	DBMS_OUTPUT.PUT_LINE('[EXCEPTION] ZERO_DIVIDE : ' || O_MSG);
+	WHEN OTHERS THEN
+		ROLLBACK;
+		DBMS_OUTPUT.PUT_LINE('[EXCEPTION] database.프로시져_명.O_RESULT =' || O_RESULT);
+		DBMS_OUTPUT.PUT_LINE('[EXCEPTION] database.프로시져_명.O_MSG =' || O_MSG);
+
+END;
+```
+> ORACLE Exception 참고 :
+> - https://docs.oracle.com/database/timesten-18.1/TTPLS/exceptions.htm#TTPLS195
+> - http://ojc.asia/bbs/board.php?bo_table=LecSQLnPlSql&wr_id=580
