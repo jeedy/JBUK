@@ -1,4 +1,6 @@
-# 맥북 초기셋팅
+# 맥북(macbook) 초기셋팅
+tag: macos, 맥북, mac, macbook, homebrew, brew, iterm, oh my zsh, 한영키, font, D2coding, naver font
+
 
 ## 1. 홈브류(https://brew.sh/) 셋팅
 
