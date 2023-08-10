@@ -76,3 +76,23 @@ https://github.com/naver/d2codingfont
 1. vscode, intellij 등 Font도 수정해주자.
 
 > brew를 통해 설치도 가능 `brew install homebrew/cask-fonts/font-d2coding`
+
+## 6. zsh history date format 수정
+```sh
+$ vim ~/.zshrc
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+HIST_STAMPS="yyyy-mm-dd"
+
+# 종료했다가 들어오던지 source 명령어를 통해 바로 반영한다.
+$ source ~/.zshrc
+
+# 확인 명령어 날려보자
+$ history -f
+
+```
