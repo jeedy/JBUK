@@ -124,3 +124,7 @@ export JAVA_HOME=$JAVA_HOME_16
 
 # brew path 연결
 export PATH="/opt/homebrew/bin:$PATH"
+
+# set maven path
+export M2_HOME=/Users/jeeyong/Maven/apache-maven-3.9.1
+export PATH=$PATH:$M2_HOME/bin
