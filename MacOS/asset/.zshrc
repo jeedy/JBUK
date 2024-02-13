@@ -60,7 +60,7 @@ ZSH_THEME="agnoster"
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
+HIST_STAMPS="yyyy-mm-dd"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -122,3 +122,9 @@ export JAVA_HOME_16=$(/usr/libexec/java_home -v16)
 # 14버전을 사용하고자 하는 경우 아래 주석(#)을 해제하고 위에 11버전을 주석처리 하면된다.
 export JAVA_HOME=$JAVA_HOME_16
 
+# brew path 연결
+export PATH="/opt/homebrew/bin:$PATH"
+
+# set maven path
+export M2_HOME=/Users/jeeyong/Maven/apache-maven-3.9.1
+export PATH=$PATH:$M2_HOME/bin
